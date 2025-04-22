@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -56,6 +56,19 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     
     return result;
   });
+  
+  // Add useEffect to handle cleanup and prevent drag animation errors
+  useEffect(() => {
+    // This will run when the component unmounts or when domainPlans/student changes
+    return () => {
+      // Ensure any potential drag operations are canceled on unmount
+      // This helps prevent the "Cannot finish a drop animating when no drop is occurring" error
+      const elements = document.querySelectorAll('[data-rbd-draggable-id]');
+      elements.forEach(el => {
+        el.removeAttribute('data-rbd-draggable-id');
+      });
+    };
+  }, [domainPlans, student]);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
