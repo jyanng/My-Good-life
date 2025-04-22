@@ -680,6 +680,10 @@ export class MemStorage implements IStorage {
     );
   }
   
+  async getAlert(id: number): Promise<Alert | undefined> {
+    return this.alerts.get(id);
+  }
+  
   async createAlert(insertAlert: InsertAlert): Promise<Alert> {
     const id = this.currentAlertId++;
     const now = new Date();
