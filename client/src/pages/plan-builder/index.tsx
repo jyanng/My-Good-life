@@ -88,7 +88,6 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
   const [domainConfidenceValues, setDomainConfidenceValues] = useState<Record<string, number>>({});
   
   // State for form inputs
-  const [currentInput, setCurrentInput] = useState<string>("");
   const [currentGoalInput, setCurrentGoalInput] = useState<string>("");
   
   // Separate state variables for each identity category text area
@@ -96,6 +95,12 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
   const [bestSupportInput, setBestSupportInput] = useState<string>("");
   const [importantToFamilyInput, setImportantToFamilyInput] = useState<string>("");
   const [bestSupportFamilyInput, setBestSupportFamilyInput] = useState<string>("");
+  
+  // Separate state variables for each strength category input
+  const [likesInput, setLikesInput] = useState<string>("");
+  const [dislikesInput, setDislikesInput] = useState<string>("");
+  const [strengthsInput, setStrengthsInput] = useState<string>("");
+  const [peopleAppreciateInput, setPeopleAppreciateInput] = useState<string>("");
   
   // Fetch student data
   const { data: student, isLoading: isLoadingStudent } = useQuery<Student>({
@@ -392,12 +397,36 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
   
   // Handlers for form inputs
   const handleAddItem = (category: keyof StrengthsData) => {
-    if (!currentInput.trim()) return;
+    let inputValue = "";
+    
+    // Get the correct input value based on category
+    if (category === "likes") {
+      inputValue = likesInput;
+    } else if (category === "dislikes") {
+      inputValue = dislikesInput;
+    } else if (category === "strengths") {
+      inputValue = strengthsInput;
+    } else if (category === "peopleAppreciate") {
+      inputValue = peopleAppreciateInput;
+    }
+    
+    if (!inputValue.trim()) return;
+    
     setStrengths(prev => ({
       ...prev,
-      [category]: [...prev[category], currentInput.trim()]
+      [category]: [...prev[category], inputValue.trim()]
     }));
-    setCurrentInput("");
+    
+    // Clear the corresponding input field
+    if (category === "likes") {
+      setLikesInput("");
+    } else if (category === "dislikes") {
+      setDislikesInput("");
+    } else if (category === "strengths") {
+      setStrengthsInput("");
+    } else if (category === "peopleAppreciate") {
+      setPeopleAppreciateInput("");
+    }
   };
   
   const handleRemoveItem = (category: keyof StrengthsData, index: number) => {
@@ -688,8 +717,8 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                     <div className="flex items-center gap-2">
                       <Input 
                         placeholder="Add something they like..."
-                        value={currentInput}
-                        onChange={(e) => setCurrentInput(e.target.value)}
+                        value={likesInput}
+                        onChange={(e) => setLikesInput(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleAddItem("likes")}
                       />
                       <Button type="button" onClick={() => handleAddItem("likes")}>
@@ -725,8 +754,8 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                     <div className="flex items-center gap-2">
                       <Input 
                         placeholder="Add something they dislike..."
-                        value={currentInput}
-                        onChange={(e) => setCurrentInput(e.target.value)}
+                        value={dislikesInput}
+                        onChange={(e) => setDislikesInput(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleAddItem("dislikes")}
                       />
                       <Button type="button" onClick={() => handleAddItem("dislikes")}>
@@ -762,8 +791,8 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                     <div className="flex items-center gap-2">
                       <Input 
                         placeholder="Add a strength..."
-                        value={currentInput}
-                        onChange={(e) => setCurrentInput(e.target.value)}
+                        value={strengthsInput}
+                        onChange={(e) => setStrengthsInput(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleAddItem("strengths")}
                       />
                       <Button type="button" onClick={() => handleAddItem("strengths")}>
