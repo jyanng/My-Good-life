@@ -22,8 +22,8 @@ export default function QuickAccess() {
               <h4 className="ml-2 text-lg font-medium">Plan Templates</h4>
             </div>
             <p className="text-sm text-gray-600 mb-4">Access and customize Good Life Plan templates for your students.</p>
-            <Link href="/templates">
-              <a className="text-primary text-sm hover:underline">Browse Templates →</a>
+            <Link href="/templates" className="text-primary text-sm hover:underline inline-block">
+              Browse Templates →
             </Link>
           </div>
           
@@ -37,8 +37,8 @@ export default function QuickAccess() {
               <h4 className="ml-2 text-lg font-medium">Case Studies</h4>
             </div>
             <p className="text-sm text-gray-600 mb-4">Explore successful transition stories and examples of completed plans.</p>
-            <Link href="/case-studies">
-              <a className="text-primary text-sm hover:underline">View Case Studies →</a>
+            <Link href="/case-studies" className="text-primary text-sm hover:underline inline-block">
+              View Case Studies →
             </Link>
           </div>
           
@@ -52,8 +52,8 @@ export default function QuickAccess() {
               <h4 className="ml-2 text-lg font-medium">Learning Center</h4>
             </div>
             <p className="text-sm text-gray-600 mb-4">Access training modules on effective plan facilitation and goal framing.</p>
-            <Link href="/learning-center">
-              <a className="text-primary text-sm hover:underline">Start Learning →</a>
+            <Link href="/learning-center" className="text-primary text-sm hover:underline inline-block">
+              Start Learning →
             </Link>
           </div>
         </div>

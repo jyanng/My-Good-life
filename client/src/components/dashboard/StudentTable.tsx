@@ -139,11 +139,11 @@ export default function StudentTable({ students, isLoading }: StudentTableProps)
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link href={`/student/${student.id}`}>
-                      <a className="text-primary hover:text-indigo-900 mr-3">View</a>
+                    <Link href={`/student/${student.id}`} className="text-primary hover:text-indigo-900 mr-3">
+                      View
                     </Link>
-                    <Link href={`/plan-builder/${student.id}`}>
-                      <a className="text-gray-600 hover:text-gray-900">Edit</a>
+                    <Link href={`/plan-builder/${student.id}`} className="text-gray-600 hover:text-gray-900">
+                      Edit
                     </Link>
                   </td>
                 </tr>
