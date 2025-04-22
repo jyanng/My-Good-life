@@ -124,46 +124,46 @@ export class MemStorage implements IStorage {
     
     // Add demo students
     const student1 = this.createStudent({
-      name: "Michael Robinson",
-      email: "michael.robinson@example.com",
-      phone: "(555) 123-4567",
-      school: "Westfield Special Education Center",
-      graduationDate: "June 2024",
+      name: "Wei Jie Tan",
+      email: "weijie.tan@example.edu.sg",
+      phone: "+65 9123 4567",
+      school: "Pathlight School",
+      graduationDate: "November 2024",
       age: 18,
-      avatarUrl: "https://images.unsplash.com/photo-1535295972055-1c762f4483e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      avatarUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       status: "active",
       facilitatorId: 1
     });
     
     const student2 = this.createStudent({
-      name: "Emma Wilson",
-      email: "emma.wilson@example.com",
-      phone: "(555) 234-5678",
-      school: "Westfield Special Education Center",
-      graduationDate: "June 2024",
+      name: "Li Ying Lim",
+      email: "liying.lim@example.edu.sg",
+      phone: "+65 9234 5678",
+      school: "Eden School",
+      graduationDate: "November 2024",
       age: 17,
-      avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      avatarUrl: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       status: "active",
       facilitatorId: 1
     });
     
     const student3 = this.createStudent({
-      name: "Tyler Peters",
-      email: "tyler.peters@example.com",
-      phone: "(555) 345-6789",
-      school: "Westfield Special Education Center",
-      graduationDate: "June 2024",
+      name: "Rizwan bin Abdullah",
+      email: "rizwan.abdullah@example.edu.sg",
+      phone: "+65 9345 6789",
+      school: "APSN Delta Senior School",
+      graduationDate: "November 2024",
       age: 19,
-      avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      avatarUrl: "https://images.unsplash.com/photo-1580518380430-2f84c0a7fb85?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       status: "active",
       facilitatorId: 1
     });
     
     const student4 = this.createStudent({
-      name: "Alex Johnson",
-      email: "alex.johnson@example.com",
-      phone: "(555) 456-7890",
-      school: "Westfield Special Education Center",
+      name: "Aishwarya Rai",
+      email: "aishwarya.rai@example.edu.sg",
+      phone: "+65 9456 7890",
+      school: "Rainbow Centre",
       graduationDate: "June 2024",
       age: 18,
       avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
@@ -174,15 +174,15 @@ export class MemStorage implements IStorage {
     // Add demo profiles
     this.createProfile({
       studentId: 1,
-      likes: ["Drawing and digital art", "Video games, especially Minecraft", "Working with computers", "Animals, particularly dogs", "Music - playing guitar"],
-      dislikes: ["Loud, crowded places", "Unexpected changes to routines", "Strong smells (perfumes, cleaning products)", "Being interrupted when focused", "Physical contact from strangers"],
-      strengths: ["Remember details about subjects I'm interested in", "Solve logical problems and puzzles", "Create detailed digital artwork", "Focus intensely on tasks I enjoy", "Care for animals"],
-      peopleAppreciate: ["Honest and straightforward", "Loyal to friends", "Creative thinking", "Passionate about interests", "Helpful when I understand what's needed"],
-      importantToMe: ["Having time alone to recharge", "Clear expectations", "Using my artistic skills", "Learning about technology"],
-      bestSupport: ["Give clear, specific instructions", "Allow time to process information", "Provide visual supports", "Respect need for personal space"],
-      importantToFamily: ["Regular communication", "Seeing progress in independence", "Educational development"],
-      bestSupportFamily: ["Updates on achievements", "Including them in planning", "Resources they can use at home"],
-      personalityTags: ["Creative", "Logical", "Detail-oriented", "Technology", "Art", "Music", "Animals", "Computers", "Gaming", "Routine", "Structure", "Visual learner"]
+      likes: ["Digital art and animation", "Mobile games, especially Mobile Legends", "Coding and technology", "Watching nature documentaries", "Playing piano at CC"],
+      dislikes: ["Crowded MRT during peak hours", "Last-minute changes to timetable", "Strong food smells in hawker centres", "Being interrupted during gaming sessions", "Strangers standing too close"],
+      strengths: ["Memorizing facts about technology", "Solving math problems quickly", "Creating digital illustrations", "Focusing on coding projects for hours", "Explaining complex topics to others"],
+      peopleAppreciate: ["Direct communication style", "Loyalty to close friends", "Creative problem solving", "Passion for learning new technologies", "Willingness to help with computer issues"],
+      importantToMe: ["Having quiet time after school", "Clear instructions for assignments", "Using my artistic talents", "Learning about AI and robotics"],
+      bestSupport: ["Give step-by-step instructions", "Allow extra time for processing", "Provide visual schedules", "Respect need for personal space in group work"],
+      importantToFamily: ["Regular updates on school progress", "Seeing me become more independent", "Academic achievements"],
+      bestSupportFamily: ["Sharing my accomplishments", "Including them in education planning", "Providing resources in both English and Mandarin"],
+      personalityTags: ["Creative", "Analytical", "Detail-focused", "Tech-savvy", "Digital art", "Music", "Science", "Coding", "Gaming", "Organized", "Structured", "Visual learner"]
     });
     
     // Add domain confidence
@@ -321,25 +321,25 @@ export class MemStorage implements IStorage {
     // Add some case studies
     this.createCaseStudy({
       title: "From Anxiety to Confidence",
-      description: "How James overcame social anxiety to secure a part-time job",
+      description: "How Terence overcame social anxiety to secure a part-time job at NTUC FairPrice",
       domains: ["safe", "connected", "independent"],
-      content: "James, a 19-year-old with autism, struggled with severe anxiety in social situations. Through his GoodLife Plan, he worked with his facilitator to develop strategies that helped him feel safe in unfamiliar environments. Starting with small steps—like ordering his own food at a quiet café—James gradually built confidence. After six months of practicing social skills and learning stress-management techniques, he successfully interviewed for and secured a part-time position at a local bookstore, an environment that matched his interests and comfort level.",
+      content: "Terence, a 19-year-old with autism from Woodlands, struggled with severe anxiety in social situations. Through his GoodLife Plan, he worked with his facilitator to develop strategies that helped him feel safe in unfamiliar environments. Starting with small steps—like ordering food at a quiet kopitiam—Terence gradually built confidence. After six months of practicing social skills and learning stress-management techniques at the Social Service Centre, he successfully interviewed for and secured a part-time position at NTUC FairPrice, an environment that matched his interests in organization and inventory management.",
       mediaUrls: []
     });
     
     this.createCaseStudy({
       title: "Building Independence Through Technology",
-      description: "Maya's journey to living semi-independently using assistive technology",
+      description: "Mei Ling's journey to living semi-independently in an HDB flat using assistive technology",
       domains: ["independent", "safe", "healthy"],
-      content: "Maya, who has an intellectual disability, dreamed of living in her own apartment. Her GoodLife Plan focused on building practical skills and leveraging technology to support her independence. She learned to use smart home devices to manage routines, video calling to stay connected with support people, and reminder apps for medication and appointments. After a year of preparation and practice, Maya moved into a supported living apartment where she handles most daily tasks independently while maintaining regular check-ins with her support network.",
+      content: "Mei Ling, who has an intellectual disability, dreamed of living in her own HDB flat with minimal support. Her GoodLife Plan focused on building practical skills and leveraging technology to support her independence. She learned to use smart home devices to manage routines, video calling to stay connected with her family in Tampines, and reminder apps for medication and appointments. After a year of preparation with SG Enable's support, Mei Ling moved into a supported living apartment where she handles most daily tasks independently while maintaining regular check-ins with her support network and visiting the nearby community center for activities.",
       mediaUrls: []
     });
     
     this.createCaseStudy({
-      title: "Finding a Voice Through Art",
-      description: "How creative expression helped Daniel communicate his needs and goals",
+      title: "Finding a Voice Through Digital Art",
+      description: "How creative expression helped Irfan communicate his needs and goals",
       domains: ["engaged", "included", "connected"],
-      content: "Daniel, who is non-verbal and on the autism spectrum, struggled to communicate his preferences and goals. His facilitator noticed his interest in colors and drawing, and incorporated art into his GoodLife planning process. Through painting and digital drawing, Daniel began expressing his interests, preferences, and even concerns. This creative approach led to Daniel joining an inclusive art program, where he developed friendships and found meaningful engagement. His artwork now serves as a communication tool in planning meetings, ensuring his voice is central to decisions about his future.",
+      content: "Irfan, who is non-verbal and on the autism spectrum, struggled to communicate his preferences and goals. His facilitator at Rainbow Centre noticed his interest in colors and digital tools, and incorporated tablet-based art into his GoodLife planning process. Through digital illustration apps, Irfan began expressing his interests, preferences, and even concerns about his future education path. This creative approach led to Irfan joining MINDS' inclusive digital art program at Enabling Village, where he developed friendships and found meaningful engagement. His digital artwork now serves as a communication tool in planning meetings, ensuring his voice is central to decisions about his future vocational training.",
       mediaUrls: []
     });
     
@@ -373,7 +373,7 @@ export class MemStorage implements IStorage {
       facilitatorId: 1,
       studentId: 3,
       type: "unreframed_goals",
-      message: "Tyler Peters has 3 goals that need to be reframed in a positive way.",
+      message: "Rizwan bin Abdullah has 3 goals that need to be reframed in a positive way.",
       status: "open"
     });
     
@@ -381,7 +381,7 @@ export class MemStorage implements IStorage {
       facilitatorId: 1,
       studentId: 4,
       type: "inactivity",
-      message: "Alex Johnson hasn't engaged with their plan in 5 days.",
+      message: "Aishwarya Rai hasn't engaged with their plan in 5 days.",
       status: "open"
     });
     
@@ -389,7 +389,7 @@ export class MemStorage implements IStorage {
       facilitatorId: 1,
       studentId: 2,
       type: "missing_information",
-      message: "Emma Wilson's Connected domain is missing support system details.",
+      message: "Li Ying Lim's Connected domain is missing support system details.",
       status: "open"
     });
   }
