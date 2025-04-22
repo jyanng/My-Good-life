@@ -130,7 +130,7 @@ export class MemStorage implements IStorage {
       school: "Pathlight School",
       graduationDate: "November 2024",
       age: 18,
-      avatarUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      avatarUrl: "https://images.unsplash.com/photo-1545696968-1a5245650b36?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       status: "active",
       facilitatorId: 1
     });
@@ -142,7 +142,7 @@ export class MemStorage implements IStorage {
       school: "Eden School",
       graduationDate: "November 2024",
       age: 17,
-      avatarUrl: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      avatarUrl: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       status: "active",
       facilitatorId: 1
     });
@@ -154,7 +154,7 @@ export class MemStorage implements IStorage {
       school: "APSN Delta Senior School",
       graduationDate: "November 2024",
       age: 19,
-      avatarUrl: "https://images.unsplash.com/photo-1580518380430-2f84c0a7fb85?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      avatarUrl: "https://images.unsplash.com/photo-1516914943479-89db7d9ae7f2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       status: "active",
       facilitatorId: 1
     });
@@ -166,7 +166,7 @@ export class MemStorage implements IStorage {
       school: "Rainbow Centre",
       graduationDate: "June 2024",
       age: 18,
-      avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      avatarUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       status: "needs_attention",
       facilitatorId: 1
     });
