@@ -58,6 +58,7 @@ export interface IStorage {
   
   // Alert methods
   getAlerts(facilitatorId: number): Promise<Alert[]>;
+  getAlert(id: number): Promise<Alert | undefined>;
   createAlert(alert: InsertAlert): Promise<Alert>;
   updateAlertStatus(id: number, status: string): Promise<Alert | undefined>;
   

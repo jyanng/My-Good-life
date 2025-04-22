@@ -332,6 +332,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(alerts);
   });
   
+  app.get("/api/alerts/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    const alert = await storage.getAlert(id);
+    if (!alert) {
+      return res.status(404).json({ message: "Alert not found" });
+    }
+    res.json(alert);
+  });
+  
   app.post("/api/alerts", async (req, res) => {
     try {
       const validated = insertAlertSchema.parse(req.body);
