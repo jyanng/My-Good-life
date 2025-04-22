@@ -909,8 +909,8 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                     <div className="space-y-4">
                       <Textarea 
                         placeholder="Add family priorities..."
-                        value={currentTextArea}
-                        onChange={(e) => setCurrentTextArea(e.target.value)}
+                        value={importantToFamilyInput}
+                        onChange={(e) => setImportantToFamilyInput(e.target.value)}
                       />
                       <Button type="button" onClick={() => handleAddIdentityItem("importantToFamily")}>
                         Add to List
@@ -943,8 +943,8 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                     <div className="space-y-4">
                       <Textarea 
                         placeholder="Add family support strategies..."
-                        value={currentTextArea}
-                        onChange={(e) => setCurrentTextArea(e.target.value)}
+                        value={bestSupportFamilyInput}
+                        onChange={(e) => setBestSupportFamilyInput(e.target.value)}
                       />
                       <Button type="button" onClick={() => handleAddIdentityItem("bestSupportFamily")}>
                         Add to List
