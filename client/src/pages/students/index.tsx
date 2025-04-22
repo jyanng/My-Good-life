@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Student, InsertStudent } from "@shared/schema";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,11 @@ export default function Students() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const queryClient = useQueryClient();
+  
+  // Add useEffect to debug modal state changes
+  useEffect(() => {
+    console.log('Modal state changed:', isAddModalOpen);
+  }, [isAddModalOpen]);
   
   const { data: students, isLoading } = useQuery<Student[]>({
     queryKey: ["/api/students?facilitatorId=1"],
@@ -259,7 +264,6 @@ export default function Students() {
               Enter information to create a new student profile.
             </DialogDescription>
           </DialogHeader>
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
