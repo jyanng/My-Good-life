@@ -995,8 +995,8 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                       onValueChange={(value) => handleConfidenceChange(domain.id, value)}
                     />
                     <div className="flex justify-between mt-1 text-xs text-gray-500">
-                      <span>Not Confident</span>
-                      <span>Very Confident</span>
+                      <span>Needs Work</span>
+                      <span>Doing Great</span>
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">{domain.description}</p>
@@ -1006,7 +1006,7 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
               <div className="pt-4">
                 <Button onClick={handleSaveConfidence}>
                   <SaveIcon className="mr-2 h-4 w-4" />
-                  Save Confidence Levels
+                  Save Life Profile
                 </Button>
               </div>
             </div>
