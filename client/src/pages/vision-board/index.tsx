@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -7,33 +7,36 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Student, DomainPlan } from '@shared/schema';
 import VisionBoard from '@/components/vision-board/VisionBoard';
-import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 export default function VisionBoardPage() {
   const [, setLocation] = useLocation();
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
+  const { toast } = useToast();
 
-  // For demo purposes, assume we're logged in as facilitator with ID 1
+  // For demo purposes, assume we're logged in as facilitator ID 1
   const facilitatorId = 1;
   
   // Fetch the list of students
   const { data: students, isLoading: isLoadingStudents } = useQuery<Student[]>({
-    queryKey: ['/api/students', facilitatorId],
+    queryKey: [`/api/students?facilitatorId=${facilitatorId}`],
   });
 
-  // Fetch the selected student's domain plans
+  // Fetch the selected student
   const { data: student, isLoading: isLoadingStudent } = useQuery<Student>({
-    queryKey: ['/api/students', selectedStudentId],
+    queryKey: [`/api/students/${selectedStudentId}`],
     enabled: !!selectedStudentId,
   });
 
+  // Fetch the student's plan
   const { data: plan } = useQuery({
-    queryKey: ['/api/students', selectedStudentId, 'plan'],
+    queryKey: [`/api/students/${selectedStudentId}/plan`],
     enabled: !!selectedStudentId,
   });
 
+  // Fetch the domain plans
   const { data: domainPlans, isLoading: isLoadingPlans } = useQuery<DomainPlan[]>({
-    queryKey: ['/api/plans', plan?.id, 'domains'],
+    queryKey: [`/api/plans/${plan?.id}/domains`],
     enabled: !!plan?.id,
   });
 
@@ -43,7 +46,10 @@ export default function VisionBoardPage() {
 
     // This would be the place to implement saving logic
     // For example, you might update domain plans with the new goal arrangements
-    alert('Vision board changes saved successfully!');
+    toast({
+      title: "Success",
+      description: "Vision board changes saved successfully!",
+    });
   };
 
   return (
