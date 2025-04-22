@@ -44,25 +44,25 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
 
   // Fetch student data
   const { data: student, isLoading: isLoadingStudent } = useQuery({
-    queryKey: ["/api/students", studentId],
+    queryKey: [`/api/students/${studentId}`],
     enabled: !!studentId
   });
 
   // Fetch alert data
   const { data: alert, isLoading: isLoadingAlert } = useQuery({
-    queryKey: ["/api/alerts", alertId],
+    queryKey: [`/api/alerts/${alertId}`],
     enabled: !!alertId
   });
 
   // Fetch student's plan
   const { data: plan, isLoading: isLoadingPlan } = useQuery({
-    queryKey: ["/api/students", studentId, "plan"],
+    queryKey: [`/api/students/${studentId}/plan`],
     enabled: !!studentId,
   });
 
   // Fetch domain plans for this student's plan
   const { data: domainPlans, isLoading: isLoadingDomainPlans } = useQuery({
-    queryKey: ["/api/plans", plan?.id, "domains"],
+    queryKey: [`/api/plans/${plan?.id}/domains`],
     enabled: !!plan?.id,
     onSuccess: (data) => {
       // Extract all unreframed goals from domain plans
@@ -98,7 +98,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/plans", plan?.id, "domains"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/plans/${plan?.id}/domains`] });
       toast({
         title: "Success",
         description: "Goal has been successfully reframed.",
@@ -125,7 +125,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/alerts"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/alerts?facilitatorId=1`] });
       toast({
         title: "Success",
         description: "All goals have been reframed and the alert has been resolved.",
