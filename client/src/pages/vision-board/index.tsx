@@ -13,9 +13,12 @@ export default function VisionBoardPage() {
   const [, setLocation] = useLocation();
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
 
+  // For demo purposes, assume we're logged in as facilitator with ID 1
+  const facilitatorId = 1;
+  
   // Fetch the list of students
   const { data: students, isLoading: isLoadingStudents } = useQuery<Student[]>({
-    queryKey: ['/api/students'],
+    queryKey: ['/api/students', facilitatorId],
   });
 
   // Fetch the selected student's domain plans
