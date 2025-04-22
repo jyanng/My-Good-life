@@ -54,15 +54,14 @@ export default function Sidebar({ user, mobileMenuOpen, setMobileMenuOpen }: Sid
                 key={item.path}
                 href={item.path}
                 onClick={() => setMobileMenuOpen(false)}
-              >
-                <a className={`flex items-center px-4 py-3 mb-2 rounded-lg ${
+                className={`flex items-center px-4 py-3 mb-2 rounded-lg ${
                   location === item.path
                     ? "text-primary bg-indigo-50"
                     : "text-gray-600 hover:bg-gray-100"
-                }`}>
-                  <span className="mr-3 text-current">{item.icon}</span>
-                  {item.label}
-                </a>
+                }`}
+              >
+                <span className="mr-3 text-current">{item.icon}</span>
+                {item.label}
               </Link>
             ))}
             
@@ -73,15 +72,14 @@ export default function Sidebar({ user, mobileMenuOpen, setMobileMenuOpen }: Sid
                 key={item.path}
                 href={item.path}
                 onClick={() => setMobileMenuOpen(false)}
-              >
-                <a className={`flex items-center px-4 py-3 mb-2 rounded-lg ${
+                className={`flex items-center px-4 py-3 mb-2 rounded-lg ${
                   location === item.path
                     ? "text-primary bg-indigo-50"
                     : "text-gray-600 hover:bg-gray-100"
-                }`}>
-                  <span className="mr-3 text-gray-500">{item.icon}</span>
-                  {item.label}
-                </a>
+                }`}
+              >
+                <span className="mr-3 text-gray-500">{item.icon}</span>
+                {item.label}
               </Link>
             ))}
           </nav>

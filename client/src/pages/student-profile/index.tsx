@@ -92,9 +92,9 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                 </div>
               )}
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">{student.name}</h2>
-              <p className="text-gray-600">{student.email}</p>
+            <div className="max-w-xs md:max-w-sm overflow-hidden">
+              <h2 className="text-2xl font-bold text-gray-900 break-words">{student.name}</h2>
+              <p className="text-gray-600 break-all">{student.email}</p>
             </div>
           </div>
           <div className="flex mt-4 md:mt-0 space-x-2">
