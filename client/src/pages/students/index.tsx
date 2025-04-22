@@ -1,17 +1,46 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "wouter";
-import { Student } from "@shared/schema";
+import { Student, InsertStudent } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, X as XIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription, 
+  DialogFooter 
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Students() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const queryClient = useQueryClient();
   
   const { data: students, isLoading } = useQuery<Student[]>({
     queryKey: ["/api/students?facilitatorId=1"],
@@ -23,11 +52,60 @@ export default function Students() {
     student.school?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Form schema for adding a student
+  const formSchema = z.object({
+    name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+    email: z.string().email({ message: "Please enter a valid email address." }).optional().nullable(),
+    phone: z.string().optional().nullable(),
+    school: z.string().optional().nullable(),
+    graduationDate: z.string().optional().nullable(),
+    age: z.coerce.number().int().positive().optional().nullable(),
+    status: z.string().default("active"),
+    facilitatorId: z.number().default(1)
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      school: "",
+      graduationDate: "",
+      age: null,
+      status: "active",
+      facilitatorId: 1
+    },
+  });
+
+  const createStudentMutation = useMutation({
+    mutationFn: async (data: InsertStudent) => {
+      return apiRequest("POST", "/api/students", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/students?facilitatorId=1"] });
+      toast({
+        title: "Success",
+        description: "Student was added successfully.",
+      });
+      setIsAddModalOpen(false);
+      form.reset();
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to add student. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    createStudentMutation.mutate(values as InsertStudent);
+  };
+
   const handleAddStudent = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Student creation form will be available soon.",
-    });
+    setIsAddModalOpen(true);
   };
 
   return (
@@ -169,6 +247,149 @@ export default function Students() {
           )}
         </div>
       )}
+      
+      {/* Add Student Modal */}
+      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add New Student</DialogTitle>
+            <DialogDescription>
+              Enter information to create a new student profile.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Wei Jie Tan" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. weijie.tan@example.edu.sg" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. +65 9123 4567" {...field} value={field.value || ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="age"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Age</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="e.g. 18" 
+                          {...field} 
+                          value={field.value || ''} 
+                          onChange={(e) => {
+                            field.onChange(e.target.valueAsNumber || null);
+                          }} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="school"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>School</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Pathlight School" {...field} value={field.value || ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="graduationDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Graduation Date</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. November 2024" {...field} value={field.value || ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select student status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="needs_attention">Needs Attention</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter className="pt-6">
+                <Button 
+                  variant="outline" 
+                  type="button" 
+                  onClick={() => setIsAddModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={createStudentMutation.isPending}>
+                  {createStudentMutation.isPending ? "Saving..." : "Save Student"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
