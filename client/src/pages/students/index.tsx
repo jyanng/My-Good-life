@@ -105,7 +105,9 @@ export default function Students() {
   };
 
   const handleAddStudent = () => {
+    console.log("Add Student button clicked, current state:", isAddModalOpen);
     setIsAddModalOpen(true);
+    console.log("After setting state:", true);
   };
 
   return (
