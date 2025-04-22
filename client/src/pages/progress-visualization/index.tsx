@@ -35,32 +35,18 @@ export default function ProgressVisualization() {
 
   // Fetch all students - hard-coded facilitator ID 1 for demo
   const { data: students, isLoading: isLoadingStudents } = useQuery<Student[]>({
-    queryKey: ["/api/students"],
-    queryFn: async () => {
-      const response = await apiRequest("/api/students?facilitatorId=1");
-      return response as Student[];
-    }
+    queryKey: ["/api/students?facilitatorId=1"]
   });
 
   // Fetch the selected student's plan
   const { data: plan, isLoading: isLoadingPlan } = useQuery<GoodLifePlan>({
-    queryKey: ["/api/students", selectedStudent, "plan"],
-    queryFn: async () => {
-      if (!selectedStudent) return null as unknown as GoodLifePlan;
-      const response = await apiRequest(`/api/students/${selectedStudent}/plan`);
-      return response as GoodLifePlan;
-    },
+    queryKey: ["/api/students/" + (selectedStudent || 0) + "/plan"],
     enabled: !!selectedStudent
   });
 
   // Fetch domain plans for the selected student's plan
   const { data: domainPlans, isLoading: isLoadingDomainPlans } = useQuery<DomainPlan[]>({
-    queryKey: ["/api/plans", plan?.id, "domains"],
-    queryFn: async () => {
-      if (!plan?.id) return [] as DomainPlan[];
-      const response = await apiRequest(`/api/plans/${plan.id}/domains`);
-      return response as DomainPlan[];
-    },
+    queryKey: ["/api/plans/" + (plan?.id || 0) + "/domains"],
     enabled: !!plan?.id
   });
 
