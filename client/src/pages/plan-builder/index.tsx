@@ -89,8 +89,13 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
   
   // State for form inputs
   const [currentInput, setCurrentInput] = useState<string>("");
-  const [currentTextArea, setCurrentTextArea] = useState<string>("");
   const [currentGoalInput, setCurrentGoalInput] = useState<string>("");
+  
+  // Separate state variables for each identity category text area
+  const [importantToMeInput, setImportantToMeInput] = useState<string>("");
+  const [bestSupportInput, setBestSupportInput] = useState<string>("");
+  const [importantToFamilyInput, setImportantToFamilyInput] = useState<string>("");
+  const [bestSupportFamilyInput, setBestSupportFamilyInput] = useState<string>("");
   
   // Fetch student data
   const { data: student, isLoading: isLoadingStudent } = useQuery<Student>({
@@ -403,12 +408,36 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
   };
   
   const handleAddIdentityItem = (category: keyof IdentityData) => {
-    if (!currentTextArea.trim()) return;
+    let inputValue = "";
+    
+    // Get the correct input value based on category
+    if (category === "importantToMe") {
+      inputValue = importantToMeInput;
+    } else if (category === "bestSupport") {
+      inputValue = bestSupportInput;
+    } else if (category === "importantToFamily") {
+      inputValue = importantToFamilyInput;
+    } else if (category === "bestSupportFamily") {
+      inputValue = bestSupportFamilyInput;
+    }
+    
+    if (!inputValue.trim()) return;
+    
     setIdentity(prev => ({
       ...prev,
-      [category]: [...prev[category], currentTextArea.trim()]
+      [category]: [...prev[category], inputValue.trim()]
     }));
-    setCurrentTextArea("");
+    
+    // Clear the corresponding input field
+    if (category === "importantToMe") {
+      setImportantToMeInput("");
+    } else if (category === "bestSupport") {
+      setBestSupportInput("");
+    } else if (category === "importantToFamily") {
+      setImportantToFamilyInput("");
+    } else if (category === "bestSupportFamily") {
+      setBestSupportFamilyInput("");
+    }
   };
   
   const handleRemoveIdentityItem = (category: keyof IdentityData, index: number) => {
@@ -812,8 +841,8 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                     <div className="space-y-4">
                       <Textarea 
                         placeholder="Add what's important..."
-                        value={currentTextArea}
-                        onChange={(e) => setCurrentTextArea(e.target.value)}
+                        value={importantToMeInput}
+                        onChange={(e) => setImportantToMeInput(e.target.value)}
                       />
                       <Button type="button" onClick={() => handleAddIdentityItem("importantToMe")}>
                         Add to List
@@ -846,8 +875,8 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                     <div className="space-y-4">
                       <Textarea 
                         placeholder="Add support strategies..."
-                        value={currentTextArea}
-                        onChange={(e) => setCurrentTextArea(e.target.value)}
+                        value={bestSupportInput}
+                        onChange={(e) => setBestSupportInput(e.target.value)}
                       />
                       <Button type="button" onClick={() => handleAddIdentityItem("bestSupport")}>
                         Add to List
