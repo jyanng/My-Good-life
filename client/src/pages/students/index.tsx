@@ -250,7 +250,7 @@ export default function Students() {
       
       {/* Add Student Modal */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Student</DialogTitle>
             <DialogDescription>
@@ -330,7 +330,7 @@ export default function Students() {
                     <FormItem>
                       <FormLabel>School</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Pathlight School" {...field} value={field.value || ''} />
+                        <Input placeholder="e.g. Admiral Hill RC" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
