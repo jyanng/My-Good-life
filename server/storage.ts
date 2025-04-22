@@ -274,6 +274,43 @@ export class MemStorage implements IStorage {
       completed: true
     });
     
+    // Create domain plans for student 3 (Rizwan) with unreframed goals that need review
+    this.createDomainPlan({
+      planId: 3,
+      domain: "safe",
+      vision: "I will feel safe in different environments",
+      goals: [
+        { 
+          id: "goal1",
+          description: "Will not struggle with loud noises in public places", 
+          status: "in_progress",
+          needsReframing: true
+        },
+        { 
+          id: "goal2",
+          description: "Will stop having meltdowns during transitions between activities", 
+          status: "not_started",
+          needsReframing: true
+        }
+      ],
+      completed: false
+    });
+    
+    this.createDomainPlan({
+      planId: 3,
+      domain: "connected",
+      vision: "I will develop meaningful relationships",
+      goals: [
+        { 
+          id: "goal3",
+          description: "Will avoid getting overwhelmed in group social situations", 
+          status: "in_progress",
+          needsReframing: true
+        }
+      ],
+      completed: false
+    });
+    
     this.createDomainPlan({
       planId: 1,
       domain: "engaged",

@@ -91,10 +91,11 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
   // Update domain plan mutation
   const updateDomainPlanMutation = useMutation({
     mutationFn: async (variables: { domainPlanId: number, goals: any }) => {
-      return apiRequest(`/api/domain-plans/${variables.domainPlanId}`, {
-        method: "PATCH",
-        body: JSON.stringify({ goals: variables.goals }),
-      });
+      return apiRequest(
+        "PATCH",
+        `/api/domain-plans/${variables.domainPlanId}`, 
+        { goals: variables.goals }
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/plans", plan?.id, "domains"] });
@@ -117,10 +118,11 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
   // Update alert status mutation
   const updateAlertMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest(`/api/alerts/${alertId}/status`, {
-        method: "PATCH",
-        body: JSON.stringify({ status: "resolved" }),
-      });
+      return apiRequest(
+        "PATCH",
+        `/api/alerts/${alertId}/status`,
+        { status: "resolved" }
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/alerts"] });
