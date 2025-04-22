@@ -141,9 +141,18 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                           {goalsByDomain[domain.id]?.length || 0} goals
                         </Badge>
                       </CardTitle>
-                      {domainVision && (
-                        <p className="text-sm italic mt-1">"{domainVision}"</p>
-                      )}
+                      <div className="mt-2">
+                        <div className="text-xs uppercase tracking-wide font-semibold text-white/80">Vision Statement</div>
+                        {domainVision ? (
+                          <div className="mt-1 bg-white/20 p-2 rounded shadow-inner border border-white/30">
+                            <p className="text-sm font-medium leading-snug">"{domainVision}"</p>
+                          </div>
+                        ) : (
+                          <div className="flex mt-1 gap-2 items-center">
+                            <p className="text-sm text-white/70 italic">No vision statement yet</p>
+                          </div>
+                        )}
+                      </div>
                     </CardHeader>
                     <CardContent className="min-h-[200px]">
                       {goalsByDomain[domain.id]?.length > 0 ? (
