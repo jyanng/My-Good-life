@@ -12,6 +12,7 @@ import PlanBuilder from "@/pages/plan-builder";
 import CaseStudies from "@/pages/case-studies";
 import LearningCenter from "@/pages/learning-center";
 import ReviewGoals from "@/pages/review-goals";
+import ProgressVisualization from "@/pages/progress-visualization";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { useState, useEffect } from "react";
 import { User } from "@shared/schema";
@@ -79,6 +80,7 @@ function Router() {
         </Route>
         <Route path="/case-studies" component={CaseStudies} />
         <Route path="/learning-center" component={LearningCenter} />
+        <Route path="/progress-visualization" component={ProgressVisualization} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>
