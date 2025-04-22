@@ -22,7 +22,8 @@ export default function CaseStudies() {
       searchQuery === "" || 
       study.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       study.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      study.content.toLowerCase().includes(searchQuery.toLowerCase());
+      study.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (study.goodLifeVision && study.goodLifeVision.toLowerCase().includes(searchQuery.toLowerCase()));
       
     const matchesDomains = 
       selectedDomains.length === 0 || 
@@ -58,12 +59,17 @@ export default function CaseStudies() {
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow p-6 mb-8">
         <div className="space-y-4">
-          <Input
-            placeholder="Search case studies..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full"
-          />
+          <div>
+            <Input
+              placeholder="Search by title, description, vision, or content..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Tip: You can search for specific Good Life Visions by including keywords like "independence" or "expression"
+            </p>
+          </div>
           
           <div>
             <h3 className="text-sm font-medium mb-2">Filter by Domain:</h3>

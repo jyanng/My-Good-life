@@ -45,6 +45,16 @@ export default function CaseStudyCard({ caseStudy }: CaseStudyCardProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-grow">
+        {caseStudy.goodLifeVision && (
+          <div className="mb-3 pb-3 border-b border-purple-100">
+            <div className="flex items-center mb-1">
+              <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+              <span className="text-xs font-semibold text-purple-700 uppercase">Good Life Vision</span>
+            </div>
+            <p className="text-purple-800 text-sm italic line-clamp-2">"{caseStudy.goodLifeVision}"</p>
+          </div>
+        )}
+      
         <p className="text-gray-700 mb-4 line-clamp-3">{caseStudy.content}</p>
         
         <div className="flex flex-wrap gap-2 mt-4">
@@ -86,9 +96,48 @@ export default function CaseStudyCard({ caseStudy }: CaseStudyCardProps) {
               </div>
               
               {caseStudy.goodLifeVision && (
-                <div className="my-4 p-4 border-l-4 bg-purple-50 border-purple-400 rounded">
-                  <h3 className="text-lg font-semibold text-purple-800 mb-2">Good Life Vision</h3>
-                  <p className="italic text-purple-700">"{caseStudy.goodLifeVision}"</p>
+                <div className="my-4 rounded-lg overflow-hidden border border-purple-200">
+                  <div className="bg-gradient-to-r from-purple-600 to-blue-500 px-4 py-3">
+                    <h3 className="text-lg font-bold text-white flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                        <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z"></path>
+                        <path d="m7 16.5-4.74-2.85"></path>
+                        <path d="m7 16.5 5-3"></path>
+                        <path d="M7 16.5v5.17"></path>
+                        <path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z"></path>
+                        <path d="m17 16.5-5-3"></path>
+                        <path d="m17 16.5 4.74-2.85"></path>
+                        <path d="M17 16.5v5.17"></path>
+                        <path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z"></path>
+                        <path d="M12 10.5 7.26 7.65"></path>
+                        <path d="m12 10.5 4.74-2.85"></path>
+                        <path d="M12 10.5V15"></path>
+                      </svg>
+                      Good Life Vision
+                    </h3>
+                  </div>
+                  
+                  <div className="bg-gradient-to-b from-purple-50 to-white p-4">
+                    <blockquote className="text-lg italic text-purple-900 mb-4 border-l-4 border-purple-300 pl-4">
+                      "{caseStudy.goodLifeVision}"
+                    </blockquote>
+                    
+                    <div className="mt-4">
+                      <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">Domain Focus Areas</h4>
+                      <div className="flex flex-wrap gap-3">
+                        {domainInfo.map(domain => domain && (
+                          <div key={domain.id} className="flex items-center">
+                            <div className={`w-3 h-3 rounded-full ${domain.bgClass} mr-1`}></div>
+                            <span className={`text-sm ${domain.textClass}`}>{domain.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 text-sm text-gray-600">
+                      <p className="mb-2">This vision statement represents the individual's aspirations across multiple domains of their Good Life Plan. It provides direction and purpose for setting specific goals and measuring progress.</p>
+                    </div>
+                  </div>
                 </div>
               )}
 
