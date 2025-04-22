@@ -11,6 +11,7 @@ import StudentProfile from "@/pages/student-profile";
 import PlanBuilder from "@/pages/plan-builder";
 import CaseStudies from "@/pages/case-studies";
 import LearningCenter from "@/pages/learning-center";
+import ReviewGoals from "@/pages/review-goals";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { useState, useEffect } from "react";
 import { User } from "@shared/schema";
@@ -72,6 +73,9 @@ function Router() {
         </Route>
         <Route path="/plan-builder/:studentId">
           {params => <PlanBuilder studentId={Number(params.studentId)} />}
+        </Route>
+        <Route path="/review-goals/:studentId/:alertId">
+          {params => <ReviewGoals studentId={Number(params.studentId)} alertId={Number(params.alertId)} />}
         </Route>
         <Route path="/case-studies" component={CaseStudies} />
         <Route path="/learning-center" component={LearningCenter} />

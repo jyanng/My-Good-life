@@ -2,6 +2,7 @@ import { Alert } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate } from "@/lib/constants";
+import { useLocation } from "wouter";
 
 interface QualityAlertsProps {
   alerts: Alert[];
@@ -10,12 +11,18 @@ interface QualityAlertsProps {
 
 export default function QualityAlerts({ alerts, isLoading }: QualityAlertsProps) {
   const { toast } = useToast();
+  const [, navigate] = useLocation();
   
-  const handleAlertAction = (alertId: number, action: string) => {
-    toast({
-      title: "Action Taken",
-      description: `You've chosen to ${action} for this alert.`,
-    });
+  const handleAlertAction = (alert: Alert, action: string) => {
+    if (alert.type === "unreframed_goals") {
+      // Navigate to the review goals page
+      navigate(`/review-goals/${alert.studentId}/${alert.id}`);
+    } else {
+      toast({
+        title: "Action Taken",
+        description: `You've chosen to ${action} for this alert.`,
+      });
+    }
   };
   
   // Helper function to get alert icon by type
@@ -107,7 +114,7 @@ export default function QualityAlerts({ alerts, isLoading }: QualityAlertsProps)
                     <Button 
                       size="sm" 
                       className="text-xs rounded-full px-3"
-                      onClick={() => handleAlertAction(alert.id, getActionText(alert.type))}
+                      onClick={() => handleAlertAction(alert, getActionText(alert.type))}
                     >
                       {getActionText(alert.type)}
                     </Button>
