@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DOMAINS } from "@/lib/constants";
+import { apiRequest } from "@/lib/queryClient";
 import { Student, GoodLifePlan, DomainPlan } from "@shared/schema";
 import { ArrowLeftIcon, HomeIcon, FileTextIcon, CalendarIcon } from "lucide-react";
 import StudentProgress from "@/components/progress/StudentProgress";
@@ -32,20 +33,34 @@ export default function ProgressVisualization() {
   const [selectedStudent, setSelectedStudent] = useState<number | null>(null);
   const [viewType, setViewType] = useState<string>("overview");
 
-  // Fetch all students
-  const { data: students, isLoading: isLoadingStudents } = useQuery({
-    queryKey: ["/api/students", { facilitatorId: 1 }]
+  // Fetch all students - hard-coded facilitator ID 1 for demo
+  const { data: students, isLoading: isLoadingStudents } = useQuery<Student[]>({
+    queryKey: ["/api/students"],
+    queryFn: async () => {
+      const response = await apiRequest("/api/students?facilitatorId=1");
+      return response as Student[];
+    }
   });
 
   // Fetch the selected student's plan
-  const { data: plan, isLoading: isLoadingPlan } = useQuery({
+  const { data: plan, isLoading: isLoadingPlan } = useQuery<GoodLifePlan>({
     queryKey: ["/api/students", selectedStudent, "plan"],
+    queryFn: async () => {
+      if (!selectedStudent) return null as unknown as GoodLifePlan;
+      const response = await apiRequest(`/api/students/${selectedStudent}/plan`);
+      return response as GoodLifePlan;
+    },
     enabled: !!selectedStudent
   });
 
   // Fetch domain plans for the selected student's plan
-  const { data: domainPlans, isLoading: isLoadingDomainPlans } = useQuery({
+  const { data: domainPlans, isLoading: isLoadingDomainPlans } = useQuery<DomainPlan[]>({
     queryKey: ["/api/plans", plan?.id, "domains"],
+    queryFn: async () => {
+      if (!plan?.id) return [] as DomainPlan[];
+      const response = await apiRequest(`/api/plans/${plan.id}/domains`);
+      return response as DomainPlan[];
+    },
     enabled: !!plan?.id
   });
 
