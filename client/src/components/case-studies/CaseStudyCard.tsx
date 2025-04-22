@@ -85,6 +85,13 @@ export default function CaseStudyCard({ caseStudy }: CaseStudyCardProps) {
                 ))}
               </div>
               
+              {caseStudy.goodLifeVision && (
+                <div className="my-4 p-4 border-l-4 bg-purple-50 border-purple-400 rounded">
+                  <h3 className="text-lg font-semibold text-purple-800 mb-2">Good Life Vision</h3>
+                  <p className="italic text-purple-700">"{caseStudy.goodLifeVision}"</p>
+                </div>
+              )}
+
               <div className="prose max-w-none">
                 <p className="whitespace-pre-line">{caseStudy.content}</p>
               </div>

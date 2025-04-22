@@ -143,6 +143,7 @@ export const caseStudies = pgTable("case_studies", {
   description: text("description").notNull(),
   domains: text("domains").array(),
   content: text("content").notNull(),
+  goodLifeVision: text("good_life_vision"),
   mediaUrls: text("media_urls").array(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -152,6 +153,7 @@ export const insertCaseStudySchema = createInsertSchema(caseStudies).pick({
   description: true,
   domains: true,
   content: true,
+  goodLifeVision: true, 
   mediaUrls: true,
 });
 

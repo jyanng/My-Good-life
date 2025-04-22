@@ -362,6 +362,7 @@ export class MemStorage implements IStorage {
       description: "How Terence overcame social anxiety to secure a part-time job at NTUC FairPrice",
       domains: ["safe", "connected", "independent"],
       content: "Terence, a 19-year-old with autism from Woodlands, struggled with severe anxiety in social situations. Through his GoodLife Plan, he worked with his facilitator to develop strategies that helped him feel safe in unfamiliar environments. Starting with small steps—like ordering food at a quiet kopitiam—Terence gradually built confidence. After six months of practicing social skills and learning stress-management techniques at the Social Service Centre, he successfully interviewed for and secured a part-time position at NTUC FairPrice, an environment that matched his interests in organization and inventory management.",
+      goodLifeVision: "I will feel secure in various environments, build meaningful connections with others, and become more independent in my daily activities and work life.",
       mediaUrls: []
     });
     
@@ -370,6 +371,7 @@ export class MemStorage implements IStorage {
       description: "Mei Ling's journey to living semi-independently in an HDB flat using assistive technology",
       domains: ["independent", "safe", "healthy"],
       content: "Mei Ling, who has an intellectual disability, dreamed of living in her own HDB flat with minimal support. Her GoodLife Plan focused on building practical skills and leveraging technology to support her independence. She learned to use smart home devices to manage routines, video calling to stay connected with her family in Tampines, and reminder apps for medication and appointments. After a year of preparation with SG Enable's support, Mei Ling moved into a supported living apartment where she handles most daily tasks independently while maintaining regular check-ins with her support network and visiting the nearby community center for activities.",
+      goodLifeVision: "I will live independently in my own space, maintain my health and wellbeing, and feel safe and supported in my daily life with the help of technology.",
       mediaUrls: []
     });
     
@@ -378,6 +380,7 @@ export class MemStorage implements IStorage {
       description: "How creative expression helped Irfan communicate his needs and goals",
       domains: ["engaged", "included", "connected"],
       content: "Irfan, who is non-verbal and on the autism spectrum, struggled to communicate his preferences and goals. His facilitator at Rainbow Centre noticed his interest in colors and digital tools, and incorporated tablet-based art into his GoodLife planning process. Through digital illustration apps, Irfan began expressing his interests, preferences, and even concerns about his future education path. This creative approach led to Irfan joining MINDS' inclusive digital art program at Enabling Village, where he developed friendships and found meaningful engagement. His digital artwork now serves as a communication tool in planning meetings, ensuring his voice is central to decisions about his future vocational training.",
+      goodLifeVision: "I will express myself through creative arts, be included in decisions about my future, and connect with others who share my interests and understand my communication style.",
       mediaUrls: []
     });
     
