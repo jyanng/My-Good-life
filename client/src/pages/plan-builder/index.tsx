@@ -828,8 +828,8 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                     <div className="flex items-center gap-2">
                       <Input 
                         placeholder="Add an appreciated quality..."
-                        value={currentInput}
-                        onChange={(e) => setCurrentInput(e.target.value)}
+                        value={peopleAppreciateInput}
+                        onChange={(e) => setPeopleAppreciateInput(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleAddItem("peopleAppreciate")}
                       />
                       <Button type="button" onClick={() => handleAddItem("peopleAppreciate")}>
