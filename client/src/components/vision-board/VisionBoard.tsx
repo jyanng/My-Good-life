@@ -1112,7 +1112,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={isAddingGoal || isEditingGoal} onOpenChange={(open) => {
         if (!open) closeGoalDialog();
       }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {isAddingGoal ? 'Add New Goal' : 'Edit Goal'}
