@@ -46,7 +46,7 @@ export default function Sidebar({ user, mobileMenuOpen, setMobileMenuOpen }: Sid
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
               <PsychologyIcon />
             </div>
-            <h1 className="ml-3 text-xl font-bold text-gray-800">GoodLife Portal</h1>
+            <h1 className="ml-3 text-xl font-bold text-gray-800">MyGoodLife Portal</h1>
           </div>
           
           <nav>

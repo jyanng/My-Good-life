@@ -22,7 +22,7 @@ export default function MobileHeader({ setMobileMenuOpen }: MobileHeaderProps) {
               <path d="M18.5 4a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z" />
             </svg>
           </div>
-          <h1 className="ml-3 text-xl font-bold text-gray-800">GoodLife</h1>
+          <h1 className="ml-3 text-xl font-bold text-gray-800">MyGoodLife</h1>
         </div>
         <button 
           className="p-2 rounded-md bg-gray-100"
