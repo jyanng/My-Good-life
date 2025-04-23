@@ -245,7 +245,7 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
     onSuccess: (data: GoodLifePlan) => {
       toast({
         title: "Plan Created",
-        description: "GoodLife Plan has been created successfully.",
+        description: "MyGoodLife Plan has been created successfully.",
       });
       setNewPlanCreated(true);
       return data;
@@ -253,7 +253,7 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to create GoodLife Plan.",
+        description: "Failed to create MyGoodLife Plan.",
         variant: "destructive"
       });
     }
@@ -622,7 +622,7 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
     } else {
       toast({
         title: "Plan Exists",
-        description: "This student already has a GoodLife Plan.",
+        description: "This student already has a MyGoodLife Plan.",
       });
     }
   };
@@ -661,7 +661,7 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
     
     toast({
       title: "Plan Building Completed",
-      description: "The GoodLife Plan has been saved successfully.",
+      description: "The MyGoodLife Plan has been saved successfully.",
     });
   };
   
@@ -709,7 +709,7 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
       <div className="bg-white rounded-lg shadow mb-6 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{student.name}'s GoodLife Plan</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{student.name}'s MyGoodLife Plan</h1>
             <p className="text-gray-600">Build a personalized transition plan based on the 6 life domains</p>
           </div>
           <Link href={`/student/${studentId}`}>
