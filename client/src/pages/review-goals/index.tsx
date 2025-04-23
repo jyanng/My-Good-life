@@ -250,7 +250,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
           <ArrowLeftIcon className="mr-2 h-4 w-4" /> Back to Dashboard
         </Button>
         
-        <h1 className="text-2xl font-bold">Review Unreframed Goals</h1>
+        <h1 className="text-2xl font-bold">Review Unreframed Visions</h1>
         <p className="text-gray-600">
           Student: <span className="font-medium">{student.name}</span>
         </p>
@@ -267,15 +267,15 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Goals That Need Reframing</CardTitle>
+            <CardTitle>Visions That Need Reframing</CardTitle>
             <CardDescription>
-              Transform each goal to focus on abilities and positive outcomes
+              Transform each vision statement to focus on abilities and positive outcomes
             </CardDescription>
           </CardHeader>
           <CardContent>
             {unreframedGoals.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500">No unreframed goals found.</p>
+                <p className="text-gray-500">No unreframed vision statements found.</p>
               </div>
             ) : (
               <div className="space-y-6">
@@ -287,12 +287,12 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                     </div>
                     
                     <div className="mb-4">
-                      <Label className="text-sm text-gray-500">Current Goal (Needs Reframing)</Label>
+                      <Label className="text-sm text-gray-500">Current Vision (Needs Reframing)</Label>
                       <p className="p-3 bg-gray-50 rounded border mt-1">{goal.current}</p>
                     </div>
                     
                     <div className="mb-2">
-                      <Label className="text-sm text-gray-500">Reframed Goal (Positive Focus)</Label>
+                      <Label className="text-sm text-gray-500">Reframed Vision (Positive Focus)</Label>
                       {isEditing[index] ? (
                         <Textarea 
                           value={goal.reframed}
@@ -304,7 +304,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                       ) : (
                         <div className="p-3 bg-blue-50 rounded border mt-1 min-h-[80px]">
                           {goal.reframed || (
-                            <span className="text-gray-400 italic">No reframed goal provided yet</span>
+                            <span className="text-gray-400 italic">No reframed vision provided yet</span>
                           )}
                         </div>
                       )}
@@ -335,7 +335,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                           onClick={() => toggleEditing(index)}
                         >
                           <PencilIcon className="mr-1 h-4 w-4" /> 
-                          {goal.reframed ? "Edit" : "Add Reframed Goal"}
+                          {goal.reframed ? "Edit" : "Add Reframed Vision"}
                         </Button>
                       )}
                     </div>

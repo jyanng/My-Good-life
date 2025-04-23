@@ -58,7 +58,7 @@ export default function QualityAlerts({ alerts, isLoading }: QualityAlertsProps)
   const getActionText = (type: string) => {
     switch (type) {
       case "unreframed_goals":
-        return "Review Now";
+        return "Review Visions";
       case "inactivity":
         return "Contact Student";
       case "missing_information":
@@ -103,7 +103,7 @@ export default function QualityAlerts({ alerts, isLoading }: QualityAlertsProps)
                 <div className="ml-3 flex-1">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-gray-900">
-                      {alert.type === "unreframed_goals" ? "Unreframed Goals" : 
+                      {alert.type === "unreframed_goals" ? "Unreframed Visions" : 
                        alert.type === "inactivity" ? "Inactivity Alert" : 
                        "Missing Support System"}
                     </p>
