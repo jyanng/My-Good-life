@@ -154,14 +154,14 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     setVisionAge(30);
     setVisionText("When I am 30 years old, I will be ");
     
-    // Example media URL based on domain - mix of images and videos for different domains
+    // Example media URLs based on domain - using high-quality images
     const mediaSamples = {
       'safe': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
       'healthy': 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      'engaged': 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Example video URL (using YouTube embed)
-      'connected': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      'engaged': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      'connected': 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
       'independent': 'https://images.unsplash.com/photo-1607748851687-ba9a10438621?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      'included': 'https://www.pexels.com/video/people-working-together-in-the-office-3205885/', // Example video URL (using Pexels)
+      'included': 'https://images.unsplash.com/photo-1517292987719-0369a794ec0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
     };
     
     setVisionMedia(mediaSamples[domainId as keyof typeof mediaSamples] || '');
@@ -803,6 +803,51 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                 onChange={(e) => setVisionMedia(e.target.value)}
                 className="w-full"
               />
+              
+              {/* Example Media Suggestion */}
+              {currentDomain && !visionMedia && (
+                <div className="mt-2 bg-slate-50 p-2 rounded border">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-medium text-slate-600">Example Media:</span>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-xs h-6 px-2"
+                      onClick={() => {
+                        const mediaSamples = {
+                          'safe': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                          'healthy': 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                          'engaged': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                          'connected': 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                          'independent': 'https://images.unsplash.com/photo-1607748851687-ba9a10438621?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                          'included': 'https://images.unsplash.com/photo-1517292987719-0369a794ec0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                        };
+                        setVisionMedia(mediaSamples[currentDomain as keyof typeof mediaSamples] || '');
+                      }}
+                    >
+                      Use This
+                    </Button>
+                  </div>
+                  <div className="mt-1 border rounded overflow-hidden bg-white">
+                    {currentDomain && (
+                      <img 
+                        src={
+                          {
+                            'safe': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            'healthy': 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            'engaged': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            'connected': 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            'independent': 'https://images.unsplash.com/photo-1607748851687-ba9a10438621?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                            'included': 'https://images.unsplash.com/photo-1517292987719-0369a794ec0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                          }[currentDomain] || ''
+                        }
+                        alt={`Example media for ${DOMAINS.find(d => d.id === currentDomain)?.name} domain`}
+                        className="max-h-[160px] w-full object-cover"
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
               {visionMedia && (
                 <div className="mt-2 border rounded overflow-hidden">
                   {visionMedia.includes('youtube.com') || visionMedia.includes('youtu.be') ? (
