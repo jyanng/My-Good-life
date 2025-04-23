@@ -11,7 +11,9 @@ import {
   insertDomainPlanSchema,
   insertCaseStudySchema,
   insertLearningModuleSchema,
-  insertAlertSchema
+  insertAlertSchema,
+  insertGoalTemplateSchema,
+  insertGoalCategorySchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -362,6 +364,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updated);
     } catch (error) {
       res.status(400).json({ message: "Invalid status data" });
+    }
+  });
+  
+  // Goal Templates
+  app.get("/api/goal-templates", async (_req, res) => {
+    try {
+      const templates = await storage.getGoalTemplates();
+      res.json(templates);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch goal templates" });
+    }
+  });
+  
+  app.get("/api/goal-templates/:id", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const template = await storage.getGoalTemplate(id);
+      
+      if (!template) {
+        return res.status(404).json({ message: "Goal template not found" });
+      }
+      
+      res.json(template);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch goal template" });
+    }
+  });
+  
+  app.post("/api/goal-templates", async (req, res) => {
+    try {
+      const validated = insertGoalTemplateSchema.parse(req.body);
+      const template = await storage.createGoalTemplate(validated);
+      res.status(201).json(template);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid goal template data", details: error.format() });
+      }
+      res.status(500).json({ message: "Failed to create goal template" });
+    }
+  });
+  
+  // Goal Categories
+  app.get("/api/goal-categories", async (_req, res) => {
+    try {
+      const categories = await storage.getGoalCategories();
+      res.json(categories);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch goal categories" });
+    }
+  });
+  
+  app.get("/api/goal-categories/:id", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const category = await storage.getGoalCategory(id);
+      
+      if (!category) {
+        return res.status(404).json({ message: "Goal category not found" });
+      }
+      
+      res.json(category);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch goal category" });
+    }
+  });
+  
+  app.post("/api/goal-categories", async (req, res) => {
+    try {
+      const validated = insertGoalCategorySchema.parse(req.body);
+      const category = await storage.createGoalCategory(validated);
+      res.status(201).json(category);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid goal category data", details: error.format() });
+      }
+      res.status(500).json({ message: "Failed to create goal category" });
     }
   });
   

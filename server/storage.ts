@@ -133,6 +133,104 @@ export class MemStorage implements IStorage {
     this.currentGoalTemplateId = 1;
     this.currentGoalCategoryId = 1;
     
+    // Create default goal categories
+    this.createGoalCategory({
+      name: "Education",
+      description: "Goals related to learning, academics, and skill development",
+      color: "#4285F4",
+      icon: "graduation-cap"
+    });
+    
+    this.createGoalCategory({
+      name: "Career",
+      description: "Goals related to employment, vocational training, and professional growth",
+      color: "#EA4335",
+      icon: "briefcase"
+    });
+    
+    this.createGoalCategory({
+      name: "Social",
+      description: "Goals related to building relationships and social skills",
+      color: "#FBBC05",
+      icon: "users"
+    });
+    
+    this.createGoalCategory({
+      name: "Health",
+      description: "Goals related to physical and mental wellbeing",
+      color: "#34A853",
+      icon: "activity"
+    });
+    
+    this.createGoalCategory({
+      name: "Daily Living",
+      description: "Goals related to independent living skills and daily routines",
+      color: "#9C27B0",
+      icon: "home"
+    });
+    
+    this.createGoalCategory({
+      name: "Community",
+      description: "Goals related to community participation and integration",
+      color: "#FF6D00",
+      icon: "map-pin"
+    });
+    
+    // Create default goal templates
+    this.createGoalTemplate({
+      domain: "safe",
+      title: "Safety Plan Development",
+      description: "Create a personal safety plan for different environments",
+      category: "Daily Living",
+      difficulty: "medium",
+      estimatedDuration: "2-3 weeks"
+    });
+    
+    this.createGoalTemplate({
+      domain: "healthy",
+      title: "Regular Exercise Routine",
+      description: "Establish a consistent exercise schedule that works with my sensory needs",
+      category: "Health",
+      difficulty: "medium",
+      estimatedDuration: "Ongoing"
+    });
+    
+    this.createGoalTemplate({
+      domain: "engaged",
+      title: "Volunteer Participation",
+      description: "Find and participate in a volunteer opportunity aligned with my interests",
+      category: "Community",
+      difficulty: "medium",
+      estimatedDuration: "1-2 months"
+    });
+    
+    this.createGoalTemplate({
+      domain: "connected",
+      title: "Social Skills Practice",
+      description: "Practice specific social skills in structured settings",
+      category: "Social",
+      difficulty: "hard",
+      estimatedDuration: "Ongoing"
+    });
+    
+    this.createGoalTemplate({
+      domain: "independent",
+      title: "Public Transportation Navigation",
+      description: "Learn to use public transportation for regular routes independently",
+      category: "Daily Living",
+      difficulty: "hard",
+      estimatedDuration: "2-3 months"
+    });
+    
+    this.createGoalTemplate({
+      domain: "included",
+      title: "Self-Advocacy Practice",
+      description: "Learn and practice effective self-advocacy strategies",
+      category: "Career",
+      difficulty: "medium",
+      estimatedDuration: "Ongoing"
+    });
+    
     // Add demo user
     this.createUser({
       username: "sarah",
@@ -799,6 +897,53 @@ export class MemStorage implements IStorage {
     alert.status = status;
     this.alerts.set(id, alert);
     return alert;
+  }
+  
+  // Goal Template methods
+  async getGoalTemplates(): Promise<GoalTemplate[]> {
+    return Array.from(this.goalTemplates.values());
+  }
+  
+  async getGoalTemplate(id: number): Promise<GoalTemplate | undefined> {
+    return this.goalTemplates.get(id);
+  }
+  
+  async createGoalTemplate(insertTemplate: InsertGoalTemplate): Promise<GoalTemplate> {
+    const id = this.currentGoalTemplateId++;
+    const now = new Date();
+    
+    const goalTemplate: GoalTemplate = {
+      ...insertTemplate,
+      id,
+      createdAt: now,
+      updatedAt: now
+    };
+    
+    this.goalTemplates.set(id, goalTemplate);
+    return goalTemplate;
+  }
+  
+  // Goal Category methods
+  async getGoalCategories(): Promise<GoalCategory[]> {
+    return Array.from(this.goalCategories.values());
+  }
+  
+  async getGoalCategory(id: number): Promise<GoalCategory | undefined> {
+    return this.goalCategories.get(id);
+  }
+  
+  async createGoalCategory(insertCategory: InsertGoalCategory): Promise<GoalCategory> {
+    const id = this.currentGoalCategoryId++;
+    const now = new Date();
+    
+    const goalCategory: GoalCategory = {
+      ...insertCategory,
+      id,
+      createdAt: now
+    };
+    
+    this.goalCategories.set(id, goalCategory);
+    return goalCategory;
   }
   
   // Dashboard Stats
