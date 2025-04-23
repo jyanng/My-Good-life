@@ -38,14 +38,37 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   
   // Convert the domain plans into a format suitable for the vision board
   const initialGoals = domainPlans.flatMap(plan => {
-    const goals = Array.isArray(plan.goals) ? plan.goals : [];
-    return goals.map((goal: any) => ({
-      id: goal.id || `${plan.id}-${Math.random().toString(36).substring(2, 9)}`,
-      description: goal.description,
-      status: goal.status || 'not_started',
-      needsReframing: goal.needsReframing || false,
-      domainId: plan.domain,
-    }));
+    // Safely handle possible goal formats
+    let goals: any[] = [];
+    
+    try {
+      if (plan && plan.goals) {
+        if (Array.isArray(plan.goals)) {
+          goals = plan.goals;
+        } else if (typeof plan.goals === 'object') {
+          // Try to safely parse if it's an object but not an array
+          goals = JSON.parse(JSON.stringify(plan.goals));
+          if (!Array.isArray(goals)) {
+            console.warn(`Goals for plan ${plan.id} is not an array after parsing:`, goals);
+            goals = [];
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Error processing goals for plan ${plan?.id}:`, error);
+      goals = [];
+    }
+    
+    // Map goals to the correct format with extra safety checks
+    return goals
+      .filter(goal => goal && typeof goal === 'object') // Filter out invalid goals 
+      .map((goal: any) => ({
+        id: goal.id || `${plan.id || 'unknown'}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        description: goal.description || 'No description',
+        status: goal.status || 'not_started',
+        needsReframing: !!goal.needsReframing, // Convert to boolean 
+        domainId: plan.domain,
+      }));
   });
 
   // Group goals by domain
@@ -298,35 +321,64 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       return;
     }
     
-    // Get source and destination domains
-    const sourceDomain = source.droppableId;
-    const destDomain = destination.droppableId;
-    
-    // Create a copy of the current state
-    const newGoalsByDomain = { ...goalsByDomain };
-    
-    // Remove from source domain
-    const [movedGoal] = newGoalsByDomain[sourceDomain].splice(source.index, 1);
-    
-    // Update the moved goal's domain
-    movedGoal.domainId = destDomain;
-    
-    // Add to destination domain
-    newGoalsByDomain[destDomain].splice(destination.index, 0, movedGoal);
-    
-    // Update state locally first for immediate feedback
-    setGoalsByDomain(newGoalsByDomain);
-    
-    // Find the domain plans
-    const sourcePlan = domainPlans.find(plan => plan.domain === sourceDomain);
-    const destPlan = domainPlans.find(plan => plan.domain === destDomain);
-    
-    // If both plans exist, update the backend
-    if (sourcePlan && destPlan) {
-      updateGoalDomainMutation.mutate({
-        sourceId: sourcePlan.id,
-        destId: destPlan.id,
-        goal: movedGoal
+    try {
+      // Get source and destination domains
+      const sourceDomain = source.droppableId;
+      const destDomain = destination.droppableId;
+      
+      // Create a deep copy of the current state
+      const newGoalsByDomain = JSON.parse(JSON.stringify(goalsByDomain));
+      
+      // Ensure the arrays exist
+      if (!Array.isArray(newGoalsByDomain[sourceDomain])) {
+        newGoalsByDomain[sourceDomain] = [];
+      }
+      
+      if (!Array.isArray(newGoalsByDomain[destDomain])) {
+        newGoalsByDomain[destDomain] = [];
+      }
+      
+      // Check if the index is valid
+      if (source.index >= newGoalsByDomain[sourceDomain].length) {
+        console.error('Source index out of bounds:', source.index, newGoalsByDomain[sourceDomain].length);
+        return;
+      }
+      
+      // Remove from source domain
+      const [movedGoal] = newGoalsByDomain[sourceDomain].splice(source.index, 1);
+      
+      if (!movedGoal) {
+        console.error('No goal found at index:', source.index);
+        return;
+      }
+      
+      // Update the moved goal's domain
+      movedGoal.domainId = destDomain;
+      
+      // Add to destination domain
+      newGoalsByDomain[destDomain].splice(destination.index, 0, movedGoal);
+      
+      // Update state locally first for immediate feedback
+      setGoalsByDomain(newGoalsByDomain);
+      
+      // Find the domain plans
+      const sourcePlan = domainPlans.find(plan => plan.domain === sourceDomain);
+      const destPlan = domainPlans.find(plan => plan.domain === destDomain);
+      
+      // If both plans exist, update the backend
+      if (sourcePlan && destPlan) {
+        updateGoalDomainMutation.mutate({
+          sourceId: sourcePlan.id,
+          destId: destPlan.id,
+          goal: movedGoal
+        });
+      }
+    } catch (error) {
+      console.error('Error in drag end handler:', error);
+      toast({
+        title: "Error",
+        description: "There was an issue moving the goal. Please try again.",
+        variant: "destructive"
       });
     }
   };
