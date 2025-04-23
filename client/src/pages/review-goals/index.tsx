@@ -363,7 +363,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                     
                     <div className="p-3 bg-green-50 rounded border mt-2">
                       <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
-                      <p>When I am 30 years old, I will be confidently participating in social gatherings at my workplace and in my community. I will have developed three effective coping strategies that help me navigate group settings with ease, and I will regularly engage in activities at Admiral Hill RC with my peers.</p>
+                      <p>When I am 30 years old, I will be confidently participating in social gatherings at my workplace and in my community. I will have developed three effective coping strategies that help me navigate group settings with ease, and I will regularly engage in activities at RC Admiral Hill with my peers.</p>
                     </div>
                   </div>
                   
@@ -428,7 +428,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                     
                     <div className="p-3 bg-green-50 rounded border mt-2">
                       <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
-                      <p>When I am 30 years old, I will be actively participating in two community groups aligned with my interests and strengths. I will have developed strategies to maintain focus and engagement in activities by identifying what motivates me. I will be sharing my special interests with others at Admiral Hill RC through teaching or leading activity groups.</p>
+                      <p>When I am 30 years old, I will be actively participating in two community groups aligned with my interests and strengths. I will have developed strategies to maintain focus and engagement in activities by identifying what motivates me. I will be sharing my special interests with others at RC Admiral Hill through teaching or leading activity groups.</p>
                     </div>
                   </div>
                 </div>
