@@ -331,6 +331,95 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     }
   };
 
+  // Goal dialog handlers
+  const openAddGoalDialog = (domainId: string) => {
+    setCurrentDomain(domainId);
+    setIsAddingGoal(true);
+    setCurrentGoal(null);
+  };
+
+  const openEditGoalDialog = (goal: GoalType) => {
+    setCurrentDomain(goal.domainId);
+    setCurrentGoal(goal);
+    setIsEditingGoal(true);
+  };
+
+  const closeGoalDialog = () => {
+    setIsAddingGoal(false);
+    setIsEditingGoal(false);
+    setCurrentGoal(null);
+    setCurrentDomain(null);
+  };
+
+  // Handle save goal (add or update)
+  const handleSaveGoal = (goalData: any) => {
+    // Find the domain plan to update
+    const domainPlan = domainPlans.find(plan => plan.domain === currentDomain);
+    
+    if (!domainPlan) {
+      toast({
+        title: "Error",
+        description: "Could not find domain plan to update",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Create a new copy of the goals by domain
+    const updatedGoalsByDomain = { ...goalsByDomain };
+    
+    if (isEditingGoal && currentGoal) {
+      // Update existing goal
+      const updatedGoals = updatedGoalsByDomain[currentDomain!].map(g => 
+        g.id === currentGoal.id ? { ...g, ...goalData } : g
+      );
+      updatedGoalsByDomain[currentDomain!] = updatedGoals;
+      
+      // Update the domain plan in the database
+      const originalGoals = Array.isArray(domainPlan.goals) ? domainPlan.goals : [];
+      const updatedDomainGoals = originalGoals.map((g: any) => 
+        g.id === currentGoal.id ? { ...g, ...goalData } : g
+      );
+      
+      updateDomainPlanMutation.mutate({
+        id: domainPlan.id,
+        data: { 
+          goals: updatedDomainGoals
+        }
+      });
+    } else {
+      // Add new goal
+      const newGoal = {
+        id: `${domainPlan.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        description: goalData.description,
+        status: goalData.status || 'not_started',
+        needsReframing: false,
+        domainId: currentDomain!,
+        ...goalData
+      };
+      
+      updatedGoalsByDomain[currentDomain!] = [
+        ...updatedGoalsByDomain[currentDomain!],
+        newGoal
+      ];
+      
+      // Update the domain plan in the database
+      const originalGoals = Array.isArray(domainPlan.goals) ? domainPlan.goals : [];
+      const updatedDomainGoals = [...originalGoals, newGoal];
+      
+      updateDomainPlanMutation.mutate({
+        id: domainPlan.id,
+        data: { 
+          goals: updatedDomainGoals
+        }
+      });
+    }
+    
+    // Update local state
+    setGoalsByDomain(updatedGoalsByDomain);
+    closeGoalDialog();
+  };
+
   // Update goal domain mutation
   const updateGoalDomainMutation = useMutation({
     mutationFn: ({ 
