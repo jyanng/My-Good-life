@@ -743,7 +743,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={isAddingVision || isEditingVision} onOpenChange={(open) => {
         if (!open) closeVisionDialog();
       }}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="max-w-xl">
           <DialogHeader>
             <DialogTitle>
               {isAddingVision ? 'Add Vision Statement' : 'Edit Vision Statement'}
@@ -755,7 +755,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
+          <div className="space-y-3 py-2">
             <div className="space-y-2">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
@@ -771,8 +771,8 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                 </div>
               </div>
               
-              <label className="text-sm font-medium block mt-4">Vision Statement</label>
-              <div className="p-3 bg-white rounded border mb-3">
+              <label className="text-sm font-medium block mt-3">Vision Statement</label>
+              <div className="p-2 bg-white rounded border mb-2">
                 <p className="text-sm font-medium">Positive Vision Format</p>
                 <p className="text-sm italic mt-1">"When I am {visionAge} years old, I will be..."</p>
               </div>
@@ -865,7 +865,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={!!removingDomain} onOpenChange={(open) => {
         if (!open) cancelRemoveVision();
       }}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Remove Vision Statement?</DialogTitle>
             <DialogDescription>
@@ -882,7 +882,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       
       {/* Share Dialog */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Share Vision Board</DialogTitle>
             <DialogDescription>
