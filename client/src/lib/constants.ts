@@ -77,7 +77,8 @@ export const MODULE_CATEGORIES = {
   GOAL_SETTING: "goal_setting",
   FACILITATION_SKILLS: "facilitation_skills",
   UNDERSTANDING_NEEDS: "understanding_needs",
-  DOMAIN_BASICS: "domain_basics"
+  DOMAIN_BASICS: "domain_basics",
+  ENVISIONING: "envisioning"
 };
 
 // Format date helper

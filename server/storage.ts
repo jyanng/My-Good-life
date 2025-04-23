@@ -466,6 +466,22 @@ export class MemStorage implements IStorage {
       category: "understanding_needs"
     });
     
+    this.createLearningModule({
+      title: "Principles of Positive Envisioning",
+      description: "Learn effective techniques for creating ability-focused vision statements",
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      duration: 12,
+      category: "envisioning"
+    });
+    
+    this.createLearningModule({
+      title: "From Limitations to Strengths",
+      description: "How to reframe negative statements into positive, aspirational visions",
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      duration: 9,
+      category: "envisioning"
+    });
+    
     // Add alerts
     this.createAlert({
       facilitatorId: 1,
