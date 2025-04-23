@@ -804,48 +804,39 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                 className="w-full"
               />
               
-              {/* Example Media Suggestion */}
+              {/* Example Media Suggestion Buttons */}
               {currentDomain && !visionMedia && (
-                <div className="mt-2 bg-slate-50 p-2 rounded border">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-medium text-slate-600">Example Media:</span>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-xs h-6 px-2"
-                      onClick={() => {
-                        const mediaSamples = {
-                          'safe': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                          'healthy': 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                          'engaged': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                          'connected': 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                          'independent': 'https://images.unsplash.com/photo-1607748851687-ba9a10438621?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                          'included': 'https://images.unsplash.com/photo-1517292987719-0369a794ec0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                        };
-                        setVisionMedia(mediaSamples[currentDomain as keyof typeof mediaSamples] || '');
-                      }}
-                    >
-                      Use This
-                    </Button>
-                  </div>
-                  <div className="mt-1 border rounded overflow-hidden bg-white">
-                    {currentDomain && (
-                      <img 
-                        src={
-                          {
-                            'safe': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                            'healthy': 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                            'engaged': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                            'connected': 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                            'independent': 'https://images.unsplash.com/photo-1607748851687-ba9a10438621?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                            'included': 'https://images.unsplash.com/photo-1517292987719-0369a794ec0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                          }[currentDomain] || ''
-                        }
-                        alt={`Example media for ${DOMAINS.find(d => d.id === currentDomain)?.name} domain`}
-                        className="max-h-[160px] w-full object-cover"
-                      />
-                    )}
-                  </div>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="flex items-center gap-2"
+                    onClick={() => {
+                      setVisionMedia('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');
+                    }}
+                  >
+                    <img 
+                      src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                      alt="Example 1"
+                      className="h-5 w-8 object-cover rounded"
+                    />
+                    <span>Use Example 1</span>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="flex items-center gap-2"
+                    onClick={() => {
+                      setVisionMedia('https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');
+                    }}
+                  >
+                    <img 
+                      src="https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                      alt="Example 2"
+                      className="h-5 w-8 object-cover rounded"
+                    />
+                    <span>Use Example 2</span>
+                  </Button>
                 </div>
               )}
               {visionMedia && (
