@@ -537,7 +537,7 @@ export class MemStorage implements IStorage {
       description: "How Terence overcame social anxiety through his Safe domain plan",
       domains: ["safe"],
       content: "Terence, a 19-year-old with autism from Woodlands, struggled with severe anxiety in social situations. Through his GoodLife Plan, he worked with his facilitator to develop strategies that helped him feel safe in unfamiliar environments. Starting with small steps—like ordering food at a quiet kopitiam—Terence gradually built confidence. After six months of practicing social skills and learning stress-management techniques at the Social Service Centre, he was able to navigate new environments with significantly reduced anxiety, allowing him to participate in community activities that he previously avoided.",
-      goodLifeVision: "I will feel safe in my community and learning environments",
+      goodLifeVision: "When I am feeling safe in my community and learning environments",
       mediaUrls: []
     });
     
@@ -546,7 +546,7 @@ export class MemStorage implements IStorage {
       description: "Mei Ling's path to developing vital independent living skills",
       domains: ["independent"],
       content: "Mei Ling, who has an intellectual disability, dreamed of living in her own HDB flat with minimal support. Her GoodLife Plan focused on building practical skills for independent living. She learned to use public transportation confidently, manage a simple budget, prepare basic meals, and handle household maintenance. After a year of preparation with SG Enable's support, Mei Ling moved into a supported living apartment where she handles most daily tasks independently while maintaining regular check-ins with her support network.",
-      goodLifeVision: "I will develop skills to live independently",
+      goodLifeVision: "When I am developing skills to live independently",
       mediaUrls: []
     });
     
@@ -555,7 +555,7 @@ export class MemStorage implements IStorage {
       description: "How creative expression helped Irfan find meaningful engagement",
       domains: ["engaged"],
       content: "Irfan, who is non-verbal and on the autism spectrum, struggled to find meaningful activities that he enjoyed. His facilitator at RC Admiral Hill noticed his interest in colors and digital tools, and incorporated tablet-based art into his GoodLife planning process. Through digital illustration apps, Irfan discovered a powerful form of self-expression and engagement. This creative approach led to Irfan joining an inclusive digital art program at Enabling Village, where he developed skills and found an activity that brought him joy and purpose.",
-      goodLifeVision: "I will participate in meaningful activities that I enjoy",
+      goodLifeVision: "When I am participating in meaningful activities that I enjoy",
       mediaUrls: []
     });
     
@@ -564,7 +564,7 @@ export class MemStorage implements IStorage {
       description: "Siti's journey to establishing consistent health habits",
       domains: ["healthy"],
       content: "Siti, a 16-year-old with Down syndrome, struggled with maintaining consistent health routines. Her Good Life Plan focused on building sustainable habits for physical and mental wellbeing. With her facilitator from Rainbow Centre, she created visual schedules for morning and evening routines, learned to prepare simple nutritious meals, and joined a weekly adaptive sports program. Over six months, Siti established a consistent sleep schedule, improved her eating habits, and found joy in regular physical activity through an inclusive swimming class at Heartbeat@Bedok sports center.",
-      goodLifeVision: "I will maintain physical and mental wellbeing through healthy habits",
+      goodLifeVision: "When I am maintaining physical and mental wellbeing through healthy habits",
       mediaUrls: []
     });
     
@@ -573,7 +573,7 @@ export class MemStorage implements IStorage {
       description: "How Jayden developed social relationships through shared interests",
       domains: ["connected"],
       content: "Jayden, an 18-year-old with autism, wanted to develop meaningful friendships but struggled with social interactions. His Good Life Plan focused on leveraging his strong interest in video games as a pathway to building connections. With support from his facilitator, Jayden joined a gaming club at *SCAPE where he could practice social skills in a structured environment around a topic he was passionate about. Over time, he learned to initiate conversations about shared interests, take turns during activities, and maintain relationships through consistent participation. He now regularly meets with two friends from the club outside of organized activities.",
-      goodLifeVision: "I will build and maintain positive relationships",
+      goodLifeVision: "When I am building and maintaining positive relationships",
       mediaUrls: []
     });
     
@@ -582,7 +582,7 @@ export class MemStorage implements IStorage {
       description: "How Priya learned to advocate for herself in educational planning",
       domains: ["included"],
       content: "Priya, a 17-year-old with cerebral palsy, often felt left out of decisions about her educational path. Her Good Life Plan focused on developing self-advocacy skills and ensuring her voice was heard in planning meetings. Working with her facilitator at SPD, she practiced expressing her needs clearly, learned about her educational rights, and developed strategies for participating effectively in discussions about her future. Within a year, Priya was confidently leading portions of her transition planning meetings at school, clearly articulating her interests in pursuing graphic design courses, and successfully advocating for accommodations that would support her learning journey.",
-      goodLifeVision: "I will advocate for myself and be included in decisions about my life",
+      goodLifeVision: "When I am advocating for myself and being included in decisions about my life",
       mediaUrls: []
     });
     
