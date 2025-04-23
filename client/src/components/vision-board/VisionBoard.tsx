@@ -508,65 +508,94 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       return;
     }
     
-    // Create a new copy of the goals by domain
-    const updatedGoalsByDomain = { ...goalsByDomain };
-    
-    if (isEditingGoal && currentGoal) {
-      // Update existing goal
-      const updatedGoals = updatedGoalsByDomain[currentDomain!].map(g => 
-        g.id === currentGoal.id ? { ...g, ...goalData } : g
-      );
-      updatedGoalsByDomain[currentDomain!] = updatedGoals;
+    try {
+      // Create a new copy of the goals by domain
+      const updatedGoalsByDomain = { ...goalsByDomain };
       
-      // Update the domain plan in the database
-      const originalGoals = Array.isArray(domainPlan.goals) ? domainPlan.goals : [];
-      const updatedDomainGoals = originalGoals.map((g: any) => 
-        g.id === currentGoal.id ? { ...g, ...goalData } : g
-      );
+      if (isEditingGoal && currentGoal) {
+        // Update existing goal
+        const updatedGoals = updatedGoalsByDomain[currentDomain!].map(g => 
+          g.id === currentGoal.id ? { ...g, ...goalData } : g
+        );
+        updatedGoalsByDomain[currentDomain!] = updatedGoals;
+        
+        // Update the domain plan in the database
+        const originalGoals = Array.isArray(domainPlan.goals) ? domainPlan.goals : [];
+        const updatedDomainGoals = originalGoals.map((g: any) => 
+          g.id === currentGoal.id ? { ...g, ...goalData } : g
+        );
+        
+        // We need to handle this differently due to the type safety
+        const updateData: any = {
+          goals: updatedDomainGoals
+        };
+        
+        // Mutate and handle success/error in the mutation itself
+        updateDomainPlanMutation.mutate({
+          id: domainPlan.id,
+          data: updateData
+        });
+        
+        // Update local state immediately for a responsive UI
+        setGoalsByDomain(updatedGoalsByDomain);
+        
+        // Toast feedback to the user
+        toast({
+          title: "Goal Updated",
+          description: "Goal has been successfully updated",
+        });
+      } else {
+        // Add new goal
+        const newGoal = {
+          id: `${domainPlan.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          description: goalData.description,
+          status: goalData.status || 'not_started',
+          needsReframing: false,
+          domainId: currentDomain!,
+          ...goalData
+        };
+        
+        updatedGoalsByDomain[currentDomain!] = [
+          ...updatedGoalsByDomain[currentDomain!],
+          newGoal
+        ];
+        
+        // Update the domain plan in the database
+        const originalGoals = Array.isArray(domainPlan.goals) ? domainPlan.goals : [];
+        const updatedDomainGoals = [...originalGoals, newGoal];
+        
+        // We need to handle this differently due to the type safety
+        const updateData: any = {
+          goals: updatedDomainGoals
+        };
+        
+        // Mutate and handle success/error in the mutation itself
+        updateDomainPlanMutation.mutate({
+          id: domainPlan.id,
+          data: updateData
+        });
+        
+        // Update local state immediately for a responsive UI
+        setGoalsByDomain(updatedGoalsByDomain);
+        
+        // Toast feedback to the user
+        toast({
+          title: "Goal Added",
+          description: "New goal has been successfully added",
+        });
+      }
       
-      // We need to handle this differently due to the type safety
-      const updateData: any = {
-        goals: updatedDomainGoals
-      };
-      
-      updateDomainPlanMutation.mutate({
-        id: domainPlan.id,
-        data: updateData
-      });
-    } else {
-      // Add new goal
-      const newGoal = {
-        id: `${domainPlan.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        description: goalData.description,
-        status: goalData.status || 'not_started',
-        needsReframing: false,
-        domainId: currentDomain!,
-        ...goalData
-      };
-      
-      updatedGoalsByDomain[currentDomain!] = [
-        ...updatedGoalsByDomain[currentDomain!],
-        newGoal
-      ];
-      
-      // Update the domain plan in the database
-      const originalGoals = Array.isArray(domainPlan.goals) ? domainPlan.goals : [];
-      const updatedDomainGoals = [...originalGoals, newGoal];
-      
-      // We need to handle this differently due to the type safety
-      const updateData: any = {
-        goals: updatedDomainGoals
-      };
-      
-      updateDomainPlanMutation.mutate({
-        id: domainPlan.id,
-        data: updateData
+      // Close the dialog regardless of mutation status
+      // If there's an error, it will be shown via the mutation's onError handler
+      closeGoalDialog();
+    } catch (error) {
+      console.error("Error saving goal:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save goal. Please try again.",
+        variant: "destructive"
       });
     }
-    
-    // Update local state
-    setGoalsByDomain(updatedGoalsByDomain);
-    closeGoalDialog();
   };
 
   // Update goal domain mutation
@@ -1318,6 +1347,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                                   provided={provided}
                                   snapshot={snapshot}
                                   onEditGoal={openEditGoalDialog}
+                                  allGoals={Object.values(goalsByDomain).flat()}
                                 />
                               )}
                             </Draggable>
@@ -1379,6 +1409,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
               domainId={currentDomain || ''}
               onSave={handleSaveGoal}
               onCancel={closeGoalDialog}
+              allGoals={Object.values(goalsByDomain).flat()}
             />
           </div>
         </DialogContent>

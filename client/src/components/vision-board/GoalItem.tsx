@@ -377,7 +377,10 @@ export default function GoalItem({ goal, domainColor, provided, snapshot, allGoa
             <Button variant="outline" onClick={() => setIsDetailsDialogOpen(false)}>
               Close
             </Button>
-            <Button>
+            <Button onClick={() => {
+              setIsDetailsDialogOpen(false);
+              onEditGoal?.(goal);
+            }}>
               Edit Goal
             </Button>
           </DialogFooter>
