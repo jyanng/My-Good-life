@@ -269,7 +269,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
           <CardHeader>
             <CardTitle>Visions That Need Reframing</CardTitle>
             <CardDescription>
-              Transform each vision statement to focus on abilities and positive outcomes
+              Transform each vision statement using the "When I am 30 years old, I will be..." format, focusing on abilities and positive outcomes
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -297,7 +297,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                         <Textarea 
                           value={goal.reframed}
                           onChange={(e) => handleReframeGoal(index, e.target.value)}
-                          placeholder="Rewrite the vision to focus on abilities, strengths, and positive outcomes rather than limitations..."
+                          placeholder="When I am 30 years old, I will be... (rewrite the vision focusing on abilities, strengths, and positive outcomes)"
                           className="mt-1"
                           rows={4}
                         />
@@ -392,7 +392,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                     
                     <div className="p-3 bg-green-50 rounded border mt-2">
                       <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
-                      <p>Wei will develop three coping strategies to manage social situations and participate confidently in small group activities with his peers at Admiral Hill RC</p>
+                      <p>When I am 30 years old, I will be confidently participating in social gatherings at my workplace and in my community. I will have developed three effective coping strategies that help me navigate group settings with ease, and I will regularly engage in activities at Admiral Hill RC with my peers.</p>
                     </div>
                   </div>
                   
@@ -405,7 +405,33 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                     
                     <div className="p-3 bg-green-50 rounded border mt-2">
                       <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
-                      <p>Rizwan will master five essential daily living skills including preparing simple meals, using public transportation, and managing a personal schedule, enabling him to live independently in an HDB flat with minimal support</p>
+                      <p>When I am 30 years old, I will be living independently in my own HDB flat. I will be preparing my own meals, managing my daily schedule, and confidently using public transportation to travel around Singapore. I will have mastered five essential daily living skills that allow me to maintain my home with minimal support from others.</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-sm uppercase tracking-wide text-gray-500 mb-2">Educational Domain</h4>
+                    <div className="p-3 bg-gray-50 rounded border">
+                      <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Original Vision</Badge>
+                      <p>Mei Ling will not fail her mathematics classes</p>
+                    </div>
+                    
+                    <div className="p-3 bg-green-50 rounded border mt-2">
+                      <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
+                      <p>When I am 30 years old, I will be applying the numerical reasoning skills I learned to manage my personal finances and excel in my career. I will have completed my polytechnic diploma in business by using personalized learning strategies and accommodations. I will be confident in my ability to solve practical math problems in everyday situations.</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-sm uppercase tracking-wide text-gray-500 mb-2">Employment Domain</h4>
+                    <div className="p-3 bg-gray-50 rounded border">
+                      <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Original Vision</Badge>
+                      <p>Kian won't be dependent on others for financial support</p>
+                    </div>
+                    
+                    <div className="p-3 bg-green-50 rounded border mt-2">
+                      <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
+                      <p>When I am 30 years old, I will be working in a technology company using my special interest in computers to contribute valuable skills to my team. I will be earning a steady income that covers my living expenses and allows me to save for future goals. I will have developed the financial literacy skills to manage my CPF account and personal budget effectively.</p>
                     </div>
                   </div>
                 </div>
