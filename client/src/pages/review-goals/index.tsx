@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DOMAINS } from "@/lib/constants";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Student, Alert as AlertType, DomainPlan } from "@shared/schema";
+import UnreframedVisionsList from "@/components/review-goals/UnreframedVisionsList";
 
 
 
@@ -266,10 +267,19 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
         </Alert>
       </div>
 
+      {/* Display all unreframed visions at the top so they're easy to see */}
+      {unreframedGoals.length > 0 && (
+        <div className="mb-8">
+          <UnreframedVisionsList 
+            goals={unreframedGoals.map(goal => ({ domain: goal.domain, current: goal.current }))} 
+          />
+        </div>
+      )}
+
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Visions That Need Reframing</CardTitle>
+            <CardTitle>Reframe Vision Statements</CardTitle>
             <CardDescription>
               Transform each vision statement using the "When I am 30 years old, I will be..." format, focusing on abilities and positive outcomes
             </CardDescription>
@@ -283,7 +293,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
               <div className="space-y-6">
                 <div className="p-4 mb-4 bg-amber-50 rounded-lg border border-amber-200">
                   <p className="text-sm text-amber-800">
-                    <span className="font-medium">Vision Statement Requirements:</span> All vision statements below need to be reframed using the <span className="font-medium">"When I am 30 years old, I will be..."</span> format. Focus on abilities and positive outcomes instead of limitations.
+                    <span className="font-medium">Reframing Instructions:</span> For each vision statement, rewrite it using the <span className="font-medium">"When I am 30 years old, I will be..."</span> format. Focus on abilities and positive outcomes instead of limitations.
                   </p>
                 </div>
                 {unreframedGoals.map((goal, index) => (
