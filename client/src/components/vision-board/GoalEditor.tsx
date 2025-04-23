@@ -19,10 +19,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { GOAL_CATEGORIES, GOAL_PRIORITIES, GOAL_TEMPLATES } from "@/lib/constants";
+import { GOAL_PRIORITIES } from "@/lib/constants";
+import { useQuery } from "@tanstack/react-query";
 
 type GoalDependency = {
   id: string;
@@ -78,13 +79,22 @@ export default function GoalEditor({
     formData.dueDate ? new Date(formData.dueDate) : undefined
   );
   
+  // Fetch templates and categories from API
+  const { data: templates = [], isLoading: isLoadingTemplates } = useQuery({
+    queryKey: ['/api/goal-templates'],
+  });
+  
+  const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['/api/goal-categories'],
+  });
+
   // Filter templates by domain
-  const domainTemplates = GOAL_TEMPLATES.filter(template => template.domain === domainId);
+  const domainTemplates = templates.filter((template: any) => template.domain === domainId);
 
   // Handle template selection
   const handleTemplateSelect = (templateId: string) => {
     const id = parseInt(templateId);
-    const template = GOAL_TEMPLATES.find(t => t.id === id);
+    const template = templates.find((t: any) => t.id === id);
     
     if (template) {
       setFormData({
@@ -154,11 +164,22 @@ export default function GoalEditor({
                   <SelectValue placeholder="Select a template" />
                 </SelectTrigger>
                 <SelectContent>
-                  {domainTemplates.map(template => (
-                    <SelectItem key={template.id} value={template.id.toString()}>
-                      {template.title}
-                    </SelectItem>
-                  ))}
+                  {isLoadingTemplates ? (
+                    <div className="flex items-center justify-center p-2">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span>Loading templates...</span>
+                    </div>
+                  ) : domainTemplates.length > 0 ? (
+                    domainTemplates.map((template: any) => (
+                      <SelectItem key={template.id} value={template.id.toString()}>
+                        {template.title}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-2 text-center text-sm text-gray-500">
+                      No templates available for this domain
+                    </div>
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -187,11 +208,18 @@ export default function GoalEditor({
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                {GOAL_CATEGORIES.map(category => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
+                {isLoadingCategories ? (
+                  <div className="flex items-center justify-center p-2">
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <span>Loading categories...</span>
+                  </div>
+                ) : (
+                  categories.map((category: any) => (
+                    <SelectItem key={category.id} value={category.name.toLowerCase()}>
+                      {category.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
