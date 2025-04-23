@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { PlusIcon, PencilIcon, XIcon } from "lucide-react";
+import { PlusIcon, PencilIcon, XIcon, WandIcon, LightbulbIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -339,24 +339,61 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Vision Statement</label>
+              <div className="p-3 bg-white rounded border mb-3">
+                <p className="text-sm font-medium">Positive Vision Format</p>
+                <p className="text-sm italic mt-1">"When I am 30 years old, I will be..."</p>
+              </div>
               <Textarea
                 placeholder="When I am 30 years old, I will be..."
                 value={visionText}
                 onChange={(e) => setVisionText(e.target.value)}
-                className="min-h-[100px]"
+                className="min-h-[100px] text-lg"
               />
             </div>
-            <div>
-              <p className="text-sm text-gray-500">
-                A good vision statement should:
-              </p>
-              <ul className="list-disc ml-5 mt-1 text-sm text-gray-500">
-                <li>Be positive and inspiring</li>
-                <li>Use first-person language ("I will...")</li>
-                <li>Describe desired future outcomes</li>
-                <li>Be specific but achievable</li>
-              </ul>
-            </div>
+            {/* Vision Suggestions */}
+            {currentDomain && (
+              <div className="mt-3">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Quick Suggestions
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start text-left h-auto py-2 px-3 mb-3"
+                  onClick={() => {
+                    const suggestions = {
+                      safe: "When I am 30 years old, I will be living in a safe environment where I feel secure and protected. I will have developed strategies to manage stress and anxiety in new situations.",
+                      healthy: "When I am 30 years old, I will be maintaining good physical and mental health through activities I enjoy. I will have a balanced lifestyle that includes regular exercise, nutritious meals, and time to relax.",
+                      engaged: "When I am 30 years old, I will be actively participating in work and leisure activities that interest me. I will be developing my skills and pursuing my passions.",
+                      connected: "When I am 30 years old, I will be maintaining meaningful relationships with family, friends, and my community. I will have a support network I can rely on.",
+                      independent: "When I am 30 years old, I will be confidently handling transportation, finances, and daily living tasks. I will be advocating for the support I need when necessary.",
+                      included: "When I am 30 years old, I will be valued for my unique contributions to my community. I will be participating in decisions about my life and future goals."
+                    };
+                    if (currentDomain in suggestions) {
+                      setVisionText(suggestions[currentDomain as keyof typeof suggestions]);
+                    }
+                  }}
+                >
+                  <WandIcon className="h-5 w-5 mr-2" />
+                  <div>
+                    <p className="font-medium">Use Domain Suggestion</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Click to use a pre-written vision for this domain</p>
+                  </div>
+                </Button>
+
+                <div className="flex items-center mt-4 mb-1">
+                  <LightbulbIcon className="h-4 w-4 mr-1 text-amber-500" />
+                  <p className="text-sm font-medium text-gray-700">
+                    Vision Statement Guidelines
+                  </p>
+                </div>
+                <ul className="list-disc ml-5 mt-1 text-sm text-gray-600">
+                  <li>Be positive and inspiring</li>
+                  <li>Use first-person language ("I will...")</li>
+                  <li>Describe desired future outcomes</li>
+                  <li>Be specific but achievable</li>
+                </ul>
+              </div>
+            )}
           </div>
           
           <DialogFooter>
@@ -443,7 +480,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                         </div>
                         {domainVision ? (
                           <div className="mt-1 bg-white/20 p-2 rounded shadow-inner border border-white/30">
-                            <p className="text-sm font-medium leading-snug">"{domainVision}"</p>
+                            <p className="text-sm font-medium leading-snug">{domainVision}</p>
                           </div>
                         ) : (
                           <div className="flex mt-1 gap-2 items-center">
