@@ -21,6 +21,95 @@ import { DOMAINS } from "@/lib/constants";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Student, Alert as AlertType, DomainPlan } from "@shared/schema";
 
+// Component to display unreframed vision examples
+const UnreframedVisionExamples = () => {
+  return (
+    <Card className="my-6 shadow-md border-amber-100">
+      <CardHeader className="pb-2 bg-gradient-to-r from-amber-50 to-amber-100">
+        <CardTitle className="text-lg font-semibold">Common Unreframed Visions</CardTitle>
+        <CardDescription>
+          These examples need reframing to focus on abilities instead of limitations
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Safe Domain */}
+          <div className="border rounded-lg p-4 bg-blue-50/30">
+            <div className="flex items-center mb-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+              <span className="font-medium">Safe Domain</span>
+            </div>
+            <div className="p-3 bg-red-50 rounded border border-red-100">
+              <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+              <p className="italic">"When I am 30 years old, I will not struggle with loud noises in public places"</p>
+            </div>
+          </div>
+          
+          {/* Connected Domain */}
+          <div className="border rounded-lg p-4 bg-pink-50/30">
+            <div className="flex items-center mb-2">
+              <div className="w-3 h-3 rounded-full bg-pink-500 mr-2"></div>
+              <span className="font-medium">Connected Domain</span>
+            </div>
+            <div className="p-3 bg-red-50 rounded border border-red-100">
+              <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+              <p className="italic">"When I am 30 years old, I will avoid getting overwhelmed in group social situations"</p>
+            </div>
+          </div>
+          
+          {/* Independent Domain */}
+          <div className="border rounded-lg p-4 bg-purple-50/30">
+            <div className="flex items-center mb-2">
+              <div className="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+              <span className="font-medium">Independent Domain</span>
+            </div>
+            <div className="p-3 bg-red-50 rounded border border-red-100">
+              <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+              <p className="italic">"When I am 30 years old, I won't be dependent on others for daily living tasks"</p>
+            </div>
+          </div>
+          
+          {/* Healthy Domain */}
+          <div className="border rounded-lg p-4 bg-green-50/30">
+            <div className="flex items-center mb-2">
+              <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+              <span className="font-medium">Healthy Domain</span>
+            </div>
+            <div className="p-3 bg-red-50 rounded border border-red-100">
+              <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+              <p className="italic">"When I am 30 years old, I won't have issues with picky eating habits"</p>
+            </div>
+          </div>
+          
+          {/* Engaged Domain */}
+          <div className="border rounded-lg p-4 bg-yellow-50/30">
+            <div className="flex items-center mb-2">
+              <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+              <span className="font-medium">Engaged Domain</span>
+            </div>
+            <div className="p-3 bg-red-50 rounded border border-red-100">
+              <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+              <p className="italic">"When I am 30 years old, I will not get bored or disinterested in activities quickly"</p>
+            </div>
+          </div>
+          
+          {/* Included Domain */}
+          <div className="border rounded-lg p-4 bg-orange-50/30">
+            <div className="flex items-center mb-2">
+              <div className="w-3 h-3 rounded-full bg-orange-500 mr-2"></div>
+              <span className="font-medium">Included & Heard Domain</span>
+            </div>
+            <div className="p-3 bg-red-50 rounded border border-red-100">
+              <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+              <p className="italic">"When I am 30 years old, I will stop feeling left out in group decision-making"</p>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 // Icons
 import { 
   CheckCircle2Icon, 
@@ -264,6 +353,9 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
         </Alert>
       </div>
 
+      {/* Examples of unreframed visions */}
+      <UnreframedVisionExamples />
+      
       <div className="space-y-6">
         <Card>
           <CardHeader>
@@ -361,87 +453,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
         </Card>
       </div>
       
-      {/* Show added examples of visions that need reframing */}
-      <div className="mt-8 mb-6">
-        <h2 className="text-xl font-semibold mb-3">Examples of Unreframed Visions</h2>
-        <Card>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Safe Domain */}
-              <div className="border rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
-                  <span className="font-medium">Safe Domain</span>
-                </div>
-                <div className="p-3 bg-red-50 rounded border">
-                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                  <p>"Will not struggle with loud noises in public places"</p>
-                </div>
-              </div>
-              
-              {/* Connected Domain */}
-              <div className="border rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <div className="w-3 h-3 rounded-full bg-pink-500 mr-2"></div>
-                  <span className="font-medium">Connected Domain</span>
-                </div>
-                <div className="p-3 bg-red-50 rounded border">
-                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                  <p>"Will avoid getting overwhelmed in group social situations"</p>
-                </div>
-              </div>
-              
-              {/* Independent Domain */}
-              <div className="border rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <div className="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
-                  <span className="font-medium">Independent Domain</span>
-                </div>
-                <div className="p-3 bg-red-50 rounded border">
-                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                  <p>"Won't be dependent on others for daily living tasks"</p>
-                </div>
-              </div>
-              
-              {/* Healthy Domain */}
-              <div className="border rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                  <span className="font-medium">Healthy Domain</span>
-                </div>
-                <div className="p-3 bg-red-50 rounded border">
-                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                  <p>"Won't have issues with picky eating habits"</p>
-                </div>
-              </div>
-              
-              {/* Engaged Domain */}
-              <div className="border rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
-                  <span className="font-medium">Engaged Domain</span>
-                </div>
-                <div className="p-3 bg-red-50 rounded border">
-                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                  <p>"Will not get bored or disinterested in activities quickly"</p>
-                </div>
-              </div>
-              
-              {/* Included Domain */}
-              <div className="border rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <div className="w-3 h-3 rounded-full bg-orange-500 mr-2"></div>
-                  <span className="font-medium">Included Domain</span>
-                </div>
-                <div className="p-3 bg-red-50 rounded border">
-                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                  <p>"Will stop feeling left out in group decision-making"</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Principles for Envisioning</h2>
@@ -514,6 +526,32 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                     <div className="p-3 bg-green-50 rounded border mt-2">
                       <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
                       <p>When I am 30 years old, I will be working in a technology company using my special interest in computers to contribute valuable skills to my team. I will be earning a steady income that covers my living expenses and allows me to save for future goals. I will have developed the financial literacy skills to manage my CPF account and personal budget effectively.</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-sm uppercase tracking-wide text-gray-500 mb-2">Healthy Domain</h4>
+                    <div className="p-3 bg-gray-50 rounded border">
+                      <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Original Vision</Badge>
+                      <p>Won't have issues with picky eating habits</p>
+                    </div>
+                    
+                    <div className="p-3 bg-green-50 rounded border mt-2">
+                      <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
+                      <p>When I am 30 years old, I will be enjoying a diverse and nutritious diet that supports my health and well-being. I will have developed skills in meal planning and food preparation that allow me to incorporate new foods gradually. I will be comfortable trying new dishes at hawker centers and restaurants with friends and colleagues.</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-sm uppercase tracking-wide text-gray-500 mb-2">Engaged Domain</h4>
+                    <div className="p-3 bg-gray-50 rounded border">
+                      <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Original Vision</Badge>
+                      <p>Will not get bored or disinterested in activities quickly</p>
+                    </div>
+                    
+                    <div className="p-3 bg-green-50 rounded border mt-2">
+                      <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
+                      <p>When I am 30 years old, I will be actively participating in two community groups aligned with my interests and strengths. I will have developed strategies to maintain focus and engagement in activities by identifying what motivates me. I will be sharing my special interests with others at Admiral Hill RC through teaching or leading activity groups.</p>
                     </div>
                   </div>
                 </div>
