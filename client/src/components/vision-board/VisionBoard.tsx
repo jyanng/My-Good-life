@@ -35,8 +35,8 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   const [currentDomain, setCurrentDomain] = useState<string | null>(null);
   const [visionText, setVisionText] = useState('');
   const [removingDomain, setRemovingDomain] = useState<string | null>(null);
-  // View mode toggle for cascading or side-by-side
-  const [viewMode, setViewMode] = useState<'grid' | 'columns'>('grid');
+  // View mode toggle for grid or list view
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   // Convert the domain plans into a format suitable for the vision board
   const initialGoals = domainPlans.flatMap(plan => {
@@ -401,13 +401,13 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
               <span>Grid</span>
             </Button>
             <Button
-              variant={viewMode === 'columns' ? "default" : "ghost"}
+              variant={viewMode === 'list' ? "default" : "ghost"}
               size="sm"
               className="px-3"
-              onClick={() => setViewMode('columns')}
+              onClick={() => setViewMode('list')}
             >
               <ColumnsIcon className="h-4 w-4 mr-1" />
-              <span>Columns</span>
+              <span>List</span>
             </Button>
           </div>
         </div>
@@ -527,8 +527,8 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
         <div className={`grid grid-cols-1 ${
           viewMode === 'grid' 
             ? 'md:grid-cols-2 lg:grid-cols-3' 
-            : viewMode === 'columns' 
-              ? 'md:grid-cols-2 lg:grid-cols-6' 
+            : viewMode === 'list' 
+              ? 'md:grid-cols-1 max-w-4xl mx-auto'
               : 'md:grid-cols-2 lg:grid-cols-3'
         } gap-4`}>
           {DOMAINS.map(domain => {
@@ -540,13 +540,13 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                 {(provided, snapshot) => (
                   <Card 
                     className={`${snapshot.isDraggingOver ? 'bg-gray-50' : ''} h-full ${
-                      viewMode === 'columns' ? 'lg:col-span-1' : ''
+                      viewMode === 'list' ? 'w-full' : ''
                     }`}
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    <CardHeader className={`${domain.bgClass} text-white ${viewMode === 'columns' ? 'p-3' : ''}`}>
-                      <CardTitle className={`flex justify-between items-center ${viewMode === 'columns' ? 'text-base' : ''}`}>
+                    <CardHeader className={`${domain.bgClass} text-white ${viewMode === 'list' ? 'p-4' : ''}`}>
+                      <CardTitle className={`flex justify-between items-center ${viewMode === 'list' ? 'text-lg' : ''}`}>
                         <span>{domain.name}</span>
                         <Badge variant="outline" className="bg-white text-gray-800 border-white">
                           {goalsByDomain[domain.id]?.length || 0} goals
@@ -589,7 +589,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                         </div>
                         {domainVision ? (
                           <div className="mt-1 bg-white/20 p-2 rounded shadow-inner border border-white/30">
-                            <p className={`text-sm font-medium leading-snug ${viewMode === 'columns' ? 'line-clamp-4' : ''}`}>
+                            <p className={`text-sm font-medium leading-snug ${viewMode === 'list' ? 'line-clamp-3' : ''}`}>
                               {domainVision.startsWith("When I am 30 years old,") ? 
                                 domainVision : 
                                 `When I am 30 years old, I will be ${domainVision.toLowerCase().startsWith("i will") ? domainVision.substring(7) : domainVision}`
@@ -603,7 +603,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                         )}
                       </div>
                     </CardHeader>
-                    <CardContent className={`${viewMode === 'columns' ? 'p-2 min-h-[150px]' : 'min-h-[200px]'}`}>
+                    <CardContent className={`${viewMode === 'list' ? 'p-4' : 'min-h-[200px]'}`}>
                       {goalsByDomain[domain.id]?.length > 0 ? (
                         <div className="space-y-2">
                           {goalsByDomain[domain.id].map((goal, index) => (
