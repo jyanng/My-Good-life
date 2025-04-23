@@ -9,7 +9,8 @@ import {
   AlertCircle,
   Calendar,
   Flag,
-  Users
+  Users,
+  X as XIcon
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";

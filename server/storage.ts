@@ -7,7 +7,9 @@ import {
   domainPlans, DomainPlan, InsertDomainPlan,
   caseStudies, CaseStudy, InsertCaseStudy,
   learningModules, LearningModule, InsertLearningModule,
-  alerts, Alert, InsertAlert
+  alerts, Alert, InsertAlert,
+  goalTemplates, GoalTemplate, InsertGoalTemplate,
+  goalCategories, GoalCategory, InsertGoalCategory
 } from "@shared/schema";
 
 export interface IStorage {
@@ -62,6 +64,16 @@ export interface IStorage {
   createAlert(alert: InsertAlert): Promise<Alert>;
   updateAlertStatus(id: number, status: string): Promise<Alert | undefined>;
   
+  // Goal Template methods
+  getGoalTemplates(): Promise<GoalTemplate[]>;
+  getGoalTemplate(id: number): Promise<GoalTemplate | undefined>;
+  createGoalTemplate(template: InsertGoalTemplate): Promise<GoalTemplate>;
+  
+  // Goal Category methods
+  getGoalCategories(): Promise<GoalCategory[]>;
+  getGoalCategory(id: number): Promise<GoalCategory | undefined>;
+  createGoalCategory(category: InsertGoalCategory): Promise<GoalCategory>;
+  
   // Dashboard Stats
   getDashboardStats(facilitatorId: number): Promise<{
     activeStudents: number;
@@ -81,6 +93,8 @@ export class MemStorage implements IStorage {
   private caseStudies: Map<number, CaseStudy>;
   private learningModules: Map<number, LearningModule>;
   private alerts: Map<number, Alert>;
+  private goalTemplates: Map<number, GoalTemplate>;
+  private goalCategories: Map<number, GoalCategory>;
   
   private currentUserId: number;
   private currentStudentId: number;
@@ -91,6 +105,8 @@ export class MemStorage implements IStorage {
   private currentCaseStudyId: number;
   private currentLearningModuleId: number;
   private currentAlertId: number;
+  private currentGoalTemplateId: number;
+  private currentGoalCategoryId: number;
 
   constructor() {
     this.users = new Map();
@@ -102,6 +118,8 @@ export class MemStorage implements IStorage {
     this.caseStudies = new Map();
     this.learningModules = new Map();
     this.alerts = new Map();
+    this.goalTemplates = new Map();
+    this.goalCategories = new Map();
     
     this.currentUserId = 1;
     this.currentStudentId = 1;
@@ -112,6 +130,8 @@ export class MemStorage implements IStorage {
     this.currentCaseStudyId = 1;
     this.currentLearningModuleId = 1;
     this.currentAlertId = 1;
+    this.currentGoalTemplateId = 1;
+    this.currentGoalCategoryId = 1;
     
     // Add demo user
     this.createUser({

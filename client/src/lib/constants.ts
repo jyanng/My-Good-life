@@ -81,6 +81,196 @@ export const MODULE_CATEGORIES = {
   ENVISIONING: "envisioning"
 };
 
+// Goal categories
+export const GOAL_CATEGORIES = [
+  {
+    id: "education",
+    name: "Education",
+    description: "Goals related to learning and academic achievement",
+    color: "#0EA5E9", // sky-500
+    icon: "GraduationCap"
+  },
+  {
+    id: "social",
+    name: "Social",
+    description: "Goals for building relationships and social skills",
+    color: "#8B5CF6", // violet-500
+    icon: "Users"
+  },
+  {
+    id: "career",
+    name: "Career",
+    description: "Goals for employment and professional development",
+    color: "#10B981", // emerald-500
+    icon: "Briefcase"
+  },
+  {
+    id: "physical",
+    name: "Physical",
+    description: "Goals for health, wellness, and physical activities",
+    color: "#EF4444", // red-500
+    icon: "Heart"
+  },
+  {
+    id: "financial",
+    name: "Financial",
+    description: "Goals for money management and financial skills",
+    color: "#F59E0B", // amber-500
+    icon: "DollarSign"
+  },
+  {
+    id: "mental",
+    name: "Mental",
+    description: "Goals for emotional well-being and mental health",
+    color: "#3B82F6", // blue-500
+    icon: "Brain"
+  },
+  {
+    id: "self_care",
+    name: "Self-Care",
+    description: "Goals for developing independence in daily living",
+    color: "#EC4899", // pink-500
+    icon: "Home"
+  },
+  {
+    id: "communication",
+    name: "Communication",
+    description: "Goals for verbal and non-verbal communication skills",
+    color: "#14B8A6", // teal-500
+    icon: "MessageCircle"
+  }
+];
+
+// Goal priority levels
+export const GOAL_PRIORITIES = {
+  HIGH: "high",
+  MEDIUM: "medium",
+  LOW: "low"
+};
+
+// Goal templates for common goal types
+export const GOAL_TEMPLATES = [
+  // Safe domain templates
+  {
+    id: 1,
+    title: "Develop coping strategies",
+    description: "Learn and practice strategies to manage stress and anxiety",
+    category: "mental",
+    domain: "safe",
+    difficulty: "medium",
+    estimatedDuration: "4-6 weeks"
+  },
+  {
+    id: 2,
+    title: "Identify safe spaces",
+    description: "Create a list of safe spaces at school, work, or in the community",
+    category: "self_care",
+    domain: "safe",
+    difficulty: "low",
+    estimatedDuration: "1-2 weeks"
+  },
+  
+  // Healthy domain templates
+  {
+    id: 3,
+    title: "Plan balanced meals",
+    description: "Create weekly meal plans that include all food groups",
+    category: "physical",
+    domain: "healthy",
+    difficulty: "medium",
+    estimatedDuration: "Ongoing"
+  },
+  {
+    id: 4,
+    title: "Exercise routine",
+    description: "Establish a regular exercise routine with preferred activities",
+    category: "physical",
+    domain: "healthy",
+    difficulty: "medium",
+    estimatedDuration: "8-12 weeks"
+  },
+  
+  // Engaged domain templates
+  {
+    id: 5,
+    title: "Join a club or activity",
+    description: "Participate in a school club or community activity related to interests",
+    category: "social",
+    domain: "engaged",
+    difficulty: "medium",
+    estimatedDuration: "Ongoing"
+  },
+  {
+    id: 6,
+    title: "Complete a project",
+    description: "Initiate and complete a personal project related to a special interest",
+    category: "education",
+    domain: "engaged",
+    difficulty: "high",
+    estimatedDuration: "2-3 months"
+  },
+  
+  // Connected domain templates
+  {
+    id: 7,
+    title: "Weekly social activity",
+    description: "Participate in a social activity with peers once per week",
+    category: "social",
+    domain: "connected",
+    difficulty: "medium",
+    estimatedDuration: "Ongoing"
+  },
+  {
+    id: 8,
+    title: "Conversation practice",
+    description: "Practice starting and maintaining conversations with peers",
+    category: "communication",
+    domain: "connected",
+    difficulty: "medium",
+    estimatedDuration: "Ongoing"
+  },
+  
+  // Independent domain templates
+  {
+    id: 9,
+    title: "Public transportation",
+    description: "Learn to navigate public transportation independently",
+    category: "self_care",
+    domain: "independent",
+    difficulty: "high",
+    estimatedDuration: "2-3 months"
+  },
+  {
+    id: 10,
+    title: "Manage personal schedule",
+    description: "Create and follow a personal schedule for daily activities",
+    category: "self_care",
+    domain: "independent",
+    difficulty: "medium",
+    estimatedDuration: "4-6 weeks"
+  },
+  
+  // Included & Heard domain templates
+  {
+    id: 11,
+    title: "Self-advocacy practice",
+    description: "Practice expressing needs and preferences in appropriate ways",
+    category: "communication",
+    domain: "included",
+    difficulty: "high",
+    estimatedDuration: "Ongoing"
+  },
+  {
+    id: 12,
+    title: "Participate in planning meetings",
+    description: "Actively participate in educational or transition planning meetings",
+    category: "communication",
+    domain: "included",
+    difficulty: "medium",
+    estimatedDuration: "As needed"
+  }
+];
+
 // Format date helper
 export const formatDate = (date: Date | string | undefined): string => {
   if (!date) return "N/A";
