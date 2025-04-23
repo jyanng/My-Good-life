@@ -72,6 +72,51 @@ type DomainVisionData = {
   }
 };
 
+// Helper functions for domain-specific content
+function getDomainPrompt(domainId: string) {
+  const prompts = {
+    safe: {
+      title: "Security & Stability Focus",
+      alternative: "Safety Strategies Approach"
+    },
+    healthy: {
+      title: "Wellbeing & Balance Focus",
+      alternative: "Health Maintenance Approach"
+    },
+    engaged: {
+      title: "Participation & Activity Focus",
+      alternative: "Interest & Involvement Approach"
+    },
+    connected: {
+      title: "Relationships & Community Focus",
+      alternative: "Social Connections Approach"
+    },
+    independent: {
+      title: "Autonomy & Skills Focus",
+      alternative: "Self-Sufficiency Approach"
+    },
+    included: {
+      title: "Voice & Recognition Focus",
+      alternative: "Community Participation Approach"
+    }
+  };
+  
+  return prompts[domainId as keyof typeof prompts] || { title: "General Focus", alternative: "Alternative Approach" };
+}
+
+function getDomainExample(domainId: string): string {
+  const examples = {
+    safe: "When I am 30 years old, I will be living in an environment where I feel secure and can manage situations that previously made me anxious. I will have people I trust to support me when needed.",
+    healthy: "When I am 30 years old, I will be enjoying regular physical activities that suit my abilities and preferences. I will have established routines that support my physical and mental wellbeing.",
+    engaged: "When I am 30 years old, I will be regularly participating in activities that match my interests and skills. I will be finding meaning and purpose through work or volunteering in my community.",
+    connected: "When I am 30 years old, I will be maintaining meaningful relationships with friends and family. I will have a circle of people who understand my communication style and support my growth.",
+    independent: "When I am 30 years old, I will be making informed choices about my daily life and future. I will have developed skills to live as independently as possible with the right balance of support.",
+    included: "When I am 30 years old, I will be actively participating in my community and having my voice heard in decisions that affect my life. I will be valued for my unique contributions."
+  };
+  
+  return examples[domainId as keyof typeof examples] || "When I am 30 years old, I will be living my good life with the right supports and opportunities to thrive.";
+}
+
 export default function PlanBuilder({ studentId }: PlanBuilderProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
