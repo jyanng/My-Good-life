@@ -89,14 +89,27 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   const openAddVisionDialog = (domainId: string) => {
     const domainPlan = domainPlans.find(plan => plan.domain === domainId);
     setCurrentDomain(domainId);
-    setVisionText(domainPlan?.vision || '');
+    
+    // Use a vision template to guide the user
+    setVisionText("When I am 30 years old, I will be ");
     setIsAddingVision(true);
   };
 
   const openEditVisionDialog = (domainId: string) => {
     const domainPlan = domainPlans.find(plan => plan.domain === domainId);
     setCurrentDomain(domainId);
-    setVisionText(domainPlan?.vision || '');
+    
+    // Format vision text if needed for consistency
+    let visionForEdit = domainPlan?.vision || '';
+    if (visionForEdit && !visionForEdit.startsWith("When I am 30 years old,")) {
+      if (visionForEdit.toLowerCase().startsWith("i will")) {
+        visionForEdit = `When I am 30 years old, ${visionForEdit}`;
+      } else {
+        visionForEdit = `When I am 30 years old, I will be ${visionForEdit}`;
+      }
+    }
+    
+    setVisionText(visionForEdit);
     setIsEditingVision(true);
   };
 
@@ -168,6 +181,18 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   const handleSaveVision = () => {
     if (!currentDomain) return;
     
+    // Format the vision text to ensure it follows the standard format
+    let formattedVision = visionText;
+    
+    // If it doesn't start with the standard format, add it
+    if (!formattedVision.startsWith("When I am 30 years old,")) {
+      if (formattedVision.toLowerCase().startsWith("i will")) {
+        formattedVision = `When I am 30 years old, ${formattedVision}`;
+      } else {
+        formattedVision = `When I am 30 years old, I will be ${formattedVision}`;
+      }
+    }
+    
     // Find the domain plan to update
     const domainPlan = domainPlans.find(plan => plan.domain === currentDomain);
     
@@ -175,7 +200,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       // Update existing domain plan
       updateDomainPlanMutation.mutate({
         id: domainPlan.id,
-        data: { vision: visionText }
+        data: { vision: formattedVision }
       });
     } else {
       // Create a new domain plan
@@ -185,7 +210,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
         const newDomainPlan: Partial<InsertDomainPlan> = {
           planId,
           domain: currentDomain,
-          vision: visionText,
+          vision: formattedVision,
           goals: []
         };
         
@@ -480,7 +505,12 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                         </div>
                         {domainVision ? (
                           <div className="mt-1 bg-white/20 p-2 rounded shadow-inner border border-white/30">
-                            <p className="text-sm font-medium leading-snug">{domainVision}</p>
+                            <p className="text-sm font-medium leading-snug">
+                              {domainVision.startsWith("When I am 30 years old,") ? 
+                                domainVision : 
+                                `When I am 30 years old, I will be ${domainVision.toLowerCase().startsWith("i will") ? domainVision.substring(7) : domainVision}`
+                              }
+                            </p>
                           </div>
                         ) : (
                           <div className="flex mt-1 gap-2 items-center">
