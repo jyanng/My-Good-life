@@ -280,19 +280,53 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       return apiRequest('PATCH', `/api/domain-plans/${id}`, data);
     },
     onSuccess: (data, variables) => {
-      toast({
-        title: "Vision Updated",
-        description: "The vision statement has been updated successfully.",
-      });
+      // Determine whether this was a vision update or a goal update based on the data
+      const isVisionUpdate = variables.data.vision !== undefined;
+      const isGoalUpdate = variables.data.goals !== undefined;
+      
+      if (isVisionUpdate) {
+        toast({
+          title: "Vision Updated",
+          description: "The vision statement has been updated successfully.",
+        });
+      } else if (isGoalUpdate) {
+        toast({
+          title: "Goal Updated",
+          description: "The goal has been saved successfully.",
+        });
+      } else {
+        toast({
+          title: "Update Successful",
+          description: "The data has been updated successfully.",
+        });
+      }
       
       // Update the local domainPlans state to immediately reflect changes in the UI
       // This ensures the vision is updated in the UI without waiting for a refetch
       const updatedDomainPlans = domainPlans.map(plan => {
         if (plan.id === variables.id) {
-          return {
-            ...plan,
-            ...variables.data
-          };
+          // Create a new plan object with the updated data
+          let updatedPlan = { ...plan };
+          
+          // Handle vision updates
+          if (variables.data.vision !== undefined) {
+            updatedPlan.vision = variables.data.vision;
+          }
+          
+          if (variables.data.visionAge !== undefined) {
+            updatedPlan.visionAge = variables.data.visionAge;
+          }
+          
+          if (variables.data.visionMedia !== undefined) {
+            updatedPlan.visionMedia = variables.data.visionMedia;
+          }
+          
+          // Handle goals updates
+          if (variables.data.goals !== undefined) {
+            updatedPlan.goals = variables.data.goals;
+          }
+          
+          return updatedPlan;
         }
         return plan;
       });
@@ -300,23 +334,73 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       // Force a re-render of the component with the updated domain plan
       // We're doing this by setting state in a setTimeout to ensure it happens after the current render cycle
       setTimeout(() => {
-        // @ts-ignore - we're updating a prop, but it's fine for immediate UI updates
-        // The actual data will be refreshed when the query is invalidated
         if (updatedDomainPlans.length > 0) {
+          // Create a custom event to update the UI immediately
           const event = new CustomEvent('domain-plans-updated', { detail: updatedDomainPlans });
           window.dispatchEvent(event);
+          
+          // If it was a goal update, also update the goals by domain
+          if (isGoalUpdate) {
+            // We need to rebuild the goalsByDomain state based on the updated domain plans
+            const updatedGoalsByDomain: Record<string, GoalType[]> = {};
+            
+            // Initialize empty arrays for each domain
+            DOMAINS.forEach(domain => {
+              updatedGoalsByDomain[domain.id] = [];
+            });
+            
+            // Process goals from updated domain plans
+            updatedDomainPlans.forEach(plan => {
+              if (plan.goals) {
+                let goals: any[] = [];
+                
+                if (Array.isArray(plan.goals)) {
+                  goals = plan.goals;
+                } else if (typeof plan.goals === 'string') {
+                  try {
+                    goals = JSON.parse(plan.goals);
+                    if (!Array.isArray(goals)) goals = [goals];
+                  } catch (e) {
+                    console.error('Error parsing goals string', e);
+                  }
+                } else if (typeof plan.goals === 'object' && plan.goals !== null) {
+                  goals = [plan.goals];
+                }
+                
+                // Map goals and add to the corresponding domain
+                const processedGoals = goals.map((g: any) => ({
+                  ...g,
+                  domainId: plan.domain
+                }));
+                
+                updatedGoalsByDomain[plan.domain] = processedGoals;
+              }
+            });
+            
+            // Update the goalsByDomain state
+            setGoalsByDomain(updatedGoalsByDomain);
+          }
         }
       }, 0);
       
       // Invalidate any queries that fetch domain plans to ensure data consistency
       queryClient.invalidateQueries({ queryKey: ['/api/plans'] });
-      closeVisionDialog();
-      cancelRemoveVision();
+      
+      // Close dialogs if needed
+      if (isVisionUpdate) {
+        closeVisionDialog();
+        cancelRemoveVision();
+      }
+      
+      if (isGoalUpdate) {
+        closeGoalDialog();
+      }
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error updating domain plan:", error);
       toast({
         title: "Error",
-        description: "Failed to update vision statement. Please try again.",
+        description: "Failed to update the data. Please try again.",
         variant: "destructive"
       });
     }
