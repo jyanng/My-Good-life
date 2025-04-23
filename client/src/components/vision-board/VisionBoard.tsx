@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -8,12 +8,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { PlusIcon, PencilIcon, XIcon, WandIcon, LightbulbIcon, GridIcon, ColumnsIcon } from "lucide-react";
+import { 
+  PlusIcon, PencilIcon, XIcon, WandIcon, LightbulbIcon, 
+  GridIcon, ColumnsIcon, PresentationIcon, UsersIcon, 
+  LinkIcon, Share2Icon, CopyIcon, CheckIcon, DownloadIcon,
+  Edit2Icon, Maximize2Icon, Users
+} from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import GoalItem from './GoalItem';
 import { DomainPlan, Student, InsertDomainPlan } from '@shared/schema';
+import { Switch } from "@/components/ui/switch";
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipProvider, 
+  TooltipTrigger 
+} from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type GoalType = {
   id: string;
@@ -39,6 +52,20 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   const [removingDomain, setRemovingDomain] = useState<string | null>(null);
   // View mode toggle for grid or list view
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  // Presentation mode
+  const [isPresentationMode, setIsPresentationMode] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const visionBoardRef = useRef<HTMLDivElement>(null);
+  
+  // Collaboration features
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [sharingLink, setSharingLink] = useState('');
+  const [collaborators, setCollaborators] = useState([
+    { id: 1, name: 'Sarah Johnson', role: 'Facilitator', avatar: '/avatars/sarah.jpg', online: true },
+    { id: 2, name: 'Dr. Li Ming', role: 'Therapist', avatar: '/avatars/li.jpg', online: false },
+    { id: 3, name: 'Wei Jie Tan', role: 'Student', avatar: '/avatars/weijie.jpg', online: true }
+  ]);
   
   // Convert the domain plans into a format suitable for the vision board
   const initialGoals = domainPlans.flatMap(plan => {
@@ -201,7 +228,14 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
 
   // Update domain plan mutation
   const updateDomainPlanMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number, data: { vision: string | null } }) => {
+    mutationFn: ({ id, data }: { 
+      id: number, 
+      data: { 
+        vision?: string | null,
+        visionAge?: number,
+        visionMedia?: string
+      } 
+    }) => {
       return apiRequest('PATCH', `/api/domain-plans/${id}`, data);
     },
     onSuccess: () => {
@@ -417,11 +451,67 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     }
   };
 
+  // Presentation mode handlers
+  const togglePresentationMode = () => {
+    setIsPresentationMode(!isPresentationMode);
+  };
+  
+  const toggleFullscreen = () => {
+    if (!isFullscreen) {
+      if (visionBoardRef.current && visionBoardRef.current.requestFullscreen) {
+        visionBoardRef.current.requestFullscreen().catch(err => {
+          console.error('Error attempting to enable fullscreen:', err);
+        });
+        setIsFullscreen(true);
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(err => {
+          console.error('Error attempting to exit fullscreen:', err);
+        });
+        setIsFullscreen(false);
+      }
+    }
+  };
+  
+  // Collaboration and sharing handlers
+  const openShareDialog = () => {
+    // Generate a shareable link (in real app, this would be a unique URL)
+    const baseUrl = window.location.origin;
+    const shareableLink = `${baseUrl}/vision-board/shared/${student.id}/${Date.now()}`;
+    setSharingLink(shareableLink);
+    setIsShareDialogOpen(true);
+  };
+  
+  const copyLinkToClipboard = () => {
+    navigator.clipboard.writeText(sharingLink).then(() => {
+      toast({
+        title: "Link Copied",
+        description: "Shareable link has been copied to clipboard.",
+      });
+    }).catch(() => {
+      toast({
+        title: "Error",
+        description: "Failed to copy link. Please try again.",
+        variant: "destructive"
+      });
+    });
+  };
+  
+  // Dynamic classes based on presentation mode
+  const presentationModeClasses = isPresentationMode 
+    ? "bg-gradient-to-br from-sky-100 to-indigo-100 p-8 rounded-xl shadow-xl" 
+    : "";
+  
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Vision Board for {student.name}</h2>
-        <div className="flex items-center gap-3">
+    <div className="space-y-6" ref={visionBoardRef}>
+      <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${isPresentationMode ? 'mb-8' : ''}`}>
+        <h2 className={`text-2xl font-bold ${isPresentationMode ? 'text-3xl text-indigo-800' : ''}`}>
+          Vision Board for {student.name}
+        </h2>
+        
+        <div className="flex flex-wrap items-center gap-3">
+          {/* View Mode Controls */}
           <div className="flex items-center bg-gray-100 p-1 rounded-lg">
             <Button
               variant={viewMode === 'grid' ? "default" : "ghost"}
@@ -442,16 +532,117 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
               <span>List</span>
             </Button>
           </div>
+          
+          {/* Presentation Mode Toggle */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={isPresentationMode ? "default" : "outline"}
+                  size="sm"
+                  className="px-3"
+                  onClick={togglePresentationMode}
+                >
+                  <PresentationIcon className="h-4 w-4 mr-1" />
+                  <span>Present</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Toggle presentation mode for meetings</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          {/* Fullscreen Toggle */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="px-3"
+                  onClick={toggleFullscreen}
+                >
+                  <Maximize2Icon className="h-4 w-4 mr-1" />
+                  <span>Fullscreen</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>View in fullscreen mode</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          {/* Share Button */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="px-3"
+                  onClick={openShareDialog}
+                >
+                  <Share2Icon className="h-4 w-4 mr-1" />
+                  <span>Share</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Share vision board with team members</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       
-      <Alert className="bg-blue-50 border-blue-200">
-        <AlertDescription>
-          <p className="text-blue-800">
-            Drag and drop goals between domains to reorganize your student's Good Life plan. This visualization helps you ensure goals are correctly categorized and balanced across domains.
-          </p>
-        </AlertDescription>
-      </Alert>
+      {/* Collaborators Section (visible only when not in presentation mode) */}
+      {!isPresentationMode && (
+        <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+          <div className="flex items-center gap-2">
+            <UsersIcon className="h-4 w-4 text-gray-500" />
+            <span className="text-sm font-medium">Collaborators:</span>
+            <div className="flex -space-x-2">
+              {collaborators.map(collaborator => (
+                <TooltipProvider key={collaborator.id}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="relative">
+                        <Avatar className="h-7 w-7 border-2 border-white">
+                          <AvatarFallback className={collaborator.online ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
+                            {collaborator.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        {collaborator.online && (
+                          <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 ring-1 ring-white"></span>
+                        )}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{collaborator.name} - {collaborator.role} <span className={collaborator.online ? "text-green-500" : "text-gray-500"}>
+                        {collaborator.online ? '● Online' : '○ Offline'}
+                      </span></p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ))}
+            </div>
+          </div>
+          <Button variant="ghost" size="sm" className="text-xs">
+            <UsersIcon className="h-3 w-3 mr-1" />
+            Invite
+          </Button>
+        </div>
+      )}
+      
+      {!isPresentationMode && (
+        <Alert className="bg-blue-50 border-blue-200">
+          <AlertDescription>
+            <p className="text-blue-800">
+              Drag and drop goals between domains to reorganize your student's Good Life plan. This visualization helps you ensure goals are correctly categorized and balanced across domains.
+            </p>
+          </AlertDescription>
+        </Alert>
+      )}
       
       {/* Dialog for adding/editing visions */}
       <Dialog open={isAddingVision || isEditingVision} onOpenChange={(open) => {
@@ -594,6 +785,95 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
         </DialogContent>
       </Dialog>
       
+      {/* Share Dialog */}
+      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Share Vision Board</DialogTitle>
+            <DialogDescription>
+              Share this vision board with team members or the student's support network.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Shareable Link</label>
+              <div className="flex items-center space-x-2">
+                <Input
+                  value={sharingLink}
+                  readOnly
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  className="px-3"
+                  onClick={copyLinkToClipboard}
+                >
+                  <CopyIcon className="h-4 w-4 mr-1" />
+                  <span>Copy</span>
+                </Button>
+              </div>
+            </div>
+            
+            <div className="space-y-2 mt-4">
+              <label className="text-sm font-medium">Sharing Options</label>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Switch id="view-only" defaultChecked />
+                    <label htmlFor="view-only" className="text-sm">View-only access</label>
+                  </div>
+                  <span className="text-xs text-gray-500">Recommended</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="allow-comments" />
+                  <label htmlFor="allow-comments" className="text-sm">Allow comments</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="allow-editing" />
+                  <label htmlFor="allow-editing" className="text-sm">Allow editing</label>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-2 mt-4">
+              <label className="text-sm font-medium">Share Directly</label>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+                  </svg>
+                  Twitter
+                </Button>
+                <Button variant="outline" size="sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                  </svg>
+                  Facebook
+                </Button>
+                <Button variant="outline" size="sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                  Email
+                </Button>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setIsShareDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button">
+              Done
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
       <DragDropContext onDragEnd={onDragEnd}>
         <div className={`grid grid-cols-1 ${
           viewMode === 'grid' 
@@ -601,23 +881,24 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
             : viewMode === 'list' 
               ? 'md:grid-cols-1 max-w-4xl mx-auto'
               : 'md:grid-cols-2 lg:grid-cols-3'
-        } gap-4`}>
+        } gap-4 ${presentationModeClasses}`}>
           {DOMAINS.map(domain => {
             const domainPlan = domainPlans.find(plan => plan.domain === domain.id);
             const domainVision = domainPlan?.vision || '';
+            const domainVisionMedia = domainPlan?.visionMedia || '';
             
             return (
-              <Droppable droppableId={domain.id} key={domain.id}>
+              <Droppable droppableId={domain.id} key={domain.id} isDropDisabled={isPresentationMode}>
                 {(provided, snapshot) => (
                   <Card 
                     className={`${snapshot.isDraggingOver ? 'bg-gray-50' : ''} h-full ${
                       viewMode === 'list' ? 'w-full' : ''
-                    }`}
+                    } ${isPresentationMode ? 'shadow-lg transform transition-all duration-200 hover:scale-[1.02]' : ''}`}
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    <CardHeader className={`${domain.bgClass} text-white ${viewMode === 'list' ? 'p-4' : ''}`}>
-                      <CardTitle className={`flex justify-between items-center ${viewMode === 'list' ? 'text-lg' : ''}`}>
+                    <CardHeader className={`${domain.bgClass} text-white ${viewMode === 'list' ? 'p-4' : ''} ${isPresentationMode ? 'p-6' : ''}`}>
+                      <CardTitle className={`flex justify-between items-center ${viewMode === 'list' ? 'text-lg' : ''} ${isPresentationMode ? 'text-2xl mb-4' : ''}`}>
                         <span>{domain.name}</span>
                         <Badge variant="outline" className="bg-white text-gray-800 border-white">
                           {goalsByDomain[domain.id]?.length || 0} goals
@@ -660,12 +941,29 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                         </div>
                         {domainVision ? (
                           <div className="mt-1 bg-white/20 p-2 rounded shadow-inner border border-white/30">
-                            <p className={`text-sm font-medium leading-snug ${viewMode === 'list' ? 'line-clamp-3' : ''}`}>
-                              {domainVision.startsWith("When I am 30 years old,") ? 
+                            {domainVisionMedia && isPresentationMode && (
+                              <div className="mb-3 rounded overflow-hidden">
+                                <img 
+                                  src={domainVisionMedia} 
+                                  alt={`Vision media for ${domain.name}`}
+                                  className="w-full h-36 object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                  }} 
+                                />
+                              </div>
+                            )}
+                            <p className={`${isPresentationMode ? 'text-base' : 'text-sm'} font-medium leading-snug ${viewMode === 'list' && !isPresentationMode ? 'line-clamp-3' : ''}`}>
+                              {domainVision.startsWith(`When I am ${domainPlan?.visionAge || 30} years old,`) ? 
                                 domainVision : 
-                                `When I am 30 years old, I will be ${domainVision.toLowerCase().startsWith("i will") ? domainVision.substring(7) : domainVision}`
+                                `When I am ${domainPlan?.visionAge || 30} years old, I will be ${domainVision.toLowerCase().startsWith("i will") ? domainVision.substring(7) : domainVision}`
                               }
                             </p>
+                            {isPresentationMode && domainVisionMedia && (
+                              <div className="mt-2 text-xs text-right text-white/80 italic">
+                                Age: {domainPlan?.visionAge || 30} years
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div className="flex mt-1 gap-2 items-center">
