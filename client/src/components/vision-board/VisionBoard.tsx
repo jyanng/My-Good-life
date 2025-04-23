@@ -18,6 +18,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import GoalItem from './GoalItem';
+import GoalEditor from './GoalEditor';
 import { DomainPlan, Student, InsertDomainPlan } from '@shared/schema';
 import { Switch } from "@/components/ui/switch";
 import { 
@@ -52,6 +53,11 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   const [removingDomain, setRemovingDomain] = useState<string | null>(null);
   // View mode toggle for grid or list view
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  // Goal editing state
+  const [isAddingGoal, setIsAddingGoal] = useState(false);
+  const [isEditingGoal, setIsEditingGoal] = useState(false);
+  const [currentGoal, setCurrentGoal] = useState<GoalType | null>(null);
   
   // Presentation mode
   const [isPresentationMode, setIsPresentationMode] = useState(false);
