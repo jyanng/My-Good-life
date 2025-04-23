@@ -533,29 +533,56 @@ export class MemStorage implements IStorage {
     
     // Add some case studies
     this.createCaseStudy({
-      title: "From Anxiety to Confidence",
-      description: "How Terence overcame social anxiety to secure a part-time job at NTUC FairPrice",
-      domains: ["safe", "connected", "independent"],
-      content: "Terence, a 19-year-old with autism from Woodlands, struggled with severe anxiety in social situations. Through his GoodLife Plan, he worked with his facilitator to develop strategies that helped him feel safe in unfamiliar environments. Starting with small steps—like ordering food at a quiet kopitiam—Terence gradually built confidence. After six months of practicing social skills and learning stress-management techniques at the Social Service Centre, he successfully interviewed for and secured a part-time position at NTUC FairPrice, an environment that matched his interests in organization and inventory management.",
-      goodLifeVision: "I will feel secure in various environments, build meaningful connections with others, and become more independent in my daily activities and work life.",
+      title: "Finding Safety in New Environments",
+      description: "How Terence overcame social anxiety through his Safe domain plan",
+      domains: ["safe"],
+      content: "Terence, a 19-year-old with autism from Woodlands, struggled with severe anxiety in social situations. Through his GoodLife Plan, he worked with his facilitator to develop strategies that helped him feel safe in unfamiliar environments. Starting with small steps—like ordering food at a quiet kopitiam—Terence gradually built confidence. After six months of practicing social skills and learning stress-management techniques at the Social Service Centre, he was able to navigate new environments with significantly reduced anxiety, allowing him to participate in community activities that he previously avoided.",
+      goodLifeVision: "I will feel safe in my community and learning environments",
       mediaUrls: []
     });
     
     this.createCaseStudy({
-      title: "Building Independence Through Technology",
-      description: "Mei Ling's journey to living semi-independently in an HDB flat using assistive technology",
-      domains: ["independent", "safe", "healthy"],
-      content: "Mei Ling, who has an intellectual disability, dreamed of living in her own HDB flat with minimal support. Her GoodLife Plan focused on building practical skills and leveraging technology to support her independence. She learned to use smart home devices to manage routines, video calling to stay connected with her family in Tampines, and reminder apps for medication and appointments. After a year of preparation with SG Enable's support, Mei Ling moved into a supported living apartment where she handles most daily tasks independently while maintaining regular check-ins with her support network and visiting the nearby community center for activities.",
-      goodLifeVision: "I will live independently in my own space, maintain my health and wellbeing, and feel safe and supported in my daily life with the help of technology.",
+      title: "Journey to Independent Living",
+      description: "Mei Ling's path to developing vital independent living skills",
+      domains: ["independent"],
+      content: "Mei Ling, who has an intellectual disability, dreamed of living in her own HDB flat with minimal support. Her GoodLife Plan focused on building practical skills for independent living. She learned to use public transportation confidently, manage a simple budget, prepare basic meals, and handle household maintenance. After a year of preparation with SG Enable's support, Mei Ling moved into a supported living apartment where she handles most daily tasks independently while maintaining regular check-ins with her support network.",
+      goodLifeVision: "I will develop skills to live independently",
       mediaUrls: []
     });
     
     this.createCaseStudy({
-      title: "Finding a Voice Through Digital Art",
-      description: "How creative expression helped Irfan communicate his needs and goals",
-      domains: ["engaged", "included", "connected"],
-      content: "Irfan, who is non-verbal and on the autism spectrum, struggled to communicate his preferences and goals. His facilitator at RC Admiral Hill noticed his interest in colors and digital tools, and incorporated tablet-based art into his GoodLife planning process. Through digital illustration apps, Irfan began expressing his interests, preferences, and even concerns about his future education path. This creative approach led to Irfan joining an inclusive digital art program at Enabling Village, where he developed friendships and found meaningful engagement. His digital artwork now serves as a communication tool in planning meetings, ensuring his voice is central to decisions about his future vocational training.",
-      goodLifeVision: "I will express myself through creative arts, be included in decisions about my future, and connect with others who share my interests and understand my communication style.",
+      title: "Engaging Through Digital Art",
+      description: "How creative expression helped Irfan find meaningful engagement",
+      domains: ["engaged"],
+      content: "Irfan, who is non-verbal and on the autism spectrum, struggled to find meaningful activities that he enjoyed. His facilitator at RC Admiral Hill noticed his interest in colors and digital tools, and incorporated tablet-based art into his GoodLife planning process. Through digital illustration apps, Irfan discovered a powerful form of self-expression and engagement. This creative approach led to Irfan joining an inclusive digital art program at Enabling Village, where he developed skills and found an activity that brought him joy and purpose.",
+      goodLifeVision: "I will participate in meaningful activities that I enjoy",
+      mediaUrls: []
+    });
+    
+    this.createCaseStudy({
+      title: "Building Healthy Routines",
+      description: "Siti's journey to establishing consistent health habits",
+      domains: ["healthy"],
+      content: "Siti, a 16-year-old with Down syndrome, struggled with maintaining consistent health routines. Her Good Life Plan focused on building sustainable habits for physical and mental wellbeing. With her facilitator from Rainbow Centre, she created visual schedules for morning and evening routines, learned to prepare simple nutritious meals, and joined a weekly adaptive sports program. Over six months, Siti established a consistent sleep schedule, improved her eating habits, and found joy in regular physical activity through an inclusive swimming class at Heartbeat@Bedok sports center.",
+      goodLifeVision: "I will maintain physical and mental wellbeing through healthy habits",
+      mediaUrls: []
+    });
+    
+    this.createCaseStudy({
+      title: "Building Meaningful Connections",
+      description: "How Jayden developed social relationships through shared interests",
+      domains: ["connected"],
+      content: "Jayden, an 18-year-old with autism, wanted to develop meaningful friendships but struggled with social interactions. His Good Life Plan focused on leveraging his strong interest in video games as a pathway to building connections. With support from his facilitator, Jayden joined a gaming club at *SCAPE where he could practice social skills in a structured environment around a topic he was passionate about. Over time, he learned to initiate conversations about shared interests, take turns during activities, and maintain relationships through consistent participation. He now regularly meets with two friends from the club outside of organized activities.",
+      goodLifeVision: "I will build and maintain positive relationships",
+      mediaUrls: []
+    });
+    
+    this.createCaseStudy({
+      title: "Finding My Voice in Decisions",
+      description: "How Priya learned to advocate for herself in educational planning",
+      domains: ["included"],
+      content: "Priya, a 17-year-old with cerebral palsy, often felt left out of decisions about her educational path. Her Good Life Plan focused on developing self-advocacy skills and ensuring her voice was heard in planning meetings. Working with her facilitator at SPD, she practiced expressing her needs clearly, learned about her educational rights, and developed strategies for participating effectively in discussions about her future. Within a year, Priya was confidently leading portions of her transition planning meetings at school, clearly articulating her interests in pursuing graphic design courses, and successfully advocating for accommodations that would support her learning journey.",
+      goodLifeVision: "I will advocate for myself and be included in decisions about my life",
       mediaUrls: []
     });
     
