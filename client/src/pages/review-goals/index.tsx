@@ -259,7 +259,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
           <AlertCircleIcon className="h-4 w-4 text-amber-500" />
           <AlertTitle className="text-amber-800">Attention Required</AlertTitle>
           <AlertDescription className="text-amber-700">
-            {alert.message} Please reframe these goals to be positive, focusing on what the student will accomplish rather than limitations.
+            {alert.message} Please reframe these vision statements to be positive and inspiring, focusing on the student's abilities and what they will accomplish rather than their limitations.
           </AlertDescription>
         </Alert>
       </div>
@@ -297,7 +297,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                         <Textarea 
                           value={goal.reframed}
                           onChange={(e) => handleReframeGoal(index, e.target.value)}
-                          placeholder="Rewrite the goal to focus on abilities and achievements rather than limitations..."
+                          placeholder="Rewrite the vision to focus on abilities, strengths, and positive outcomes rather than limitations..."
                           className="mt-1"
                           rows={4}
                         />
@@ -362,34 +362,51 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
       </div>
 
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Reframing Guidelines</h2>
+        <h2 className="text-xl font-semibold mb-4">Principles for Envisioning</h2>
         <Card>
           <CardContent className="p-6">
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <h3 className="font-medium">Do:</h3>
-                <ul className="list-disc pl-5 space-y-1 mt-2">
-                  <li>Focus on abilities, not limitations</li>
-                  <li>Use positive language that emphasizes growth</li>
-                  <li>Be specific about desired outcomes</li>
-                  <li>Make goals measurable when possible</li>
-                  <li>Consider the student's strengths and interests</li>
+                <h3 className="font-medium text-lg">Core Principles:</h3>
+                <ul className="list-disc pl-5 space-y-2 mt-3">
+                  <li>Focus on <span className="font-medium text-blue-700">abilities and strengths</span>, rather than limitations</li>
+                  <li>Use <span className="font-medium text-blue-700">positive and aspirational language</span> that inspires growth</li>
+                  <li>Create visions that are <span className="font-medium text-blue-700">specific and meaningful</span> to the student</li>
+                  <li>Include <span className="font-medium text-blue-700">measurable elements</span> that can track progress</li>
+                  <li>Reflect the student's <span className="font-medium text-blue-700">personal interests and values</span></li>
+                  <li>Consider <span className="font-medium text-blue-700">cultural context and family perspectives</span></li>
                 </ul>
               </div>
               
               <Separator />
               
               <div>
-                <h3 className="font-medium">Example:</h3>
-                <div className="mt-2 space-y-2">
-                  <div className="p-3 bg-gray-50 rounded border">
-                    <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Original</Badge>
-                    <p>Wei will not struggle with social anxiety in group settings</p>
+                <h3 className="font-medium text-lg">Examples:</h3>
+                <div className="mt-3 space-y-4">
+                  <div>
+                    <h4 className="text-sm uppercase tracking-wide text-gray-500 mb-2">Social Domain</h4>
+                    <div className="p-3 bg-gray-50 rounded border">
+                      <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Original Vision</Badge>
+                      <p>Wei will not struggle with social anxiety in group settings</p>
+                    </div>
+                    
+                    <div className="p-3 bg-green-50 rounded border mt-2">
+                      <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
+                      <p>Wei will develop three coping strategies to manage social situations and participate confidently in small group activities with his peers at Admiral Hill RC</p>
+                    </div>
                   </div>
                   
-                  <div className="p-3 bg-green-50 rounded border">
-                    <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed</Badge>
-                    <p>Wei will develop three coping strategies to manage social situations and participate confidently in small group activities</p>
+                  <div>
+                    <h4 className="text-sm uppercase tracking-wide text-gray-500 mb-2">Independent Living Domain</h4>
+                    <div className="p-3 bg-gray-50 rounded border">
+                      <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Original Vision</Badge>
+                      <p>Rizwan won't need help with daily living tasks</p>
+                    </div>
+                    
+                    <div className="p-3 bg-green-50 rounded border mt-2">
+                      <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Reframed Vision</Badge>
+                      <p>Rizwan will master five essential daily living skills including preparing simple meals, using public transportation, and managing a personal schedule, enabling him to live independently in an HDB flat with minimal support</p>
+                    </div>
                   </div>
                 </div>
               </div>
