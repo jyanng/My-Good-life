@@ -14,6 +14,7 @@ import LearningCenter from "@/pages/learning-center";
 import ReviewGoals from "@/pages/review-goals";
 import ProgressVisualization from "@/pages/progress-visualization";
 import VisionBoard from "@/pages/vision-board";
+import PlanTemplates from "@/pages/plan-templates";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { useState, useEffect } from "react";
 import { User } from "@shared/schema";
@@ -86,6 +87,7 @@ function Router() {
           {params => <VisionBoard studentId={Number(params.studentId)} />}
         </Route>
         <Route path="/vision-board" component={VisionBoard} />
+        <Route path="/plan-templates" component={PlanTemplates} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>
