@@ -743,19 +743,19 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={isAddingVision || isEditingVision} onOpenChange={(open) => {
         if (!open) closeVisionDialog();
       }}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
               {isAddingVision ? 'Add Vision Statement' : 'Edit Vision Statement'}
             </DialogTitle>
             <DialogDescription>
               {currentDomain && 
-                `Create a vision statement for the ${DOMAINS.find(d => d.id === currentDomain)?.name} domain that reflects what the student wants for their future.`
+                `${DOMAINS.find(d => d.id === currentDomain)?.name} Domain Vision`
               }
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-3 py-2">
+          <div className="space-y-2 py-2">
             <div className="space-y-2">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
@@ -771,22 +771,20 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                 </div>
               </div>
               
-              <label className="text-sm font-medium block mt-3">Vision Statement</label>
+              <label className="text-sm font-medium block mt-2">Vision Statement</label>
               <div className="p-2 bg-white rounded border mb-2">
-                <p className="text-sm font-medium">Positive Vision Format</p>
-                <p className="text-sm italic mt-1">"When I am {visionAge} years old, I will be..."</p>
+                <p className="text-sm italic">"When I am {visionAge} years old, I will be..."</p>
               </div>
               <Textarea
                 placeholder={`When I am ${visionAge} years old, I will be...`}
                 value={visionText}
                 onChange={(e) => setVisionText(e.target.value)}
-                className="min-h-[100px] text-lg"
+                className="min-h-[80px]"
               />
             </div>
             
-            <div className="space-y-2 mt-4">
+            <div className="space-y-2 mt-3">
               <label className="text-sm font-medium block">Media URL (Optional)</label>
-              <p className="text-xs text-gray-500 mb-2">Add an image URL to represent this vision</p>
               <Input
                 type="url"
                 placeholder="https://example.com/image.jpg"
@@ -796,11 +794,10 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
               />
               {visionMedia && (
                 <div className="mt-2 border rounded overflow-hidden">
-                  <p className="text-xs bg-gray-100 p-2">Preview:</p>
                   <img 
                     src={visionMedia} 
                     alt="Vision media preview" 
-                    className="max-h-[150px] object-contain mx-auto p-2"
+                    className="max-h-[120px] object-contain mx-auto p-2"
                     onError={(e) => {
                       e.currentTarget.src = "https://placehold.co/400x300/ebf5ff/6b7280/?text=Invalid+Image+URL";
                     }}
@@ -808,15 +805,14 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                 </div>
               )}
             </div>
-            {/* Vision Suggestions */}
+            
+            {/* Vision Suggestions Button */}
             {currentDomain && (
-              <div className="mt-3">
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  Quick Suggestions
-                </p>
+              <div className="mt-2">
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start text-left h-auto py-2 px-3 mb-3"
+                  size="sm"
+                  className="w-full justify-start text-left h-auto py-2 px-3"
                   onClick={() => {
                     const suggestions = {
                       safe: "When I am 30 years old, I will be living in a safe environment where I feel secure and protected. I will have developed strategies to manage stress and anxiety in new situations.",
@@ -831,25 +827,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                     }
                   }}
                 >
-                  <WandIcon className="h-5 w-5 mr-2" />
-                  <div>
-                    <p className="font-medium">Use Domain Suggestion</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Click to use a pre-written vision for this domain</p>
-                  </div>
+                  <WandIcon className="h-4 w-4 mr-2" />
+                  Use Domain Suggestion
                 </Button>
-
-                <div className="flex items-center mt-4 mb-1">
-                  <LightbulbIcon className="h-4 w-4 mr-1 text-amber-500" />
-                  <p className="text-sm font-medium text-gray-700">
-                    Vision Statement Guidelines
-                  </p>
-                </div>
-                <ul className="list-disc ml-5 mt-1 text-sm text-gray-600">
-                  <li>Be positive and inspiring</li>
-                  <li>Use first-person language ("I will...")</li>
-                  <li>Describe desired future outcomes</li>
-                  <li>Be specific but achievable</li>
-                </ul>
               </div>
             )}
           </div>
