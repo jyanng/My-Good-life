@@ -57,9 +57,10 @@ interface GoalItemProps {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   allGoals?: GoalType[];
+  onEditGoal?: (goal: GoalType) => void;
 }
 
-export default function GoalItem({ goal, domainColor, provided, snapshot, allGoals = [] }: GoalItemProps) {
+export default function GoalItem({ goal, domainColor, provided, snapshot, allGoals = [], onEditGoal }: GoalItemProps) {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isDependenciesDialogOpen, setIsDependenciesDialogOpen] = useState(false);
   
@@ -234,7 +235,9 @@ export default function GoalItem({ goal, domainColor, provided, snapshot, allGoa
                     {hasDependencies ? "View Dependencies" : "Add Dependencies"}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Edit Goal</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onEditGoal?.(goal)}>
+                    Edit Goal
+                  </DropdownMenuItem>
                   <DropdownMenuItem className={goal.status === 'completed' ? "text-gray-400" : ""}>
                     Mark {goal.status === 'completed' ? "Incomplete" : "Complete"}
                   </DropdownMenuItem>

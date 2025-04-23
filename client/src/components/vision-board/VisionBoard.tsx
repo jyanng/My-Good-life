@@ -1078,14 +1078,33 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                                   domainColor={domain.textClass}
                                   provided={provided}
                                   snapshot={snapshot}
+                                  onEditGoal={openEditGoalDialog}
                                 />
                               )}
                             </Draggable>
                           ))}
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full mt-2 border-dashed"
+                            onClick={() => openAddGoalDialog(domain.id)}
+                          >
+                            <PlusIcon className="h-4 w-4 mr-1" />
+                            Add Goal
+                          </Button>
                         </div>
                       ) : (
-                        <div className="h-full flex items-center justify-center text-gray-400 text-sm">
-                          <p>Drop goals here</p>
+                        <div className="h-full flex flex-col items-center justify-center text-gray-400 text-sm gap-3">
+                          <p>No goals yet</p>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="border-dashed"
+                            onClick={() => openAddGoalDialog(domain.id)}
+                          >
+                            <PlusIcon className="h-4 w-4 mr-1" />
+                            Add Goal
+                          </Button>
                         </div>
                       )}
                       {provided.placeholder}
@@ -1097,6 +1116,34 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
           })}
         </div>
       </DragDropContext>
+
+      {/* Dialog for adding/editing goals */}
+      <Dialog open={isAddingGoal || isEditingGoal} onOpenChange={(open) => {
+        if (!open) closeGoalDialog();
+      }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {isAddingGoal ? 'Add New Goal' : 'Edit Goal'}
+            </DialogTitle>
+            <DialogDescription>
+              {currentDomain && 
+                `${isAddingGoal ? 'Create' : 'Update'} a goal for the ${DOMAINS.find(d => d.id === currentDomain)?.name} domain that supports the student's vision.`
+              }
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <GoalEditor 
+              isEditing={isEditingGoal}
+              goal={currentGoal}
+              domainId={currentDomain}
+              onSave={handleSaveGoal}
+              onCancel={closeGoalDialog}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
