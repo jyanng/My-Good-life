@@ -1292,6 +1292,9 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                                   <li>Make goals specific and achievable</li>
                                   <li>Focus on positive actions</li>
                                   <li>Break down larger goals into smaller steps</li>
+                                  <li>Who should I involve to help me succeed?</li>
+                                  <li>What could get in the way of achieving this goal?</li>
+                                  <li>When should I start working on this goal?</li>
                                 </ul>
                               </div>
                               
