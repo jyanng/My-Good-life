@@ -34,6 +34,8 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   const [isEditingVision, setIsEditingVision] = useState(false);
   const [currentDomain, setCurrentDomain] = useState<string | null>(null);
   const [visionText, setVisionText] = useState('');
+  const [visionAge, setVisionAge] = useState(30);
+  const [visionMedia, setVisionMedia] = useState('');
   const [removingDomain, setRemovingDomain] = useState<string | null>(null);
   // View mode toggle for grid or list view
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -116,7 +118,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     setCurrentDomain(domainId);
     
     // Use a vision template to guide the user
+    setVisionAge(30);
     setVisionText("When I am 30 years old, I will be ");
+    setVisionMedia('');
     setIsAddingVision(true);
   };
 
@@ -124,13 +128,29 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     const domainPlan = domainPlans.find(plan => plan.domain === domainId);
     setCurrentDomain(domainId);
     
+    // Set age from existing plan or default to 30
+    setVisionAge(domainPlan?.visionAge || 30);
+    
+    // Set media from existing plan
+    setVisionMedia(domainPlan?.visionMedia || '');
+    
     // Format vision text if needed for consistency
     let visionForEdit = domainPlan?.vision || '';
-    if (visionForEdit && !visionForEdit.startsWith("When I am 30 years old,")) {
+    const agePattern = new RegExp(`When I am (\\d+) years old,`);
+    const match = visionForEdit.match(agePattern);
+    
+    if (match) {
+      // Extract age from the vision text if it exists
+      const extractedAge = parseInt(match[1]);
+      if (!isNaN(extractedAge)) {
+        setVisionAge(extractedAge);
+      }
+    } else if (visionForEdit) {
+      // Add standard format if missing
       if (visionForEdit.toLowerCase().startsWith("i will")) {
-        visionForEdit = `When I am 30 years old, ${visionForEdit}`;
+        visionForEdit = `When I am ${visionAge} years old, ${visionForEdit}`;
       } else {
-        visionForEdit = `When I am 30 years old, I will be ${visionForEdit}`;
+        visionForEdit = `When I am ${visionAge} years old, I will be ${visionForEdit}`;
       }
     }
     
@@ -206,15 +226,21 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   const handleSaveVision = () => {
     if (!currentDomain) return;
     
-    // Format the vision text to ensure it follows the standard format
+    // Format the vision text to ensure it follows the standard format with the customized age
     let formattedVision = visionText;
+    const agePrefix = `When I am ${visionAge} years old,`;
     
-    // If it doesn't start with the standard format, add it
-    if (!formattedVision.startsWith("When I am 30 years old,")) {
-      if (formattedVision.toLowerCase().startsWith("i will")) {
-        formattedVision = `When I am 30 years old, ${formattedVision}`;
+    // If it doesn't start with the standard format, add it with the custom age
+    if (!formattedVision.startsWith(agePrefix)) {
+      // Check if it already has a different age in the prefix
+      const agePattern = new RegExp(`When I am (\\d+) years old,`);
+      if (agePattern.test(formattedVision)) {
+        // Replace the existing age with the new age
+        formattedVision = formattedVision.replace(agePattern, agePrefix);
+      } else if (formattedVision.toLowerCase().startsWith("i will")) {
+        formattedVision = `${agePrefix} ${formattedVision}`;
       } else {
-        formattedVision = `When I am 30 years old, I will be ${formattedVision}`;
+        formattedVision = `${agePrefix} I will be ${formattedVision}`;
       }
     }
     
@@ -222,13 +248,17 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     const domainPlan = domainPlans.find(plan => plan.domain === currentDomain);
     
     if (domainPlan) {
-      // Update existing domain plan
+      // Update existing domain plan with all the new fields
       updateDomainPlanMutation.mutate({
         id: domainPlan.id,
-        data: { vision: formattedVision }
+        data: { 
+          vision: formattedVision,
+          visionAge,
+          visionMedia
+        }
       });
     } else {
-      // Create a new domain plan
+      // Create a new domain plan with all the new fields
       const planId = domainPlans[0]?.planId; // Use the planId from any existing domain plan
       
       if (planId) {
@@ -236,6 +266,8 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
           planId,
           domain: currentDomain,
           vision: formattedVision,
+          visionAge,
+          visionMedia,
           goals: []
         };
         
@@ -439,17 +471,56 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
           
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Vision Statement</label>
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <label className="text-sm font-medium block mb-1">Age in Years</label>
+                  <Input 
+                    type="number" 
+                    min="1" 
+                    max="100" 
+                    value={visionAge}
+                    onChange={(e) => setVisionAge(parseInt(e.target.value) || 30)}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+              
+              <label className="text-sm font-medium block mt-4">Vision Statement</label>
               <div className="p-3 bg-white rounded border mb-3">
                 <p className="text-sm font-medium">Positive Vision Format</p>
-                <p className="text-sm italic mt-1">"When I am 30 years old, I will be..."</p>
+                <p className="text-sm italic mt-1">"When I am {visionAge} years old, I will be..."</p>
               </div>
               <Textarea
-                placeholder="When I am 30 years old, I will be..."
+                placeholder={`When I am ${visionAge} years old, I will be...`}
                 value={visionText}
                 onChange={(e) => setVisionText(e.target.value)}
                 className="min-h-[100px] text-lg"
               />
+            </div>
+            
+            <div className="space-y-2 mt-4">
+              <label className="text-sm font-medium block">Media URL (Optional)</label>
+              <p className="text-xs text-gray-500 mb-2">Add an image URL to represent this vision</p>
+              <Input
+                type="url"
+                placeholder="https://example.com/image.jpg"
+                value={visionMedia}
+                onChange={(e) => setVisionMedia(e.target.value)}
+                className="w-full"
+              />
+              {visionMedia && (
+                <div className="mt-2 border rounded overflow-hidden">
+                  <p className="text-xs bg-gray-100 p-2">Preview:</p>
+                  <img 
+                    src={visionMedia} 
+                    alt="Vision media preview" 
+                    className="max-h-[150px] object-contain mx-auto p-2"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://placehold.co/400x300/ebf5ff/6b7280/?text=Invalid+Image+URL";
+                    }}
+                  />
+                </div>
+              )}
             </div>
             {/* Vision Suggestions */}
             {currentDomain && (

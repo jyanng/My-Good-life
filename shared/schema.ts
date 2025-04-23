@@ -123,6 +123,8 @@ export const domainPlans = pgTable("domain_plans", {
   planId: integer("plan_id").notNull(),
   domain: text("domain").notNull(),
   vision: text("vision"),
+  visionAge: integer("vision_age").default(30),
+  visionMedia: text("vision_media"),
   goals: jsonb("goals").default([]),
   completed: boolean("completed").default(false),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -132,6 +134,8 @@ export const insertDomainPlanSchema = createInsertSchema(domainPlans).pick({
   planId: true,
   domain: true,
   vision: true,
+  visionAge: true,
+  visionMedia: true,
   goals: true,
   completed: true,
 });
