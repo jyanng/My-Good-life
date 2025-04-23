@@ -9,9 +9,13 @@ import { Student, DomainPlan } from '@shared/schema';
 import VisionBoard from '@/components/vision-board/VisionBoard';
 import { useToast } from '@/hooks/use-toast';
 
-export default function VisionBoardPage() {
+interface VisionBoardPageProps {
+  studentId?: number;
+}
+
+export default function VisionBoardPage({ studentId }: VisionBoardPageProps) {
   const [, setLocation] = useLocation();
-  const [selectedStudentId, setSelectedStudentId] = useState<string>('');
+  const [selectedStudentId, setSelectedStudentId] = useState<string>(studentId ? studentId.toString() : '');
   const { toast } = useToast();
 
   // For demo purposes, assume we're logged in as facilitator ID 1

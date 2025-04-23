@@ -82,6 +82,9 @@ function Router() {
         <Route path="/case-studies" component={CaseStudies} />
         <Route path="/learning-center" component={LearningCenter} />
         <Route path="/progress-visualization" component={ProgressVisualization} />
+        <Route path="/vision-board/:studentId">
+          {params => <VisionBoard studentId={Number(params.studentId)} />}
+        </Route>
         <Route path="/vision-board" component={VisionBoard} />
         <Route component={NotFound} />
       </Switch>
