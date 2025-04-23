@@ -4,8 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DOMAINS } from '@/lib/constants';
 import { Badge } from '@/components/ui/badge';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { PlusIcon, PencilIcon, XIcon } from "lucide-react";
 import GoalItem from './GoalItem';
-import { DomainPlan, Student } from '@shared/schema';
+import { DomainPlan, Student, InsertDomainPlan } from '@shared/schema';
 
 type GoalType = {
   id: string;
