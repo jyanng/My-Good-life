@@ -154,14 +154,14 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     setVisionAge(30);
     setVisionText("When I am 30 years old, I will be ");
     
-    // Example media URL based on domain
+    // Example media URL based on domain - mix of images and videos for different domains
     const mediaSamples = {
       'safe': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
       'healthy': 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      'engaged': 'https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      'engaged': 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Example video URL (using YouTube embed)
       'connected': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
       'independent': 'https://images.unsplash.com/photo-1607748851687-ba9a10438621?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      'included': 'https://images.unsplash.com/photo-1517292987719-0369a794ec0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      'included': 'https://www.pexels.com/video/people-working-together-in-the-office-3205885/', // Example video URL (using Pexels)
     };
     
     setVisionMedia(mediaSamples[domainId as keyof typeof mediaSamples] || '');
@@ -754,7 +754,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={isAddingVision || isEditingVision} onOpenChange={(open) => {
         if (!open) closeVisionDialog();
       }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {isAddingVision ? 'Add Vision Statement' : 'Edit Vision Statement'}
@@ -805,14 +805,51 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
               />
               {visionMedia && (
                 <div className="mt-2 border rounded overflow-hidden">
-                  <img 
-                    src={visionMedia} 
-                    alt="Vision media preview" 
-                    className="max-h-[120px] object-contain mx-auto p-2"
-                    onError={(e) => {
-                      e.currentTarget.src = "https://placehold.co/400x300/ebf5ff/6b7280/?text=Invalid+Image+URL";
-                    }}
-                  />
+                  {visionMedia.includes('youtube.com') || visionMedia.includes('youtu.be') ? (
+                    // Handle YouTube videos
+                    <iframe 
+                      src={visionMedia}
+                      title="Vision video preview"
+                      className="w-full h-[200px]"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  ) : visionMedia.includes('vimeo.com') ? (
+                    // Handle Vimeo videos
+                    <iframe 
+                      src={visionMedia}
+                      title="Vision video preview"
+                      className="w-full h-[200px]"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  ) : visionMedia.includes('pexels.com/video') ? (
+                    // Handle Pexels video links - show a clickable link
+                    <div className="p-4 text-center">
+                      <a 
+                        href={visionMedia} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline flex flex-col items-center"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-2">
+                          <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        Click to view video on Pexels
+                      </a>
+                    </div>
+                  ) : (
+                    // Default to image
+                    <img 
+                      src={visionMedia} 
+                      alt="Vision media preview" 
+                      className="max-h-[160px] object-contain mx-auto p-2"
+                      onError={(e) => {
+                        e.currentTarget.src = "https://placehold.co/400x300/ebf5ff/6b7280/?text=Invalid+Image+URL";
+                      }}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -873,7 +910,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       
       {/* Share Dialog */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Share Vision Board</DialogTitle>
             <DialogDescription>
@@ -1029,14 +1066,51 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                           <div className="mt-1 bg-white/20 p-2 rounded shadow-inner border border-white/30">
                             {domainVisionMedia && isPresentationMode && (
                               <div className="mb-3 rounded overflow-hidden">
-                                <img 
-                                  src={domainVisionMedia} 
-                                  alt={`Vision media for ${domain.name}`}
-                                  className="w-full h-36 object-cover"
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                  }} 
-                                />
+                                {domainVisionMedia.includes('youtube.com') || domainVisionMedia.includes('youtu.be') ? (
+                                  // Handle YouTube videos
+                                  <iframe 
+                                    src={domainVisionMedia}
+                                    title={`${domain.name} vision video`}
+                                    className="w-full h-36"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                  ></iframe>
+                                ) : domainVisionMedia.includes('vimeo.com') ? (
+                                  // Handle Vimeo videos
+                                  <iframe 
+                                    src={domainVisionMedia}
+                                    title={`${domain.name} vision video`}
+                                    className="w-full h-36"
+                                    allow="autoplay; fullscreen; picture-in-picture"
+                                    allowFullScreen
+                                  ></iframe>
+                                ) : domainVisionMedia.includes('pexels.com/video') ? (
+                                  // Handle Pexels video links - show a clickable link
+                                  <div className="p-2 text-center bg-white/10">
+                                    <a 
+                                      href={domainVisionMedia} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="text-white hover:underline flex flex-col items-center"
+                                    >
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-1">
+                                        <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                                      </svg>
+                                      View Video
+                                    </a>
+                                  </div>
+                                ) : (
+                                  // Default to image
+                                  <img 
+                                    src={domainVisionMedia} 
+                                    alt={`Vision media for ${domain.name}`}
+                                    className="w-full h-36 object-cover"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }} 
+                                  />
+                                )}
                               </div>
                             )}
                             <p className={`${isPresentationMode ? 'text-base' : 'text-sm'} font-medium leading-snug ${viewMode === 'list' && !isPresentationMode ? 'line-clamp-3' : ''}`}>
