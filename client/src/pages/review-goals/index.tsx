@@ -267,133 +267,67 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
         </Alert>
       </div>
 
-      {/* Display all unreframed visions at the top so they're easy to see */}
+      {/* Integrated reframing component */}
       <div className="mb-8">
         <UnreframedVisionsList 
-          goals={unreframedGoals.map(goal => ({ domain: goal.domain, current: goal.current }))} 
+          goals={unreframedGoals.map(goal => ({ 
+            domain: goal.domain, 
+            current: goal.current,
+            goalId: goal.goalId,
+            reframed: goal.reframed
+          }))} 
+          onSaveReframedVision={async (domain, goalId, current, reframed) => {
+            if (!goalId) return;
+            
+            // Find the goal index
+            const index = unreframedGoals.findIndex(g => g.goalId === goalId);
+            if (index === -1) return;
+            
+            // Update goal locally first
+            const updatedGoals = [...unreframedGoals];
+            updatedGoals[index].reframed = reframed;
+            setUnreframedGoals(updatedGoals);
+            
+            // Find the domain plan for this goal
+            const domainPlan = domainPlans?.find(dp => dp.domain === domain);
+            if (!domainPlan) return;
+            
+            // Get current goals and update the specific goal
+            const currentGoals = domainPlan.goals as any[] || [];
+            const updatedDomainGoals = currentGoals.map(g => {
+              if (g.id === goalId) {
+                return {
+                  ...g,
+                  reframedDescription: reframed,
+                  needsReframing: false,
+                  isReframed: true
+                };
+              }
+              return g;
+            });
+            
+            // Save updated goals
+            await updateDomainPlanMutation.mutateAsync({
+              domainPlanId: domainPlan.id,
+              goals: updatedDomainGoals
+            });
+          }}
         />
       </div>
 
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Reframe Vision Statements</CardTitle>
-            <CardDescription>
-              Transform each vision statement using the "When I am 30 years old, I will be..." format, focusing on abilities and positive outcomes
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {unreframedGoals.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-500">No unreframed vision statements found.</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <div className="p-4 mb-4 bg-amber-50 rounded-lg border border-amber-200">
-                  <p className="text-sm text-amber-800">
-                    <span className="font-medium">Reframing Instructions:</span> For each vision statement, rewrite it using the <span className="font-medium">"When I am 30 years old, I will be..."</span> format. Focus on abilities and positive outcomes instead of limitations.
-                  </p>
-                </div>
-                {unreframedGoals.map((goal, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <div className="flex items-center mb-3">
-                      <div className={`w-3 h-3 rounded-full ${getDomainColorClass(goal.domain)} mr-2`}></div>
-                      <span className="font-medium">{getDomainName(goal.domain)} Domain</span>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <Label className="text-sm text-gray-500">Current Vision (Needs Reframing)</Label>
-                      <div className="p-3 bg-red-50 rounded border border-red-100 mt-1 flex items-start">
-                        <div className="mr-2 mt-1">
-                          <AlertCircleIcon className="h-4 w-4 text-red-600" />
-                        </div>
-                        <div>
-                          <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Negative Focus</Badge>
-                          <p className="text-gray-800">"{goal.current}"</p>
-                          <p className="text-xs text-red-700 mt-2 italic">This vision focuses on what will be avoided or eliminated rather than positive capabilities.</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-2">
-                      <Label className="text-sm text-gray-500">Reframed Vision (Positive Focus)</Label>
-                      {isEditing[index] ? (
-                        <Textarea 
-                          value={goal.reframed}
-                          onChange={(e) => handleReframeGoal(index, e.target.value)}
-                          placeholder="When I am 30 years old, I will be... (rewrite the vision focusing on abilities, strengths, and positive outcomes)"
-                          className="mt-1"
-                          rows={4}
-                        />
-                      ) : (
-                        <div className="p-3 bg-blue-50 rounded border mt-1 min-h-[80px]">
-                          {goal.reframed ? (
-                            <div>
-                              <Badge variant="outline" className="mb-2 bg-green-50 text-green-700 border-green-200">Positive Focus</Badge>
-                              <p className="text-gray-800">{goal.reframed}</p>
-                            </div>
-                          ) : (
-                            <div className="flex flex-col items-center justify-center h-full py-4">
-                              <div className="mb-2 text-blue-500">
-                                <PencilIcon className="h-8 w-8 opacity-30" />
-                              </div>
-                              <p className="text-gray-400 italic text-center">This vision statement needs to be reframed</p>
-                              <p className="text-gray-400 text-xs text-center mt-1">Click "Add Reframed Vision" to continue</p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex justify-end space-x-2 mt-4">
-                      {isEditing[index] ? (
-                        <>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => toggleEditing(index)}
-                          >
-                            <RotateCcwIcon className="mr-1 h-4 w-4" /> Cancel
-                          </Button>
-                          <Button 
-                            size="sm"
-                            onClick={() => handleSaveReframedGoal(index)}
-                            disabled={updateDomainPlanMutation.isPending}
-                          >
-                            <SaveIcon className="mr-1 h-4 w-4" /> Save
-                          </Button>
-                        </>
-                      ) : (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => toggleEditing(index)}
-                        >
-                          <PencilIcon className="mr-1 h-4 w-4" /> 
-                          {goal.reframed ? "Edit" : "Add Reframed Vision"}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/")}
-            >
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleCompleteReview}
-              disabled={updateAlertMutation.isPending || unreframedGoals.some(g => !g.reframed.trim())}
-            >
-              <CheckCircle2Icon className="mr-2 h-4 w-4" /> Complete Review
-            </Button>
-          </CardFooter>
-        </Card>
+      <div className="text-right space-x-4 mb-8">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate("/")}
+        >
+          Cancel and Return to Dashboard
+        </Button>
+        <Button 
+          onClick={handleCompleteReview}
+          disabled={updateAlertMutation.isPending || unreframedGoals.some(g => !g.reframed.trim())}
+        >
+          <CheckCircle2Icon className="mr-2 h-4 w-4" /> Complete All Reframing
+        </Button>
       </div>
       
 
