@@ -153,7 +153,18 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     // Use a vision template to guide the user
     setVisionAge(30);
     setVisionText("When I am 30 years old, I will be ");
-    setVisionMedia('');
+    
+    // Example media URL based on domain
+    const mediaSamples = {
+      'safe': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      'healthy': 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      'engaged': 'https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      'connected': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      'independent': 'https://images.unsplash.com/photo-1607748851687-ba9a10438621?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      'included': 'https://images.unsplash.com/photo-1517292987719-0369a794ec0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+    };
+    
+    setVisionMedia(mediaSamples[domainId as keyof typeof mediaSamples] || '');
     setIsAddingVision(true);
   };
 
@@ -1101,7 +1112,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={isAddingGoal || isEditingGoal} onOpenChange={(open) => {
         if (!open) closeGoalDialog();
       }}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
               {isAddingGoal ? 'Add New Goal' : 'Edit Goal'}
