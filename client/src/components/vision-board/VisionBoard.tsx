@@ -121,7 +121,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   // Create domain plan mutation
   const createDomainPlanMutation = useMutation({
     mutationFn: (newDomainPlan: Partial<InsertDomainPlan>) => {
-      return apiRequest<any>('/api/domain-plans', 'POST', newDomainPlan);
+      return apiRequest('POST', '/api/domain-plans', newDomainPlan);
     },
     onSuccess: () => {
       toast({
@@ -144,7 +144,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   // Update domain plan mutation
   const updateDomainPlanMutation = useMutation({
     mutationFn: ({ id, data }: { id: number, data: { vision: string | null } }) => {
-      return apiRequest<any>(`/api/domain-plans/${id}`, 'PATCH', data);
+      return apiRequest('PATCH', `/api/domain-plans/${id}`, data);
     },
     onSuccess: () => {
       toast({
