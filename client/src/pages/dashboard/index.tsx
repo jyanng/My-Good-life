@@ -98,7 +98,7 @@ export default function Dashboard() {
       
       {/* Footer */}
       <footer className="mt-8 text-center text-gray-500 text-sm pb-8">
-        <p>© 2023 GoodLife Transition Portal. All rights reserved.</p>
+        <p>© 2023 MyGoodLife Transition Portal. All rights reserved.</p>
       </footer>
     </div>
   );
