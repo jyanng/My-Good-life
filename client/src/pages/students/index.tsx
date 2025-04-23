@@ -336,7 +336,7 @@ export default function Students() {
                     <FormItem>
                       <FormLabel>School</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Admiral Hill RC" {...field} value={field.value || ''} />
+                        <Input placeholder="e.g. RC Admiral Hill" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
