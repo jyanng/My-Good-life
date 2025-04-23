@@ -275,70 +275,102 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Examples of unreframed visions embedded inside the card */}
-            <div className="mb-6 border rounded-lg p-4 bg-amber-50/50 border-amber-200">
-              <h3 className="text-lg font-medium mb-3">Common Unreframed Visions - Examples</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-                {/* Safe Domain */}
-                <div className="border rounded-lg p-3 bg-blue-50/30">
-                  <div className="flex items-center mb-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
-                    <span className="font-medium">Safe Domain</span>
-                  </div>
-                  <div className="p-3 bg-red-50 rounded border border-red-100">
-                    <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                    <p className="italic">"When I am 30 years old, I will not struggle with loud noises in public places"</p>
-                  </div>
-                </div>
-                
-                {/* Connected Domain */}
-                <div className="border rounded-lg p-3 bg-pink-50/30">
-                  <div className="flex items-center mb-2">
-                    <div className="w-3 h-3 rounded-full bg-pink-500 mr-2"></div>
-                    <span className="font-medium">Connected Domain</span>
-                  </div>
-                  <div className="p-3 bg-red-50 rounded border border-red-100">
-                    <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                    <p className="italic">"When I am 30 years old, I will avoid getting overwhelmed in group social situations"</p>
-                  </div>
-                </div>
-                
-                {/* Independent Domain */}
-                <div className="border rounded-lg p-3 bg-purple-50/30">
-                  <div className="flex items-center mb-2">
-                    <div className="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
-                    <span className="font-medium">Independent Domain</span>
-                  </div>
-                  <div className="p-3 bg-red-50 rounded border border-red-100">
-                    <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                    <p className="italic">"When I am 30 years old, I won't be dependent on others for daily living tasks"</p>
-                  </div>
-                </div>
-                
-                {/* Healthy Domain */}
-                <div className="border rounded-lg p-3 bg-green-50/30">
-                  <div className="flex items-center mb-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                    <span className="font-medium">Healthy Domain</span>
-                  </div>
-                  <div className="p-3 bg-red-50 rounded border border-red-100">
-                    <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
-                    <p className="italic">"When I am 30 years old, I won't have issues with picky eating habits"</p>
-                  </div>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mt-2">These examples use negative language focused on limitations. They need to be reframed to focus on abilities and positive outcomes.</p>
-            </div>
-            
-            <Separator className="my-6" />
-            
             {unreframedGoals.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-500">No unreframed vision statements found.</p>
               </div>
             ) : (
               <div className="space-y-6">
-                <h3 className="text-lg font-medium mb-2">Student's Visions to Reframe</h3>
+                <div className="mb-6 border rounded-lg p-4 bg-amber-50/50 border-amber-200">
+                  <h3 className="text-lg font-medium mb-3">All Vision Statements That Need Reframing</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                    {/* Safe Domain */}
+                    <div className="border rounded-lg p-3 bg-blue-50/30">
+                      <div className="flex items-center mb-2">
+                        <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                        <span className="font-medium">Safe Domain</span>
+                      </div>
+                      <div className="flex flex-col space-y-2">
+                        <div className="p-3 bg-red-50 rounded border border-red-100">
+                          <Badge variant="outline" className="mb-1 bg-red-50 text-red-700 border-red-200">Current</Badge>
+                          <p className="text-sm">"Will not struggle with loud noises in public places"</p>
+                        </div>
+                        <div className="p-3 bg-red-50 rounded border border-red-100">
+                          <Badge variant="outline" className="mb-1 bg-red-50 text-red-700 border-red-200">Current</Badge>
+                          <p className="text-sm">"Will stop having meltdowns during transitions between activities"</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Connected Domain */}
+                    <div className="border rounded-lg p-3 bg-pink-50/30">
+                      <div className="flex items-center mb-2">
+                        <div className="w-3 h-3 rounded-full bg-pink-500 mr-2"></div>
+                        <span className="font-medium">Connected Domain</span>
+                      </div>
+                      <div className="p-3 bg-red-50 rounded border border-red-100">
+                        <Badge variant="outline" className="mb-1 bg-red-50 text-red-700 border-red-200">Current</Badge>
+                        <p className="text-sm">"Will avoid getting overwhelmed in group social situations"</p>
+                      </div>
+                    </div>
+                    
+                    {/* Independent Domain */}
+                    <div className="border rounded-lg p-3 bg-purple-50/30">
+                      <div className="flex items-center mb-2">
+                        <div className="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+                        <span className="font-medium">Independent Domain</span>
+                      </div>
+                      <div className="flex flex-col space-y-2">
+                        <div className="p-3 bg-red-50 rounded border border-red-100">
+                          <Badge variant="outline" className="mb-1 bg-red-50 text-red-700 border-red-200">Current</Badge>
+                          <p className="text-sm">"Won't be dependent on others for daily living tasks"</p>
+                        </div>
+                        <div className="p-3 bg-red-50 rounded border border-red-100">
+                          <Badge variant="outline" className="mb-1 bg-red-50 text-red-700 border-red-200">Current</Badge>
+                          <p className="text-sm">"Will not get confused when following complex instructions"</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Healthy Domain */}
+                    <div className="border rounded-lg p-3 bg-green-50/30">
+                      <div className="flex items-center mb-2">
+                        <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                        <span className="font-medium">Healthy Domain</span>
+                      </div>
+                      <div className="flex flex-col space-y-2">
+                        <div className="p-3 bg-red-50 rounded border border-red-100">
+                          <Badge variant="outline" className="mb-1 bg-red-50 text-red-700 border-red-200">Current</Badge>
+                          <p className="text-sm">"Won't have issues with picky eating habits"</p>
+                        </div>
+                        <div className="p-3 bg-red-50 rounded border border-red-100">
+                          <Badge variant="outline" className="mb-1 bg-red-50 text-red-700 border-red-200">Current</Badge>
+                          <p className="text-sm">"Will stop feeling anxious about medical appointments"</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Engaged Domain */}
+                    <div className="border rounded-lg p-3 bg-yellow-50/30">
+                      <div className="flex items-center mb-2">
+                        <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                        <span className="font-medium">Engaged Domain</span>
+                      </div>
+                      <div className="p-3 bg-red-50 rounded border border-red-100">
+                        <Badge variant="outline" className="mb-1 bg-red-50 text-red-700 border-red-200">Current</Badge>
+                        <p className="text-sm">"Will not get bored or disinterested in activities quickly"</p>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-4">
+                    <span className="font-medium">Why These Need Reframing:</span> These vision statements use negative language and focus on limitations. 
+                    They need to be reframed using the "When I am 30 years old, I will be..." format to focus on abilities and positive outcomes.
+                  </p>
+                </div>
+                
+                <Separator className="my-6" />
+                
+                <h3 className="text-lg font-medium mb-2">Reframe Individual Vision Statements</h3>
                 {unreframedGoals.map((goal, index) => (
                   <div key={index} className="border rounded-lg p-4">
                     <div className="flex items-center mb-3">
