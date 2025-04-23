@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { PlusIcon, PencilIcon, XIcon, WandIcon, LightbulbIcon } from "lucide-react";
+import { PlusIcon, PencilIcon, XIcon, WandIcon, LightbulbIcon, GridIcon, ColumnsIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -35,6 +35,8 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   const [currentDomain, setCurrentDomain] = useState<string | null>(null);
   const [visionText, setVisionText] = useState('');
   const [removingDomain, setRemovingDomain] = useState<string | null>(null);
+  // View mode toggle for cascading or side-by-side
+  const [viewMode, setViewMode] = useState<'grid' | 'columns'>('grid');
   
   // Convert the domain plans into a format suitable for the vision board
   const initialGoals = domainPlans.flatMap(plan => {
@@ -387,6 +389,28 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Vision Board for {student.name}</h2>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center bg-gray-100 p-1 rounded-lg">
+            <Button
+              variant={viewMode === 'grid' ? "default" : "ghost"}
+              size="sm"
+              className="px-3"
+              onClick={() => setViewMode('grid')}
+            >
+              <GridIcon className="h-4 w-4 mr-1" />
+              <span>Grid</span>
+            </Button>
+            <Button
+              variant={viewMode === 'columns' ? "default" : "ghost"}
+              size="sm"
+              className="px-3"
+              onClick={() => setViewMode('columns')}
+            >
+              <ColumnsIcon className="h-4 w-4 mr-1" />
+              <span>Columns</span>
+            </Button>
+          </div>
+        </div>
       </div>
       
       <Alert className="bg-blue-50 border-blue-200">
@@ -500,7 +524,13 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       </Dialog>
       
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={`grid grid-cols-1 ${
+          viewMode === 'grid' 
+            ? 'md:grid-cols-2 lg:grid-cols-3' 
+            : viewMode === 'columns' 
+              ? 'md:grid-cols-2 lg:grid-cols-6' 
+              : 'md:grid-cols-2 lg:grid-cols-3'
+        } gap-4`}>
           {DOMAINS.map(domain => {
             const domainPlan = domainPlans.find(plan => plan.domain === domain.id);
             const domainVision = domainPlan?.vision || '';
@@ -509,12 +539,14 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
               <Droppable droppableId={domain.id} key={domain.id}>
                 {(provided, snapshot) => (
                   <Card 
-                    className={`${snapshot.isDraggingOver ? 'bg-gray-50' : ''} h-full`}
+                    className={`${snapshot.isDraggingOver ? 'bg-gray-50' : ''} h-full ${
+                      viewMode === 'columns' ? 'lg:col-span-1' : ''
+                    }`}
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    <CardHeader className={`${domain.bgClass} text-white`}>
-                      <CardTitle className="flex justify-between items-center">
+                    <CardHeader className={`${domain.bgClass} text-white ${viewMode === 'columns' ? 'p-3' : ''}`}>
+                      <CardTitle className={`flex justify-between items-center ${viewMode === 'columns' ? 'text-base' : ''}`}>
                         <span>{domain.name}</span>
                         <Badge variant="outline" className="bg-white text-gray-800 border-white">
                           {goalsByDomain[domain.id]?.length || 0} goals
@@ -557,7 +589,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                         </div>
                         {domainVision ? (
                           <div className="mt-1 bg-white/20 p-2 rounded shadow-inner border border-white/30">
-                            <p className="text-sm font-medium leading-snug">
+                            <p className={`text-sm font-medium leading-snug ${viewMode === 'columns' ? 'line-clamp-4' : ''}`}>
                               {domainVision.startsWith("When I am 30 years old,") ? 
                                 domainVision : 
                                 `When I am 30 years old, I will be ${domainVision.toLowerCase().startsWith("i will") ? domainVision.substring(7) : domainVision}`
@@ -571,7 +603,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                         )}
                       </div>
                     </CardHeader>
-                    <CardContent className="min-h-[200px]">
+                    <CardContent className={`${viewMode === 'columns' ? 'p-2 min-h-[150px]' : 'min-h-[200px]'}`}>
                       {goalsByDomain[domain.id]?.length > 0 ? (
                         <div className="space-y-2">
                           {goalsByDomain[domain.id].map((goal, index) => (
