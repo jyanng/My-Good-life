@@ -372,7 +372,7 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
                   <li>Focus on <span className="font-medium text-blue-700">abilities and strengths</span>, rather than limitations</li>
                   <li>Use <span className="font-medium text-blue-700">positive and aspirational language</span> that inspires growth</li>
                   <li>Create visions that are <span className="font-medium text-blue-700">specific and meaningful</span> to the student</li>
-                  <li>Include <span className="font-medium text-blue-700">measurable elements</span> that can track progress</li>
+                  <li>Maintain a <span className="font-medium text-blue-700">long-term perspective</span> that looks toward adult life</li>
                   <li>Reflect the student's <span className="font-medium text-blue-700">personal interests and values</span></li>
                   <li>Consider <span className="font-medium text-blue-700">cultural context and family perspectives</span></li>
                 </ul>
