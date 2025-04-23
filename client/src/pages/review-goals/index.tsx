@@ -360,6 +360,88 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
           </CardFooter>
         </Card>
       </div>
+      
+      {/* Show added examples of visions that need reframing */}
+      <div className="mt-8 mb-6">
+        <h2 className="text-xl font-semibold mb-3">Examples of Unreframed Visions</h2>
+        <Card>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Safe Domain */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center mb-2">
+                  <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                  <span className="font-medium">Safe Domain</span>
+                </div>
+                <div className="p-3 bg-red-50 rounded border">
+                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+                  <p>"Will not struggle with loud noises in public places"</p>
+                </div>
+              </div>
+              
+              {/* Connected Domain */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center mb-2">
+                  <div className="w-3 h-3 rounded-full bg-pink-500 mr-2"></div>
+                  <span className="font-medium">Connected Domain</span>
+                </div>
+                <div className="p-3 bg-red-50 rounded border">
+                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+                  <p>"Will avoid getting overwhelmed in group social situations"</p>
+                </div>
+              </div>
+              
+              {/* Independent Domain */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center mb-2">
+                  <div className="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+                  <span className="font-medium">Independent Domain</span>
+                </div>
+                <div className="p-3 bg-red-50 rounded border">
+                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+                  <p>"Won't be dependent on others for daily living tasks"</p>
+                </div>
+              </div>
+              
+              {/* Healthy Domain */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center mb-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                  <span className="font-medium">Healthy Domain</span>
+                </div>
+                <div className="p-3 bg-red-50 rounded border">
+                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+                  <p>"Won't have issues with picky eating habits"</p>
+                </div>
+              </div>
+              
+              {/* Engaged Domain */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center mb-2">
+                  <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                  <span className="font-medium">Engaged Domain</span>
+                </div>
+                <div className="p-3 bg-red-50 rounded border">
+                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+                  <p>"Will not get bored or disinterested in activities quickly"</p>
+                </div>
+              </div>
+              
+              {/* Included Domain */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center mb-2">
+                  <div className="w-3 h-3 rounded-full bg-orange-500 mr-2"></div>
+                  <span className="font-medium">Included Domain</span>
+                </div>
+                <div className="p-3 bg-red-50 rounded border">
+                  <Badge variant="outline" className="mb-2 bg-red-50 text-red-700 border-red-200">Needs Reframing</Badge>
+                  <p>"Will stop feeling left out in group decision-making"</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Principles for Envisioning</h2>
