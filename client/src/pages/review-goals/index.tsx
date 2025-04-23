@@ -268,13 +268,11 @@ export default function ReviewGoals({ studentId, alertId }: ReviewGoalsProps) {
       </div>
 
       {/* Display all unreframed visions at the top so they're easy to see */}
-      {unreframedGoals.length > 0 && (
-        <div className="mb-8">
-          <UnreframedVisionsList 
-            goals={unreframedGoals.map(goal => ({ domain: goal.domain, current: goal.current }))} 
-          />
-        </div>
-      )}
+      <div className="mb-8">
+        <UnreframedVisionsList 
+          goals={unreframedGoals.map(goal => ({ domain: goal.domain, current: goal.current }))} 
+        />
+      </div>
 
       <div className="space-y-6">
         <Card>
