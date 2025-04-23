@@ -89,21 +89,26 @@ export default function GoalEditor({
   });
 
   // Filter templates by domain
-  const domainTemplates = templates.filter((template: any) => template.domain === domainId);
+  const domainTemplates = Array.isArray(templates) 
+    ? templates.filter((template: any) => template.domain === domainId)
+    : [];
 
   // Handle template selection
   const handleTemplateSelect = (templateId: string) => {
     const id = parseInt(templateId);
-    const template = templates.find((t: any) => t.id === id);
     
-    if (template) {
-      setFormData({
-        ...formData,
-        description: template.description,
-        category: template.category,
-        templateId: template.id,
-        estimatedDuration: template.estimatedDuration
-      });
+    if (Array.isArray(templates)) {
+      const template = templates.find((t: any) => t.id === id);
+      
+      if (template) {
+        setFormData({
+          ...formData,
+          description: template.description,
+          category: template.category,
+          templateId: template.id,
+          estimatedDuration: template.estimatedDuration
+        });
+      }
     }
   };
   
@@ -213,12 +218,16 @@ export default function GoalEditor({
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                     <span>Loading categories...</span>
                   </div>
-                ) : (
+                ) : Array.isArray(categories) && categories.length > 0 ? (
                   categories.map((category: any) => (
                     <SelectItem key={category.id} value={category.name.toLowerCase()}>
                       {category.name}
                     </SelectItem>
                   ))
+                ) : (
+                  <div className="p-2 text-center text-sm text-gray-500">
+                    No categories available
+                  </div>
                 )}
               </SelectContent>
             </Select>
