@@ -23,7 +23,17 @@ import {
   PlusIcon, 
   TrashIcon, 
   CheckIcon,
-  SaveIcon
+  SaveIcon,
+  ShieldCheckIcon,
+  HeartPulseIcon,
+  ActivityIcon,
+  UsersIcon,
+  LaptopIcon,
+  MegaphoneIcon,
+  SparklesIcon,
+  WandIcon,
+  LightbulbIcon,
+  TargetIcon
 } from "lucide-react";
 import { DOMAINS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
@@ -1094,102 +1104,256 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
                   {DOMAINS.map((domain) => (
                     <TabsContent key={domain.id} value={domain.id} className="space-y-4 pt-4">
                       <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center">
-                            <div className={`w-4 h-4 rounded-full ${domain.bgClass} mr-2`}></div>
-                            {domain.name} Domain Vision
-                          </CardTitle>
-                          <CardDescription>Create a vision statement for the {domain.name} domain</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <Label htmlFor={`vision-${domain.id}`}>Vision Statement</Label>
-                            <Textarea 
-                              id={`vision-${domain.id}`}
-                              placeholder={`Example: I will feel ${domain.name.toLowerCase()} in my community and learning environments`}
-                              value={domainVisions[domain.id]?.vision || ''}
-                              onChange={(e) => handleVisionChange(domain.id, e.target.value)}
-                            />
-                            
-                            <div className="space-y-4 mt-6">
-                              <div className="flex items-center justify-between">
-                                <Label htmlFor={`goals-${domain.id}`}>Goals</Label>
-                                <span className="text-sm text-gray-500">
-                                  {domainVisions[domain.id]?.goals?.length || 0} goals
+                        <CardHeader className={`border-b ${domain.lightBgClass}`}>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <CardTitle className="flex items-center">
+                                <div className={`w-5 h-5 rounded-full ${domain.bgClass} mr-2 flex items-center justify-center text-white text-xs font-bold`}>
+                                  {domain.name.charAt(0)}
+                                </div>
+                                <span className={`bg-gradient-to-r from-${domain.id === 'safe' ? 'red' : domain.id === 'healthy' ? 'emerald' : domain.id === 'engaged' ? 'amber' : domain.id === 'connected' ? 'blue' : domain.id === 'independent' ? 'purple' : 'pink'}-600 to-${domain.id === 'safe' ? 'red' : domain.id === 'healthy' ? 'emerald' : domain.id === 'engaged' ? 'amber' : domain.id === 'connected' ? 'blue' : domain.id === 'independent' ? 'purple' : 'pink'}-400 bg-clip-text text-transparent`}>
+                                  {domain.name} Domain Vision
                                 </span>
+                              </CardTitle>
+                              <CardDescription>Imagine your ideal future in the {domain.name} domain</CardDescription>
+                            </div>
+                            
+                            <div className={`p-2 rounded-full ${domain.lightBgClass}`}>
+                              {domain.id === 'safe' && <ShieldCheckIcon className="h-5 w-5 text-red-600" />}
+                              {domain.id === 'healthy' && <HeartPulseIcon className="h-5 w-5 text-emerald-600" />}
+                              {domain.id === 'engaged' && <ActivityIcon className="h-5 w-5 text-amber-600" />}
+                              {domain.id === 'connected' && <UsersIcon className="h-5 w-5 text-blue-600" />}
+                              {domain.id === 'independent' && <LaptopIcon className="h-5 w-5 text-purple-600" />}
+                              {domain.id === 'included' && <MegaphoneIcon className="h-5 w-5 text-pink-600" />}
+                            </div>
+                          </div>
+                        </CardHeader>
+                        
+                        <CardContent className="p-6">
+                          <div className="space-y-6">
+                            {/* Vision Building Guide */}
+                            <div className={`p-4 rounded-lg border ${domain.lightBgClass} mb-4`}>
+                              <h3 className={`text-lg font-medium mb-2 ${domain.textClass}`}>Envisioning Guide</h3>
+                              <p className="text-sm mb-3">When creating your vision, think about:</p>
+                              <ul className="list-disc pl-5 space-y-1 text-sm">
+                                <li>What does being {domain.name.toLowerCase()} look like for you at age 30?</li>
+                                <li>What positive experiences would you like to have?</li>
+                                <li>How would your life be improved in this domain?</li>
+                                <li>What strengths can you build upon?</li>
+                              </ul>
+                              
+                              <div className="mt-3 p-3 bg-white rounded border">
+                                <p className="text-sm font-medium">Positive Vision Format</p>
+                                <p className="text-sm italic mt-1">"When I am 30 years old, I will be..."</p>
+                              </div>
+                            </div>
+                            
+                            {/* Vision Builder */}
+                            <div>
+                              <Label htmlFor={`vision-${domain.id}`} className="text-lg font-medium">
+                                My {domain.name} Vision
+                              </Label>
+                              
+                              {/* Vision Statement Builder */}
+                              <div className="mt-2 mb-4">
+                                <Textarea 
+                                  id={`vision-${domain.id}`}
+                                  placeholder={`When I am 30 years old, I will be...`}
+                                  value={domainVisions[domain.id]?.vision || ''}
+                                  onChange={(e) => handleVisionChange(domain.id, e.target.value)}
+                                  className="min-h-[100px] text-lg"
+                                />
                               </div>
                               
-                              <div className="flex items-center gap-2">
-                                <Input 
-                                  id={`goals-${domain.id}`}
-                                  placeholder="Add a goal for this domain..."
-                                  value={currentGoalInput}
-                                  onChange={(e) => setCurrentGoalInput(e.target.value)}
-                                  onKeyDown={(e) => e.key === "Enter" && handleAddGoal(domain.id)}
-                                />
-                                <Button type="button" onClick={() => handleAddGoal(domain.id)}>
-                                  <PlusIcon className="h-4 w-4" />
+                              {/* Vision Prompts */}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                                <Button 
+                                  variant="outline" 
+                                  className="justify-start text-left h-auto py-2 px-3"
+                                  onClick={() => {
+                                    if (domain.id === 'safe') {
+                                      handleVisionChange(domain.id, "When I am 30 years old, I will be confident navigating different environments and managing my feelings of security. I will have strategies to help me feel calm and safe when facing new situations.");
+                                    } else if (domain.id === 'healthy') {
+                                      handleVisionChange(domain.id, "When I am 30 years old, I will be maintaining good physical and mental health through activities I enjoy. I will have a balanced lifestyle that includes regular exercise, nutritious meals, and time to relax.");
+                                    } else if (domain.id === 'engaged') {
+                                      handleVisionChange(domain.id, "When I am 30 years old, I will be actively participating in meaningful activities that match my interests and abilities. I will be pursuing hobbies and work that I find fulfilling.");
+                                    } else if (domain.id === 'connected') {
+                                      handleVisionChange(domain.id, "When I am 30 years old, I will be building and maintaining positive relationships with friends, family, and others in my community. I will have a support network of people who understand and appreciate me.");
+                                    } else if (domain.id === 'independent') {
+                                      handleVisionChange(domain.id, "When I am 30 years old, I will be making my own choices and managing daily tasks with the right amount of support. I will have skills that help me live as independently as possible.");
+                                    } else if (domain.id === 'included') {
+                                      handleVisionChange(domain.id, "When I am 30 years old, I will be expressing my thoughts and needs effectively. I will be included in decisions that affect me and actively participating in my community.");
+                                    }
+                                  }}
+                                >
+                                  <SparklesIcon className={`h-5 w-5 mr-2 ${domain.textClass}`} />
+                                  <div>
+                                    <p className="font-medium">{getDomainPrompt(domain.id).title}</p>
+                                    <p className="text-xs text-gray-500 mt-0.5">Click to use this suggestion</p>
+                                  </div>
+                                </Button>
+                                
+                                <Button 
+                                  variant="outline" 
+                                  className="justify-start text-left h-auto py-2 px-3"
+                                  onClick={() => {
+                                    const alternativePrompts = {
+                                      safe: "When I am 30 years old, I will be confident in identifying and addressing potential safety concerns in my home and community. I will have supportive people I can trust and rely on.",
+                                      healthy: "When I am 30 years old, I will be taking care of my health with regular checkups and activities that make me feel good. I will be managing stress in positive ways.",
+                                      engaged: "When I am 30 years old, I will be contributing my skills and talents to activities I care about. I will be exploring new interests and continuing to learn.",
+                                      connected: "When I am 30 years old, I will be maintaining meaningful connections with others through effective communication. I will be participating in social activities that I enjoy.",
+                                      independent: "When I am 30 years old, I will be confidently handling transportation, finances, and daily living tasks. I will be advocating for the support I need when necessary.",
+                                      included: "When I am 30 years old, I will be valued for my unique contributions to my community. I will be participating in decisions about my life and future goals."
+                                    };
+                                    handleVisionChange(domain.id, alternativePrompts[domain.id]);
+                                  }}
+                                >
+                                  <WandIcon className={`h-5 w-5 mr-2 ${domain.textClass}`} />
+                                  <div>
+                                    <p className="font-medium">{getDomainPrompt(domain.id).alternative}</p>
+                                    <p className="text-xs text-gray-500 mt-0.5">Click to use this suggestion</p>
+                                  </div>
                                 </Button>
                               </div>
                               
-                              <div className="space-y-2">
-                                {domainVisions[domain.id]?.goals?.map((goal, index) => (
-                                  <div 
-                                    key={index} 
-                                    className={`flex items-center justify-between p-3 rounded ${
-                                      goal.status === 'completed' 
-                                        ? 'bg-green-50 border border-green-200' 
-                                        : goal.status === 'in_progress' 
-                                          ? 'bg-amber-50 border border-amber-200' 
-                                          : 'bg-gray-50 border border-gray-200'
-                                    }`}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      <Button 
-                                        variant="ghost" 
-                                        size="sm" 
-                                        className="h-6 w-6 p-0 rounded-full" 
-                                        onClick={() => handleToggleGoalStatus(domain.id, index)}
-                                      >
-                                        {goal.status === 'completed' ? (
-                                          <CheckIcon className="h-4 w-4 text-green-600" />
-                                        ) : goal.status === 'in_progress' ? (
-                                          <div className="h-4 w-4 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
-                                        ) : (
-                                          <div className="h-4 w-4 rounded-full border-2 border-gray-300" />
-                                        )}
-                                      </Button>
-                                      <span className={goal.status === 'completed' ? 'line-through text-green-800' : ''}>
-                                        {goal.description}
-                                      </span>
-                                    </div>
-                                    <div className="flex items-center">
-                                      <Badge variant="outline" className="mr-2">
-                                        {goal.status === 'completed' 
-                                          ? 'Completed' 
-                                          : goal.status === 'in_progress' 
-                                            ? 'In Progress' 
-                                            : 'Not Started'
-                                        }
-                                      </Badge>
-                                      <Button 
-                                        variant="ghost" 
-                                        size="sm" 
-                                        onClick={() => handleRemoveGoal(domain.id, index)}
-                                      >
-                                        <TrashIcon className="h-4 w-4 text-gray-500" />
-                                      </Button>
-                                    </div>
+                              {/* Domain-Specific Vision Example */}
+                              <div className="mb-6 p-4 bg-white rounded-lg border border-dashed">
+                                <div className="flex items-start">
+                                  <LightbulbIcon className={`h-5 w-5 mr-2 mt-0.5 ${domain.textClass}`} />
+                                  <div>
+                                    <p className="text-sm font-medium mb-1">Vision Example</p>
+                                    <p className="text-sm italic">{getDomainExample(domain.id)}</p>
                                   </div>
-                                ))}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Goals Section - Enhanced with guidelines */}
+                            <div className="space-y-6 mt-8 pt-6 border-t">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <Label htmlFor={`goals-${domain.id}`} className="text-lg font-medium">Goals</Label>
+                                  <p className="text-sm text-gray-600 mt-1">Specific steps to achieve your vision</p>
+                                </div>
+                                <Badge variant="secondary" className="text-sm">
+                                  {domainVisions[domain.id]?.goals?.length || 0} goals
+                                </Badge>
+                              </div>
+                              
+                              {/* Goal Creation Tips */}
+                              <div className="bg-gray-50 p-4 rounded-lg text-sm">
+                                <p className="font-medium mb-2">Tips for creating effective goals:</p>
+                                <ul className="list-disc pl-5 space-y-1">
+                                  <li>Make goals specific and achievable</li>
+                                  <li>Focus on positive actions</li>
+                                  <li>Break down larger goals into smaller steps</li>
+                                </ul>
+                              </div>
+                              
+                              {/* Goal Input with better UI */}
+                              <div className="flex items-center gap-2">
+                                <Input 
+                                  id={`goals-${domain.id}`}
+                                  placeholder="Add a specific goal for this domain..."
+                                  value={currentGoalInput}
+                                  onChange={(e) => setCurrentGoalInput(e.target.value)}
+                                  onKeyDown={(e) => e.key === "Enter" && handleAddGoal(domain.id)}
+                                  className="flex-1"
+                                />
+                                <Button 
+                                  type="button" 
+                                  onClick={() => handleAddGoal(domain.id)}
+                                  className={domain.bgClass}
+                                >
+                                  <PlusIcon className="h-4 w-4 mr-1" /> Add Goal
+                                </Button>
+                              </div>
+                              
+                              {/* Goals List with enhanced UI */}
+                              <div className="space-y-3">
+                                {domainVisions[domain.id]?.goals?.length === 0 ? (
+                                  <div className="text-center py-6 border border-dashed rounded-lg">
+                                    <TargetIcon className="h-8 w-8 mx-auto text-gray-400 mb-2" />
+                                    <p className="text-gray-500">No goals added yet</p>
+                                    <p className="text-sm text-gray-400">Add specific steps to achieve your vision</p>
+                                  </div>
+                                ) : (
+                                  domainVisions[domain.id]?.goals?.map((goal, index) => (
+                                    <div 
+                                      key={index} 
+                                      className={`flex items-center justify-between p-4 rounded-lg ${
+                                        goal.status === 'completed' 
+                                          ? 'bg-green-50 border border-green-200' 
+                                          : goal.status === 'in_progress' 
+                                            ? 'bg-amber-50 border border-amber-200' 
+                                            : 'bg-gray-50 border border-gray-200'
+                                      }`}
+                                    >
+                                      <div className="flex items-center gap-3 flex-1">
+                                        <Button 
+                                          variant="ghost" 
+                                          size="sm" 
+                                          className={`h-7 w-7 p-0 rounded-full ${
+                                            goal.status === 'completed' 
+                                              ? 'bg-green-100'
+                                              : goal.status === 'in_progress'
+                                                ? 'bg-amber-100'
+                                                : 'bg-gray-200'
+                                          }`}
+                                          onClick={() => handleToggleGoalStatus(domain.id, index)}
+                                        >
+                                          {goal.status === 'completed' ? (
+                                            <CheckIcon className="h-4 w-4 text-green-600" />
+                                          ) : goal.status === 'in_progress' ? (
+                                            <div className="h-4 w-4 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+                                          ) : (
+                                            <div className="h-4 w-4 rounded-full border-2 border-gray-400" />
+                                          )}
+                                        </Button>
+                                        <span className={goal.status === 'completed' ? 'line-through text-green-800' : 'font-medium'}>
+                                          {goal.description}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <Badge variant="outline" className={`
+                                          ${goal.status === 'completed' 
+                                            ? 'border-green-200 bg-green-50 text-green-800' 
+                                            : goal.status === 'in_progress' 
+                                              ? 'border-amber-200 bg-amber-50 text-amber-800' 
+                                              : 'border-gray-200 bg-gray-50 text-gray-800'
+                                          }`}
+                                        >
+                                          {goal.status === 'completed' 
+                                            ? 'Completed' 
+                                            : goal.status === 'in_progress' 
+                                              ? 'In Progress' 
+                                              : 'Not Started'
+                                          }
+                                        </Badge>
+                                        <Button 
+                                          variant="ghost" 
+                                          size="sm" 
+                                          onClick={() => handleRemoveGoal(domain.id, index)}
+                                          className="text-gray-500 hover:text-red-500"
+                                        >
+                                          <TrashIcon className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ))
+                                )}
                               </div>
                             </div>
                           </div>
                         </CardContent>
-                        <CardFooter className="flex justify-end">
-                          <Button onClick={() => handleSaveDomainVision(domain.id)}>
+                        
+                        <CardFooter className="flex justify-end border-t p-4">
+                          <Button 
+                            onClick={() => handleSaveDomainVision(domain.id)}
+                            className={domain.bgClass}
+                          >
                             <SaveIcon className="mr-2 h-4 w-4" />
-                            Save {domain.name} Domain
+                            Save {domain.name} Domain Vision
                           </Button>
                         </CardFooter>
                       </Card>
