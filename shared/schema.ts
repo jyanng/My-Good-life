@@ -117,6 +117,45 @@ export const insertGoodLifePlanSchema = createInsertSchema(goodLifePlans).pick({
   progress: true,
 });
 
+// Goal Templates
+export const goalTemplates = pgTable("goal_templates", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull(),
+  domain: text("domain").notNull(),
+  difficulty: text("difficulty").default("medium"),
+  estimatedDuration: text("estimated_duration"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertGoalTemplateSchema = createInsertSchema(goalTemplates).pick({
+  title: true,
+  description: true,
+  category: true,
+  domain: true,
+  difficulty: true,
+  estimatedDuration: true,
+});
+
+// Goal Categories
+export const goalCategories = pgTable("goal_categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  color: text("color").notNull(),
+  icon: text("icon"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertGoalCategorySchema = createInsertSchema(goalCategories).pick({
+  name: true,
+  description: true,
+  color: true,
+  icon: true,
+});
+
 // Domain Plans
 export const domainPlans = pgTable("domain_plans", {
   id: serial("id").primaryKey(),
@@ -226,3 +265,9 @@ export type InsertLearningModule = z.infer<typeof insertLearningModuleSchema>;
 
 export type Alert = typeof alerts.$inferSelect;
 export type InsertAlert = z.infer<typeof insertAlertSchema>;
+
+export type GoalTemplate = typeof goalTemplates.$inferSelect;
+export type InsertGoalTemplate = z.infer<typeof insertGoalTemplateSchema>;
+
+export type GoalCategory = typeof goalCategories.$inferSelect;
+export type InsertGoalCategory = z.infer<typeof insertGoalCategorySchema>;
