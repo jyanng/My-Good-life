@@ -1,11 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -47,23 +40,23 @@ type GoalType = {
 };
 
 interface GoalEditorProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (goal: GoalType) => void;
+  isEditing: boolean;
   goal?: GoalType; // If provided, we're editing an existing goal
   domainId: string;
+  onSave: (goal: GoalType) => void;
+  onCancel: () => void;
   allGoals?: GoalType[];
 }
 
 export default function GoalEditor({
-  isOpen,
-  onClose,
-  onSave,
+  isEditing,
   goal,
   domainId,
+  onSave,
+  onCancel,
   allGoals = []
 }: GoalEditorProps) {
-  const isEditMode = !!goal;
+  // Create a default goal if not in edit mode
   const defaultGoal: GoalType = {
     id: goal?.id || `goal-${Date.now()}`,
     description: '',
@@ -73,10 +66,11 @@ export default function GoalEditor({
     collaborators: [],
   };
 
-  const [formData, setFormData] = useState<GoalType>(isEditMode ? { ...goal } : defaultGoal);
+  // Set up state
+  const [formData, setFormData] = useState<GoalType>(isEditing && goal ? { ...goal } : defaultGoal);
   const [isUsingTemplate, setIsUsingTemplate] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    formData.dueDate ? new Date(formData.dueDate) : undefined
+    formData.dueDate ? new Date(formData.dueDate as string) : undefined
   );
   
   // Fetch templates and categories from API
@@ -136,184 +130,177 @@ export default function GoalEditor({
       ...formData,
       dueDate: selectedDate ? selectedDate.toISOString() : undefined
     });
-    onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Edit Goal' : 'Add New Goal'}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-4">
-          {!isEditMode && (
-            <div className="flex items-center mb-4">
-              <Label htmlFor="use-template" className="flex-1">
-                Use a template?
-              </Label>
-              <input
-                id="use-template"
-                type="checkbox"
-                className="ml-2"
-                checked={isUsingTemplate}
-                onChange={(e) => setIsUsingTemplate(e.target.checked)}
-              />
-            </div>
-          )}
-          
-          {!isEditMode && isUsingTemplate && (
-            <div className="space-y-2">
-              <Label htmlFor="template">Select Template</Label>
-              <Select onValueChange={handleTemplateSelect}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a template" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingTemplates ? (
-                    <div className="flex items-center justify-center p-2">
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      <span>Loading templates...</span>
-                    </div>
-                  ) : domainTemplates.length > 0 ? (
-                    domainTemplates.map((template: any) => (
-                      <SelectItem key={template.id} value={template.id.toString()}>
-                        {template.title}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <div className="p-2 text-center text-sm text-gray-500">
-                      No templates available for this domain
-                    </div>
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Goal Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Enter the goal description"
-              rows={3}
-              className="resize-none"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
-            <Select
-              value={formData.category}
-              onValueChange={(value) => setFormData({ ...formData, category: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {isLoadingCategories ? (
-                  <div className="flex items-center justify-center p-2">
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    <span>Loading categories...</span>
-                  </div>
-                ) : Array.isArray(categories) && categories.length > 0 ? (
-                  categories.map((category: any) => (
-                    <SelectItem key={category.id} value={category.name.toLowerCase()}>
-                      {category.name}
-                    </SelectItem>
-                  ))
-                ) : (
-                  <div className="p-2 text-center text-sm text-gray-500">
-                    No categories available
-                  </div>
-                )}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="priority">Priority</Label>
-            <Select
-              value={formData.priority}
-              onValueChange={(value) => setFormData({ ...formData, priority: value as any })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={GOAL_PRIORITIES.HIGH}>High</SelectItem>
-                <SelectItem value={GOAL_PRIORITIES.MEDIUM}>Medium</SelectItem>
-                <SelectItem value={GOAL_PRIORITIES.LOW}>Low</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="estimatedDuration">Estimated Duration</Label>
-            <Input
-              id="estimatedDuration"
-              name="estimatedDuration"
-              value={formData.estimatedDuration || ''}
-              onChange={handleChange}
-              placeholder="e.g. 2 weeks, 3 months, ongoing"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label>Due Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !selectedDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  initialFocus
-                  disabled={(date) => date < new Date()}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <Select
-              value={formData.status}
-              onValueChange={(value) => setFormData({ ...formData, status: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="not_started">Not Started</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+    <div className="space-y-4">
+      {!isEditing && (
+        <div className="flex items-center mb-4">
+          <Label htmlFor="use-template" className="flex-1">
+            Use a template?
+          </Label>
+          <input
+            id="use-template"
+            type="checkbox"
+            className="ml-2"
+            checked={isUsingTemplate}
+            onChange={(e) => setIsUsingTemplate(e.target.checked)}
+          />
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={!formData.description.trim()}>
-            Save Goal
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      )}
+      
+      {!isEditing && isUsingTemplate && (
+        <div className="space-y-2">
+          <Label htmlFor="template">Select Template</Label>
+          <Select onValueChange={handleTemplateSelect}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a template" />
+            </SelectTrigger>
+            <SelectContent>
+              {isLoadingTemplates ? (
+                <div className="flex items-center justify-center p-2">
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <span>Loading templates...</span>
+                </div>
+              ) : domainTemplates.length > 0 ? (
+                domainTemplates.map((template: any) => (
+                  <SelectItem key={template.id} value={template.id.toString()}>
+                    {template.title}
+                  </SelectItem>
+                ))
+              ) : (
+                <div className="p-2 text-center text-sm text-gray-500">
+                  No templates available for this domain
+                </div>
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <Label htmlFor="description">Goal Description</Label>
+        <Textarea
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Enter the goal description"
+          rows={3}
+          className="resize-none"
+        />
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="category">Category</Label>
+        <Select
+          value={formData.category}
+          onValueChange={(value) => setFormData({ ...formData, category: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {isLoadingCategories ? (
+              <div className="flex items-center justify-center p-2">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <span>Loading categories...</span>
+              </div>
+            ) : Array.isArray(categories) && categories.length > 0 ? (
+              categories.map((category: any) => (
+                <SelectItem key={category.id} value={category.name.toLowerCase()}>
+                  {category.name}
+                </SelectItem>
+              ))
+            ) : (
+              <div className="p-2 text-center text-sm text-gray-500">
+                No categories available
+              </div>
+            )}
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="priority">Priority</Label>
+        <Select
+          value={formData.priority}
+          onValueChange={(value) => setFormData({ ...formData, priority: value as any })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select priority" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={GOAL_PRIORITIES.HIGH}>High</SelectItem>
+            <SelectItem value={GOAL_PRIORITIES.MEDIUM}>Medium</SelectItem>
+            <SelectItem value={GOAL_PRIORITIES.LOW}>Low</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="estimatedDuration">Estimated Duration</Label>
+        <Input
+          id="estimatedDuration"
+          name="estimatedDuration"
+          value={formData.estimatedDuration || ''}
+          onChange={handleChange}
+          placeholder="e.g. 2 weeks, 3 months, ongoing"
+        />
+      </div>
+      
+      <div className="space-y-2">
+        <Label>Due Date</Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-full justify-start text-left font-normal",
+                !selectedDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              initialFocus
+              disabled={(date) => date < new Date()}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="status">Status</Label>
+        <Select
+          value={formData.status}
+          onValueChange={(value) => setFormData({ ...formData, status: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="not_started">Not Started</SelectItem>
+            <SelectItem value="in_progress">In Progress</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="flex justify-end space-x-2 pt-4">
+        <Button variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button onClick={handleSave} disabled={!formData.description.trim()}>
+          Save Goal
+        </Button>
+      </div>
+    </div>
   );
 }

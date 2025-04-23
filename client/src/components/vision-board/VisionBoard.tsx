@@ -1136,8 +1136,8 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
           <div className="py-4">
             <GoalEditor 
               isEditing={isEditingGoal}
-              goal={currentGoal}
-              domainId={currentDomain}
+              goal={currentGoal || undefined}
+              domainId={currentDomain || ''}
               onSave={handleSaveGoal}
               onCancel={closeGoalDialog}
             />
