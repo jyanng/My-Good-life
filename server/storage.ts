@@ -313,6 +313,63 @@ export class MemStorage implements IStorage {
     });
     
     this.createDomainPlan({
+      planId: 3,
+      domain: "independent",
+      vision: "I will become more independent in my daily life",
+      goals: [
+        { 
+          id: "goal4",
+          description: "Won't be dependent on others for daily living tasks", 
+          status: "not_started",
+          needsReframing: true
+        },
+        { 
+          id: "goal5",
+          description: "Will not get confused when following complex instructions", 
+          status: "in_progress",
+          needsReframing: true
+        }
+      ],
+      completed: false
+    });
+    
+    this.createDomainPlan({
+      planId: 3,
+      domain: "healthy",
+      vision: "I will maintain good health and wellbeing",
+      goals: [
+        { 
+          id: "goal6",
+          description: "Won't have issues with picky eating habits", 
+          status: "not_started",
+          needsReframing: true
+        },
+        { 
+          id: "goal7",
+          description: "Will stop feeling anxious about medical appointments", 
+          status: "in_progress",
+          needsReframing: true
+        }
+      ],
+      completed: false
+    });
+    
+    this.createDomainPlan({
+      planId: 3,
+      domain: "engaged",
+      vision: "I will participate in meaningful activities",
+      goals: [
+        { 
+          id: "goal8",
+          description: "Will not get bored or disinterested in activities quickly", 
+          status: "not_started",
+          needsReframing: true
+        }
+      ],
+      completed: false
+    });
+    
+    this.createDomainPlan({
       planId: 1,
       domain: "engaged",
       vision: "I will participate in meaningful activities that I enjoy",
@@ -414,7 +471,7 @@ export class MemStorage implements IStorage {
       facilitatorId: 1,
       studentId: 3,
       type: "unreframed_goals",
-      message: "Rizwan bin Abdullah has 3 goals that need to be reframed in a positive way.",
+      message: "Rizwan bin Abdullah has 8 vision statements that need to be reframed in a positive way.",
       status: "open"
     });
     
