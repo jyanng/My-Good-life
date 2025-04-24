@@ -8,6 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  FullscreenDialog,
+  FullscreenDialogContent,
+  FullscreenDialogDescription,
+  FullscreenDialogFooter,
+  FullscreenDialogHeader,
+  FullscreenDialogTitle,
+} from "@/components/ui/fullscreen-dialog";
 import { 
   PlusIcon, PencilIcon, XIcon, WandIcon, LightbulbIcon, 
   GridIcon, ColumnsIcon, PresentationIcon, UsersIcon, 
@@ -938,7 +946,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={isAddingVision || isEditingVision} onOpenChange={(open) => {
         if (!open) closeVisionDialog();
       }}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto z-[9999]">
           <DialogHeader>
             <DialogTitle>
               {isAddingVision ? 'Add Vision Statement' : 'Edit Vision Statement'}
@@ -1113,7 +1121,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={!!removingDomain} onOpenChange={(open) => {
         if (!open) cancelRemoveVision();
       }}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-sm z-[9999]">
           <DialogHeader>
             <DialogTitle>Remove Vision Statement?</DialogTitle>
             <DialogDescription>
