@@ -7,6 +7,33 @@ import { DOMAINS } from "@/lib/constants";
 import { formatDate } from "@/lib/constants";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 
+// Format vision statement to use the "When I am X years old, I will..." format
+function formatVisionStatement(vision: string | null): string {
+  if (!vision) return "";
+  
+  try {
+    // Check if this is already in JSON format
+    if (vision.startsWith('{')) {
+      const visionData = JSON.parse(vision);
+      return `"When I am ${visionData.age || 30} years old, I will ${visionData.text}"`;
+    }
+    
+    // If it doesn't already start with the format, add it
+    if (!vision.toLowerCase().startsWith('when i am')) {
+      return `"When I am 30 years old, I will ${vision}"`;
+    }
+    
+    // Otherwise just return the original with quotes
+    return `"${vision}"`;
+  } catch (e) {
+    // If there's an error parsing JSON, return the original
+    if (!vision.toLowerCase().startsWith('when i am')) {
+      return `"When I am 30 years old, I will ${vision}"`;
+    }
+    return `"${vision}"`;
+  }
+}
+
 interface CaseStudyCardProps {
   caseStudy: CaseStudy;
 }
@@ -51,7 +78,7 @@ export default function CaseStudyCard({ caseStudy }: CaseStudyCardProps) {
               <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
               <span className="text-xs font-semibold text-purple-700 uppercase">Good Life Vision</span>
             </div>
-            <p className="text-purple-800 text-sm italic line-clamp-2">"{caseStudy.goodLifeVision}"</p>
+            <p className="text-purple-800 text-sm italic line-clamp-2">{formatVisionStatement(caseStudy.goodLifeVision)}</p>
           </div>
         )}
       
@@ -119,7 +146,7 @@ export default function CaseStudyCard({ caseStudy }: CaseStudyCardProps) {
                   
                   <div className="bg-gradient-to-b from-purple-50 to-white p-4">
                     <blockquote className="text-lg italic text-purple-900 mb-4 border-l-4 border-purple-300 pl-4">
-                      "{caseStudy.goodLifeVision}"
+                      {formatVisionStatement(caseStudy.goodLifeVision)}
                     </blockquote>
                     
                     <div className="mt-4">
