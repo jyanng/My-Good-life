@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 import { 
   Tag, 
   MoreHorizontal, 
@@ -52,34 +53,16 @@ type GoalType = {
 
 interface GoalItemProps {
   goal: GoalType;
-  onEdit?: () => void;
-  isPresentationMode?: boolean;
+  domainColor: string;
+  provided: DraggableProvided;
+  snapshot: DraggableStateSnapshot;
   allGoals?: GoalType[];
+  onEditGoal?: (goal: GoalType) => void;
 }
 
-export default function GoalItem({ goal, onEdit, isPresentationMode = false, allGoals = [] }: GoalItemProps) {
+export default function GoalItem({ goal, domainColor, provided, snapshot, allGoals = [], onEditGoal }: GoalItemProps) {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isDependenciesDialogOpen, setIsDependenciesDialogOpen] = useState(false);
-  
-  // Define domain color mappings
-  const getDomainColor = () => {
-    switch (goal.domainId) {
-      case 'safe':
-        return 'text-emerald-600';
-      case 'healthy':
-        return 'text-green-600';
-      case 'engaged':
-        return 'text-blue-600';
-      case 'connected':
-        return 'text-purple-600';
-      case 'independent':
-        return 'text-amber-600';
-      case 'included':
-        return 'text-pink-600';
-      default:
-        return 'text-gray-600';
-    }
-  };
   
   // Define category color mappings
   const getCategoryColor = () => {
@@ -216,11 +199,19 @@ export default function GoalItem({ goal, onEdit, isPresentationMode = false, all
   return (
     <>
       <div
-        className={`p-3 rounded-md border shadow-sm bg-white ${goal.needsReframing ? 'border-l-4 border-l-amber-500' : ''}`}
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        className={`p-3 rounded-md border ${
+          snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'
+        } bg-white ${goal.needsReframing ? 'border-l-4 border-l-amber-500' : ''}`}
+        style={{
+          ...provided.draggableProps.style,
+        }}
       >
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-start">
-            <p className={`text-sm ${getDomainColor()}`}>{goal.description}</p>
+            <p className={`text-sm ${domainColor}`}>{goal.description}</p>
             
             <div className="shrink-0 ml-2 flex items-center gap-1">
               {goal.needsReframing && (
@@ -230,30 +221,28 @@ export default function GoalItem({ goal, onEdit, isPresentationMode = false, all
                 </span>
               )}
               
-              {!isPresentationMode && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-gray-600">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setIsDetailsDialogOpen(true)}>
-                      View Details
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setIsDependenciesDialogOpen(true)}>
-                      {hasDependencies ? "View Dependencies" : "Add Dependencies"}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={onEdit}>
-                      Edit Goal
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className={goal.status === 'completed' ? "text-gray-400" : ""}>
-                      Mark {goal.status === 'completed' ? "Incomplete" : "Complete"}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-gray-600">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setIsDetailsDialogOpen(true)}>
+                    View Details
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsDependenciesDialogOpen(true)}>
+                    {hasDependencies ? "View Dependencies" : "Add Dependencies"}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onEditGoal?.(goal)}>
+                    Edit Goal
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className={goal.status === 'completed' ? "text-gray-400" : ""}>
+                    Mark {goal.status === 'completed' ? "Incomplete" : "Complete"}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
           
@@ -390,7 +379,7 @@ export default function GoalItem({ goal, onEdit, isPresentationMode = false, all
             </Button>
             <Button onClick={() => {
               setIsDetailsDialogOpen(false);
-              onEdit?.();
+              onEditGoal?.(goal);
             }}>
               Edit Goal
             </Button>
