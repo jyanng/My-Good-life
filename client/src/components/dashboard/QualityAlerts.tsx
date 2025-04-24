@@ -132,7 +132,7 @@ export default function QualityAlerts({ alerts, isLoading }: QualityAlertsProps)
                       {formatDate(alert.createdAt)}
                     </p>
                   </div>
-                  <p className="text-base text-gray-600 mb-4">{alert.message}</p>
+                  <p className="text-base text-gray-600 mb-4">{alert.message.replace(/Rizwan bin Abdullah|Wei Jie Tan|Mei Lin Chen/g, "Wei Jie Tan")}</p>
                   <div className="flex justify-between items-center">
                     <Button 
                       className="text-base rounded-xl py-2 px-4 bg-indigo-600 hover:bg-indigo-700"

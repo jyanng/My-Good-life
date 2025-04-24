@@ -56,8 +56,12 @@ export default function Dashboard() {
         </div>
       </div>
       
+      {/* Main Profile Section */}
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">My Profile</h2>
+      <ProfileCard student={students && students.length > 0 ? students[0] : undefined} isLoading={isLoadingStudents} />
+      
       {/* Welcome Card */}
-      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100 mb-8">
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100 mb-8 mt-8">
         <div className="flex flex-col md:flex-row items-start md:items-center">
           <div className="bg-white p-3 rounded-full mb-4 md:mb-0 md:mr-6 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-600">
@@ -107,10 +111,6 @@ export default function Dashboard() {
         <DomainProgress domainProgress={isLoadingStats ? undefined : stats?.domainProgress} />
         <QualityAlerts alerts={alerts as Alert[] || []} isLoading={isLoadingAlerts} />
       </div>
-      
-      {/* Main Profile Section */}
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">My Profile</h2>
-      <ProfileCard student={students && students.length > 0 ? students[0] : undefined} isLoading={isLoadingStudents} />
       
       {/* Quick Access Section - Resources */}
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Helpful Resources</h2>
