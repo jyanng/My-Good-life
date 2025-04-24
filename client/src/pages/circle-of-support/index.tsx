@@ -20,12 +20,21 @@ type SupportPerson = {
 };
 
 export default function CircleOfSupport() {
-  // For demo purposes we're using the first student
+  // For demo purposes we're using a hardcoded student
   const { data: students, isLoading: isLoadingStudents } = useQuery({
     queryKey: ["/api/students"],
   });
 
-  const student = students && students.length > 0 ? students[0] : null;
+  // Define a fallback student
+  const fallbackStudent = {
+    id: 1,
+    name: "Wei Jie Tan",
+    email: "weijie.tan@example.com",
+    avatarUrl: null,
+    school: "Pathlight School"
+  };
+
+  const student = fallbackStudent;
 
   // Sample support people for the demo
   const [supportPeople, setSupportPeople] = useState<SupportPerson[]>([
@@ -239,13 +248,13 @@ export default function CircleOfSupport() {
         </CardHeader>
         <CardContent className="p-0">
           <div className="relative h-[600px] bg-gradient-to-r from-indigo-50 to-purple-50 p-6 flex items-center justify-center">
-            {/* Outer Circle */}
+            {/* Larger Community Circle */}
             <div className="absolute rounded-full border-2 border-indigo-100 w-[500px] h-[500px]"></div>
             
-            {/* Middle Circle */}
+            {/* Immediate Neighborhood Circle */}
             <div className="absolute rounded-full border-2 border-indigo-200 w-[350px] h-[350px]"></div>
             
-            {/* Inner Circle */}
+            {/* Home Circle */}
             <div className="absolute rounded-full border-2 border-indigo-300 w-[200px] h-[200px]"></div>
             
             {/* Center - You */}
@@ -274,45 +283,51 @@ export default function CircleOfSupport() {
                 person.relationship === "Friend" ? "text-blue-800" :
                 person.relationship === "Professional" ? "text-emerald-800" : "text-purple-800";
               
+              // Select icon based on relationship
+              const PersonIcon = 
+                person.relationship === "Family" ? 
+                  () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path fillRule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clipRule="evenodd" />
+                    <path d="M5.082 14.254a8.287 8.287 0 00-1.308 5.135 9.687 9.687 0 01-1.764-.44l-.115-.04a.563.563 0 01-.373-.487l-.01-.121a3.75 3.75 0 013.57-4.047zM20.226 19.389a8.287 8.287 0 00-1.308-5.135 3.75 3.75 0 013.57 4.047l-.01.121a.563.563 0 01-.373.486l-.115.04c-.567.2-1.156.349-1.764.441z" />
+                  </svg> :
+                person.relationship === "Friend" ? 
+                  () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clipRule="evenodd" />
+                  </svg> :
+                person.relationship === "Professional" ? 
+                  () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path fillRule="evenodd" d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
+                    <path d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z" />
+                  </svg> :
+                  () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+                  </svg>;
+
               return (
                 <motion.div
                   key={person.id}
                   className={cn(
-                    "absolute rounded-lg p-3 shadow-md cursor-pointer transform transition-all duration-200",
+                    "absolute rounded-full p-2 shadow-md cursor-pointer transform transition-all duration-200 border-2",
                     backgroundColor,
-                    "hover:scale-110"
+                    "hover:scale-110 hover:shadow-lg z-20"
                   )}
                   style={{
                     transform: `translate(${x}px, ${y}px)`,
-                    width: "120px",
+                    borderColor: textColor.replace('text-', 'border-').replace('-800', '-400'),
                   }}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.1 }}
+                  onClick={() => handleEditPerson(person)}
                 >
-                  <div className="text-center">
-                    <h4 className={cn("font-medium text-sm", textColor)}>{person.name}</h4>
-                    <p className="text-xs text-gray-600">{person.role}</p>
-                    {person.institution && (
-                      <p className="text-xs text-gray-500 mt-1">{person.institution}</p>
-                    )}
-                    <div className="flex justify-center mt-2 space-x-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => handleEditPerson(person)}
-                      >
-                        <PencilIcon className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-red-500"
-                        onClick={() => handleDeletePerson(person.id)}
-                      >
-                        <Trash2Icon className="h-3 w-3" />
-                      </Button>
+                  {/* Person Icon and Info */}
+                  <div className="flex flex-col items-center justify-center">
+                    <div className={cn("p-2 rounded-full", textColor)}>
+                      <PersonIcon />
+                    </div>
+                    <div className="text-center mt-2 w-24">
+                      <h4 className={cn("font-medium text-sm", textColor)}>{person.name}</h4>
+                      <p className="text-xs text-gray-600 truncate">{person.role}</p>
                     </div>
                   </div>
                 </motion.div>
