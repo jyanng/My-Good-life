@@ -8,7 +8,7 @@ export default function QuickAccess() {
         <p className="mt-2 text-gray-600">Tools and information to support your journey</p>
       </div>
       <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Plan Ideas Section */}
           <div className="border border-indigo-100 rounded-xl p-6 hover:shadow-md transition-shadow bg-gradient-to-b from-white to-indigo-50">
             <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
@@ -25,6 +25,24 @@ export default function QuickAccess() {
             <p className="text-base text-gray-600 mb-4">Find ready-to-use plan templates that you can customize for your unique goals and needs.</p>
             <Link href="/templates" className="inline-flex items-center text-indigo-600 font-medium hover:text-indigo-800 transition-colors group">
               <span>Browse Plan Ideas</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2 group-hover:translate-x-1 transition-transform">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+          
+          {/* Complete Your Story Section */}
+          <div className="border border-pink-100 rounded-xl p-6 hover:shadow-md transition-shadow bg-gradient-to-b from-white to-pink-50">
+            <div className="w-14 h-14 bg-pink-100 rounded-xl flex items-center justify-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-600">
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z" />
+              </svg>
+            </div>
+            <h4 className="text-lg font-semibold text-gray-800 mb-3">Complete Your Story</h4>
+            <p className="text-base text-gray-600 mb-4">Map out your circle of support and identify key people in your journey to independence.</p>
+            <Link href="/circle-of-support" className="inline-flex items-center text-pink-600 font-medium hover:text-pink-800 transition-colors group">
+              <span>Map Your Circle</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2 group-hover:translate-x-1 transition-transform">
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />

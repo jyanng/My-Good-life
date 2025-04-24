@@ -17,6 +17,7 @@ import PersonalProgress from "@/pages/personal-progress";
 import VisionBoard from "@/pages/vision-board";
 import PlanTemplates from "@/pages/plan-templates";
 import MyGoodLifePlan from "@/pages/myplan";
+import CircleOfSupport from "@/pages/circle-of-support";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { useState, useEffect } from "react";
 import { User } from "@shared/schema";
@@ -92,6 +93,7 @@ function Router() {
         <Route path="/plan-templates" component={PlanTemplates} />
         <Route path="/myplan" component={MyGoodLifePlan} />
         <Route path="/personal-progress" component={PersonalProgress} />
+        <Route path="/circle-of-support" component={CircleOfSupport} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>
