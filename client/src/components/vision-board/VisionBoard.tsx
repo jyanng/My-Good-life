@@ -996,26 +996,34 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                         {...provided.droppableProps}
                         className={`space-y-2 ${goalsByDomain[plan.domain]?.length ? 'pb-1' : ''}`}
                       >
-                        {goalsByDomain[plan.domain]?.map((goal, index) => (
-                          <Draggable
-                            key={goal.id}
-                            draggableId={goal.id}
-                            index={index}
-                            isDragDisabled={isPresentationMode}
-                          >
-                            {(providedDrag) => (
-                              <GoalItem 
-                                goal={goal} 
-                                domainColor="text-gray-700"
-                                provided={providedDrag}
-                                snapshot={{isDragging: false}}
-                                onEdit={() => openEditGoalDialog(goal)}
-                                isPresentationMode={isPresentationMode}
-                                allGoals={Object.values(goalsByDomain).flat()}
-                              />
-                            )}
-                          </Draggable>
-                        ))}
+                        {goalsByDomain[plan.domain]?.map((goal, index) => {
+                          // Ensure the goal has an ID before trying to use it as a draggableId
+                          if (!goal.id) {
+                            console.error('Goal is missing ID:', goal);
+                            return null;
+                          }
+                          
+                          return (
+                            <Draggable
+                              key={goal.id}
+                              draggableId={String(goal.id)} // Ensure draggableId is a string
+                              index={index}
+                              isDragDisabled={isPresentationMode}
+                            >
+                              {(providedDrag, snapshotDrag) => (
+                                <GoalItem 
+                                  goal={goal} 
+                                  domainColor={DOMAINS.find(d => d.id === plan.domain)?.textClass || "text-gray-700"}
+                                  provided={providedDrag}
+                                  snapshot={snapshotDrag}
+                                  onEdit={() => openEditGoalDialog(goal)}
+                                  isPresentationMode={isPresentationMode}
+                                  allGoals={Object.values(goalsByDomain).flat()}
+                                />
+                              )}
+                            </Draggable>
+                          );
+                        })}
                         {provided.placeholder}
                         
                         {!isPresentationMode && (
