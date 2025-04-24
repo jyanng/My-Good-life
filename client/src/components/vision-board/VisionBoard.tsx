@@ -170,6 +170,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
 
   // Vision dialog handlers
   const openAddVisionDialog = (domainId: string) => {
+    // Exit fullscreen if active
+    exitFullscreenForDialog();
+    
     const domainPlan = domainPlans.find(plan => plan.domain === domainId);
     setCurrentDomain(domainId);
     
@@ -192,6 +195,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   };
 
   const openEditVisionDialog = (domainId: string) => {
+    // Exit fullscreen if active
+    exitFullscreenForDialog();
+    
     const domainPlan = domainPlans.find(plan => plan.domain === domainId);
     setCurrentDomain(domainId);
     
@@ -233,6 +239,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   };
 
   const confirmRemoveVision = (domainId: string) => {
+    // Exit fullscreen if active
+    exitFullscreenForDialog();
+    
     setRemovingDomain(domainId);
   };
 
@@ -476,12 +485,18 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
 
   // Goal dialog handlers
   const openAddGoalDialog = (domainId: string) => {
+    // Exit fullscreen if active
+    exitFullscreenForDialog();
+    
     setCurrentDomain(domainId);
     setIsAddingGoal(true);
     setCurrentGoal(null);
   };
 
   const openEditGoalDialog = (goal: GoalType) => {
+    // Exit fullscreen if active
+    exitFullscreenForDialog();
+    
     setCurrentDomain(goal.domainId);
     setCurrentGoal(goal);
     setIsEditingGoal(true);
@@ -759,6 +774,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   
   // Collaboration and sharing handlers
   const openShareDialog = () => {
+    // Exit fullscreen if active
+    exitFullscreenForDialog();
+    
     // Generate a shareable link (in real app, this would be a unique URL)
     const baseUrl = window.location.origin;
     const shareableLink = `${baseUrl}/vision-board/shared/${student.id}/${Date.now()}`;
