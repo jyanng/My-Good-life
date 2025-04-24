@@ -16,7 +16,7 @@ type SupportPerson = {
   role: string;
   institution?: string;
   relationship: string;
-  tier: 1 | 2 | 3; // 1 = inner circle, 2 = middle, 3 = outer
+  tier: 1 | 2 | 3; // 1 = home, 2 = immediate neighborhood, 3 = larger community
 };
 
 export default function CircleOfSupport() {
@@ -176,9 +176,9 @@ export default function CircleOfSupport() {
                   onChange={(e) => setNewPerson({ ...newPerson, tier: Number(e.target.value) as 1 | 2 | 3 })}
                   className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value={1}>Inner Circle (Most Important)</option>
-                  <option value={2}>Middle Circle</option>
-                  <option value={3}>Outer Circle</option>
+                  <option value={1}>Home (Most Important)</option>
+                  <option value={2}>Immediate Neighborhood</option>
+                  <option value={3}>Larger Community</option>
                 </select>
               </div>
             </div>
@@ -323,15 +323,15 @@ export default function CircleOfSupport() {
             <div className="absolute top-6 right-8 flex flex-col space-y-2">
               <div className="flex items-center">
                 <div className="w-4 h-4 rounded-full border-2 border-indigo-300 mr-2"></div>
-                <span className="text-sm font-medium">Inner Circle</span>
+                <span className="text-sm font-medium">Home</span>
               </div>
               <div className="flex items-center">
                 <div className="w-4 h-4 rounded-full border-2 border-indigo-200 mr-2"></div>
-                <span className="text-sm font-medium">Middle Circle</span>
+                <span className="text-sm font-medium">Immediate Neighborhood</span>
               </div>
               <div className="flex items-center">
                 <div className="w-4 h-4 rounded-full border-2 border-indigo-100 mr-2"></div>
-                <span className="text-sm font-medium">Outer Circle</span>
+                <span className="text-sm font-medium">Larger Community</span>
               </div>
             </div>
             
@@ -393,10 +393,10 @@ export default function CircleOfSupport() {
                     <td className="py-3">{person.relationship}</td>
                     <td className="py-3">
                       {person.tier === 1
-                        ? "Inner"
+                        ? "Home"
                         : person.tier === 2
-                        ? "Middle"
-                        : "Outer"}
+                        ? "Neighborhood"
+                        : "Community"}
                     </td>
                     <td className="py-3 text-right">
                       <Button
@@ -513,9 +513,9 @@ export default function CircleOfSupport() {
                   }
                   className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value={1}>Inner Circle (Most Important)</option>
-                  <option value={2}>Middle Circle</option>
-                  <option value={3}>Outer Circle</option>
+                  <option value={1}>Home (Most Important)</option>
+                  <option value={2}>Immediate Neighborhood</option>
+                  <option value={3}>Larger Community</option>
                 </select>
               </div>
             </div>
