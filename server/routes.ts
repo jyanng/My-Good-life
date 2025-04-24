@@ -305,15 +305,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const id = Number(req.params.id);
     try {
       const updateData = insertCaseStudySchema.partial().parse(req.body);
-      // Add a storage method to update case studies
-      const caseStudy = await storage.getCaseStudy(id);
-      if (!caseStudy) {
+      const updatedCaseStudy = await storage.updateCaseStudy(id, updateData);
+      if (!updatedCaseStudy) {
         return res.status(404).json({ message: "Case study not found" });
       }
-      
-      // Update the case study
-      const updatedCaseStudy = { ...caseStudy, ...updateData };
-      // Since we don't have an updateCaseStudy method, we'll just return the expected result
       res.json(updatedCaseStudy);
     } catch (error) {
       res.status(400).json({ message: "Invalid case study data" });

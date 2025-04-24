@@ -873,6 +873,19 @@ export class MemStorage implements IStorage {
     this.caseStudies.set(id, caseStudy);
     return caseStudy;
   }
+
+  async updateCaseStudy(id: number, updateData: Partial<InsertCaseStudy>): Promise<CaseStudy | undefined> {
+    const caseStudy = this.caseStudies.get(id);
+    if (!caseStudy) return undefined;
+    
+    const updatedCaseStudy: CaseStudy = { 
+      ...caseStudy, 
+      ...updateData
+    };
+    
+    this.caseStudies.set(id, updatedCaseStudy);
+    return updatedCaseStudy;
+  }
   
   // Learning Module methods
   async getLearningModules(): Promise<LearningModule[]> {
