@@ -678,10 +678,10 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
               
               <label className="text-sm font-medium block mt-2">Vision Statement</label>
               <div className="p-2 bg-white rounded border mb-2">
-                <p className="text-sm italic">"When I am {visionAge} years old, I will be..."</p>
+                <p className="text-sm italic">"When I am {visionAge} years old, I will..."</p>
               </div>
               <Textarea
-                placeholder={`When I am ${visionAge} years old, I will be...`}
+                placeholder="be confident navigating different environments..."
                 value={visionText}
                 onChange={(e) => setVisionText(e.target.value)}
                 className="min-h-[80px]"
@@ -707,12 +707,12 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                     className="w-full justify-start text-left h-auto py-2 px-3"
                     onClick={() => {
                       const suggestions = {
-                        safe: "When I am 30 years old, I will be living in a safe environment where I feel secure and protected. I will have developed strategies to manage stress and anxiety in new situations.",
-                        healthy: "When I am 30 years old, I will be maintaining good physical and mental health through activities I enjoy. I will have a balanced lifestyle that includes regular exercise, nutritious meals, and time to relax.",
-                        engaged: "When I am 30 years old, I will be actively participating in work and leisure activities that interest me. I will be developing my skills and pursuing my passions.",
-                        connected: "When I am 30 years old, I will be maintaining meaningful relationships with family, friends, and my community. I will have a support network I can rely on.",
-                        independent: "When I am 30 years old, I will be confidently handling transportation, finances, and daily living tasks. I will be advocating for the support I need when necessary.",
-                        included: "When I am 30 years old, I will be valued for my unique contributions to my community. I will be participating in decisions about my life and future goals."
+                        safe: "be confident navigating different environments and managing my feelings of security. I will have strategies to help me feel calm and safe when facing new situations.",
+                        healthy: "have established healthy routines that support my physical and mental wellbeing. I will enjoy regular exercise and nutritious meals that fit my preferences.",
+                        engaged: "be actively participating in meaningful work and leisure activities that align with my interests and skills. I will be continuously learning and developing my talents.",
+                        connected: "have built and maintained supportive relationships with friends, family and my community. I will communicate effectively and feel valued in my social circles.",
+                        independent: "be making important decisions about my daily life with confidence. I will manage my finances, transportation, and home responsibilities successfully.",
+                        included: "be an active and respected member of my community. I will advocate for myself and others, and my voice will be heard in decisions that affect my life."
                       };
                       if (currentDomain in suggestions) {
                         setVisionText(suggestions[currentDomain as keyof typeof suggestions]);
@@ -914,11 +914,8 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                         ${viewMode === 'list' ? 'text-base' : 'text-sm'}
                         ${isPresentationMode ? 'text-lg font-bold mb-2' : ''}
                       `}>
-                        <span className="text-sm font-normal text-gray-500 block">
-                          {`When I am ${visionData.age} years old, I will be...`}
-                        </span>
                         <div className="mt-1">
-                          {visionData.text}
+                          {`When I am ${visionData.age} years old, I will ${visionData.text}`}
                         </div>
                       </CardTitle>
                       

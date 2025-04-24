@@ -207,7 +207,18 @@ export default function PersonalProgress() {
                         {getDomainIcon(domain.id)}
                       </div>
                       <CardDescription>
-                        {domainPlan?.vision || `No vision set for ${domain.name} domain`}
+                        {domainPlan?.vision ? 
+                          domainPlan.vision.startsWith('{') ? 
+                            (() => {
+                              try {
+                                const visionData = JSON.parse(domainPlan.vision);
+                                return `When I am ${visionData.age || 30} years old, I will ${visionData.text}`;
+                              } catch (e) {
+                                return domainPlan.vision;
+                              }
+                            })() 
+                            : domainPlan.vision
+                          : `No vision set for ${domain.name} domain`}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6">
