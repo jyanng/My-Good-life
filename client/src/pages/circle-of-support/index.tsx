@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { PlusIcon, UserIcon, BuildingIcon, Trash2Icon, PencilIcon, MoveIcon, SaveIcon } from "lucide-react";
-import { motion, useDragControls } from "framer-motion";
+import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
@@ -62,7 +62,6 @@ export default function CircleOfSupport() {
   const [dragId, setDragId] = useState<string | null>(null);
   const [hasPositionChanges, setHasPositionChanges] = useState(false);
   const visualizationRef = useRef<HTMLDivElement>(null);
-  const dragControls = useDragControls();
 
   const handleAddPerson = () => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -387,10 +386,11 @@ export default function CircleOfSupport() {
                     <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
                   </svg>;
 
-              // Handle starting drag from handle icon
+              // Simple drag handler 
               const onDragHandlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
                 e.stopPropagation();
-                dragControls.start(e);
+                // We're using direct drag on the entire element
+                handleDragStart(person.id);
               };
               
               const isBeingDragged = dragId === person.id;
@@ -416,7 +416,6 @@ export default function CircleOfSupport() {
                     damping: 20
                   }}
                   drag={true}
-                  dragControls={dragControls}
                   dragConstraints={visualizationRef}
                   dragElastic={0.1}
                   dragMomentum={false}
