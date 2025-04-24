@@ -1003,19 +1003,16 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                             index={index}
                             isDragDisabled={isPresentationMode}
                           >
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
-                                <GoalItem 
-                                  goal={goal} 
-                                  onEdit={() => openEditGoalDialog(goal)}
-                                  isPresentationMode={isPresentationMode}
-                                  allGoals={Object.values(goalsByDomain).flat()}
-                                />
-                              </div>
+                            {(providedDrag) => (
+                              <GoalItem 
+                                goal={goal} 
+                                domainColor="text-gray-700"
+                                provided={providedDrag}
+                                snapshot={{isDragging: false}}
+                                onEdit={() => openEditGoalDialog(goal)}
+                                isPresentationMode={isPresentationMode}
+                                allGoals={Object.values(goalsByDomain).flat()}
+                              />
                             )}
                           </Draggable>
                         ))}

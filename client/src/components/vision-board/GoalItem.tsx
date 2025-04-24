@@ -53,14 +53,23 @@ type GoalType = {
 
 interface GoalItemProps {
   goal: GoalType;
-  domainColor: string;
-  provided: DraggableProvided;
-  snapshot: DraggableStateSnapshot;
+  domainColor?: string;
+  provided?: DraggableProvided;
+  snapshot?: DraggableStateSnapshot;
   allGoals?: GoalType[];
-  onEditGoal?: (goal: GoalType) => void;
+  onEdit?: (goal: GoalType) => void;
+  isPresentationMode?: boolean;
 }
 
-export default function GoalItem({ goal, domainColor, provided, snapshot, allGoals = [], onEditGoal }: GoalItemProps) {
+export default function GoalItem({ 
+  goal, 
+  domainColor = "text-gray-700", 
+  provided, 
+  snapshot, 
+  allGoals = [], 
+  onEdit,
+  isPresentationMode = false
+}: GoalItemProps) {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isDependenciesDialogOpen, setIsDependenciesDialogOpen] = useState(false);
   
@@ -199,14 +208,14 @@ export default function GoalItem({ goal, domainColor, provided, snapshot, allGoa
   return (
     <>
       <div
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
+        ref={provided?.innerRef}
+        {...provided?.draggableProps}
+        {...provided?.dragHandleProps}
         className={`p-3 rounded-md border ${
-          snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'
+          snapshot?.isDragging ? 'shadow-lg' : 'shadow-sm'
         } bg-white ${goal.needsReframing ? 'border-l-4 border-l-amber-500' : ''}`}
         style={{
-          ...provided.draggableProps.style,
+          ...provided?.draggableProps?.style,
         }}
       >
         <div className="flex flex-col gap-2">
@@ -235,7 +244,7 @@ export default function GoalItem({ goal, domainColor, provided, snapshot, allGoa
                     {hasDependencies ? "View Dependencies" : "Add Dependencies"}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onEditGoal?.(goal)}>
+                  <DropdownMenuItem onClick={() => onEdit?.(goal)}>
                     Edit Goal
                   </DropdownMenuItem>
                   <DropdownMenuItem className={goal.status === 'completed' ? "text-gray-400" : ""}>
@@ -379,7 +388,7 @@ export default function GoalItem({ goal, domainColor, provided, snapshot, allGoa
             </Button>
             <Button onClick={() => {
               setIsDetailsDialogOpen(false);
-              onEditGoal?.(goal);
+              onEdit?.(goal);
             }}>
               Edit Goal
             </Button>
