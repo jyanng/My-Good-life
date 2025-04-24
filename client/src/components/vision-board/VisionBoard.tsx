@@ -743,6 +743,14 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   };
   
   const toggleFullscreen = () => {
+    // Check if any dialog is open - don't toggle fullscreen if a dialog is open
+    const isAnyDialogOpen = isAddingVision || isEditingVision || isAddingGoal || isEditingGoal || isShareDialogOpen || !!removingDomain;
+    
+    if (isAnyDialogOpen) {
+      // Don't toggle fullscreen when dialogs are open
+      return;
+    }
+    
     if (!isFullscreen) {
       if (visionBoardRef.current && visionBoardRef.current.requestFullscreen) {
         visionBoardRef.current.requestFullscreen().catch(err => {
@@ -760,15 +768,24 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     }
   };
   
-  // Helper to exit fullscreen when opening dialogs
-  const exitFullscreenForDialog = () => {
-    if (isFullscreen && document.exitFullscreen) {
-      document.exitFullscreen().catch(err => {
-        console.error('Error attempting to exit fullscreen for dialog:', err);
-      });
-      setIsFullscreen(false);
-    }
-  };
+  // Track fullscreen changes from browser
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      // Update our state to match the browser's fullscreen state
+      const isDocFullscreen = document.fullscreenElement !== null;
+      if (isFullscreen !== isDocFullscreen) {
+        setIsFullscreen(isDocFullscreen);
+      }
+    };
+    
+    // Add event listener for fullscreen changes
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [isFullscreen]);
   
   // Collaboration and sharing handlers
   const openShareDialog = () => {
