@@ -51,450 +51,155 @@ interface VisionBoardProps {
 }
 
 export default function VisionBoard({ student, domainPlans }: VisionBoardProps) {
-  // State for vision editing and adding
-  const [isAddingVision, setIsAddingVision] = useState(false);
-  const [isEditingVision, setIsEditingVision] = useState(false);
-  const [currentDomain, setCurrentDomain] = useState<string | null>(null);
-  const [visionText, setVisionText] = useState('');
-  const [visionAge, setVisionAge] = useState(30);
-  const [visionMedia, setVisionMedia] = useState('');
-  const [removingDomain, setRemovingDomain] = useState<string | null>(null);
-  // View mode toggle for grid or list view
+  const [goalsByDomain, setGoalsByDomain] = useState<Record<string, GoalType[]>>({});
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  
-  // Goal editing state
+  const [isPresentationMode, setIsPresentationMode] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [isAddingGoal, setIsAddingGoal] = useState(false);
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [currentGoal, setCurrentGoal] = useState<GoalType | null>(null);
-  
-  // Presentation mode
-  const [isPresentationMode, setIsPresentationMode] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const visionBoardRef = useRef<HTMLDivElement>(null);
-  
-  // Collaboration features
+  const [currentDomain, setCurrentDomain] = useState<string | null>(null);
+  const [isAddingVision, setIsAddingVision] = useState(false);
+  const [isEditingVision, setIsEditingVision] = useState(false);
+  const [visionText, setVisionText] = useState('');
+  const [visionMedia, setVisionMedia] = useState('');
+  const [visionAge, setVisionAge] = useState(30);
+  const [removingDomain, setRemovingDomain] = useState<string | null>(null);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const [sharingLink, setSharingLink] = useState('');
-  const [collaborators, setCollaborators] = useState([
-    { id: 1, name: 'Sarah Johnson', role: 'Facilitator', avatar: '/avatars/sarah.jpg', online: true },
-    { id: 2, name: 'Dr. Li Ming', role: 'Therapist', avatar: '/avatars/li.jpg', online: false },
-    { id: 3, name: 'Wei Jie Tan', role: 'Student', avatar: '/avatars/weijie.jpg', online: true }
-  ]);
-  
-  // Convert the domain plans into a format suitable for the vision board
-  const initialGoals = domainPlans.flatMap(plan => {
-    // Safely handle possible goal formats
-    let goals: any[] = [];
-    
-    try {
-      if (plan && plan.goals) {
-        if (Array.isArray(plan.goals)) {
-          goals = plan.goals;
-        } else if (typeof plan.goals === 'object') {
-          // Try to safely parse if it's an object but not an array
-          goals = JSON.parse(JSON.stringify(plan.goals));
-          if (!Array.isArray(goals)) {
-            console.warn(`Goals for plan ${plan.id} is not an array after parsing:`, goals);
-            goals = [];
-          }
-        }
-      }
-    } catch (error) {
-      console.error(`Error processing goals for plan ${plan?.id}:`, error);
-      goals = [];
-    }
-    
-    // Map goals to the correct format with extra safety checks
-    return goals
-      .filter(goal => goal && typeof goal === 'object') // Filter out invalid goals 
-      .map((goal: any) => ({
-        id: goal.id || `${plan.id || 'unknown'}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        description: goal.description || 'No description',
-        status: goal.status || 'not_started',
-        needsReframing: !!goal.needsReframing, // Convert to boolean 
-        domainId: plan.domain,
-      }));
-  });
-
-  // Group goals by domain
-  const [goalsByDomain, setGoalsByDomain] = useState<Record<string, GoalType[]>>(() => {
-    const result: Record<string, GoalType[]> = {};
-    
-    // Initialize empty arrays for all domains
-    DOMAINS.forEach(domain => {
-      result[domain.id] = [];
-    });
-    
-    // Fill in goals for domains that have them
-    initialGoals.forEach(goal => {
-      if (result[goal.domainId]) {
-        result[goal.domainId].push(goal);
-      } else {
-        // If somehow we have a goal for a domain not in our constants, add it to the first domain
-        if (DOMAINS.length > 0) {
-          result[DOMAINS[0].id].push(goal);
-        }
-      }
-    });
-    
-    return result;
-  });
-  
-  // Add useEffect to handle domain plan updates and cleanup
-  useEffect(() => {
-    // Listen for domain-plans-updated events
-    const handleDomainPlansUpdated = (event: CustomEvent<DomainPlan[]>) => {
-      // Force re-render with updated domain plans
-      // This is just a temporary UI update until the query is refreshed
-      console.log("Domain plans updated in the UI", event.detail);
-      
-      // Update the local state with the new domain plans
-      // This will cause an immediate UI update without waiting for a query refetch
-      // We need to be careful with typecasting here
-      if (Array.isArray(event.detail) && event.detail.length > 0) {
-        // @ts-ignore - we're forcing a local state update before the query refreshes
-        setDomainPlans(event.detail);
-      }
-    };
-
-    // Add event listener with type assertion for CustomEvent
-    window.addEventListener('domain-plans-updated', 
-      handleDomainPlansUpdated as EventListener);
-
-    // This will run when the component unmounts or when domainPlans/student changes
-    return () => {
-      // Remove the event listener
-      window.removeEventListener('domain-plans-updated', 
-        handleDomainPlansUpdated as EventListener);
-        
-      // Ensure any potential drag operations are canceled on unmount
-      // This helps prevent the "Cannot finish a drop animating when no drop is occurring" error
-      const elements = document.querySelectorAll('[data-rbd-draggable-id]');
-      elements.forEach(el => {
-        el.removeAttribute('data-rbd-draggable-id');
-      });
-    };
-  }, [domainPlans, student]);
-
-  // Vision dialog handlers
-  const openAddVisionDialog = (domainId: string) => {
-    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
-    const domainPlan = domainPlans.find(plan => plan.domain === domainId);
-    setCurrentDomain(domainId);
-    
-    // Use a vision template to guide the user
-    setVisionAge(30);
-    setVisionText("When I am 30 years old, I will be ");
-    
-    // Example media URLs based on domain - using high-quality images
-    const mediaSamples = {
-      'safe': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      'healthy': 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      'engaged': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      'connected': 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      'independent': 'https://images.unsplash.com/photo-1607748851687-ba9a10438621?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      'included': 'https://images.unsplash.com/photo-1517292987719-0369a794ec0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-    };
-    
-    setVisionMedia(mediaSamples[domainId as keyof typeof mediaSamples] || '');
-    setIsAddingVision(true);
-  };
-
-  const openEditVisionDialog = (domainId: string) => {
-    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
-    const domainPlan = domainPlans.find(plan => plan.domain === domainId);
-    setCurrentDomain(domainId);
-    
-    // Set age from existing plan or default to 30
-    setVisionAge(domainPlan?.visionAge || 30);
-    
-    // Set media from existing plan
-    setVisionMedia(domainPlan?.visionMedia || '');
-    
-    // Format vision text if needed for consistency
-    let visionForEdit = domainPlan?.vision || '';
-    const agePattern = new RegExp(`When I am (\\d+) years old,`);
-    const match = visionForEdit.match(agePattern);
-    
-    if (match) {
-      // Extract age from the vision text if it exists
-      const extractedAge = parseInt(match[1]);
-      if (!isNaN(extractedAge)) {
-        setVisionAge(extractedAge);
-      }
-    } else if (visionForEdit) {
-      // Add standard format if missing
-      if (visionForEdit.toLowerCase().startsWith("i will")) {
-        visionForEdit = `When I am ${visionAge} years old, ${visionForEdit}`;
-      } else {
-        visionForEdit = `When I am ${visionAge} years old, I will be ${visionForEdit}`;
-      }
-    }
-    
-    setVisionText(visionForEdit);
-    setIsEditingVision(true);
-  };
-
-  const closeVisionDialog = () => {
-    setIsAddingVision(false);
-    setIsEditingVision(false);
-    setCurrentDomain(null);
-    setVisionText('');
-  };
-
-  const confirmRemoveVision = (domainId: string) => {
-    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
-    setRemovingDomain(domainId);
-  };
-
-  const cancelRemoveVision = () => {
-    setRemovingDomain(null);
-  };
-
-  // Access toast functionality
+  const boardRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  
+  // Shareable link
+  const sharingLink = window.location.href;
+  
+  // Generate a display name for avatar
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
-  // Create domain plan mutation
-  const createDomainPlanMutation = useMutation({
-    mutationFn: (newDomainPlan: Partial<InsertDomainPlan>) => {
-      return apiRequest('POST', '/api/domain-plans', newDomainPlan);
+  // Collect goals from domain plans
+  useEffect(() => {
+    const collectedGoals: Record<string, GoalType[]> = {};
+    
+    domainPlans.forEach(plan => {
+      if (plan.goals) {
+        try {
+          const goalsArray = typeof plan.goals === 'string' 
+            ? JSON.parse(plan.goals) 
+            : plan.goals;
+            
+          if (Array.isArray(goalsArray)) {
+            collectedGoals[plan.domain] = goalsArray;
+          } else {
+            console.error(`Goals for domain ${plan.domain} is not an array:`, goalsArray);
+            collectedGoals[plan.domain] = [];
+          }
+        } catch (error) {
+          console.error(`Error parsing goals for domain ${plan.domain}:`, error);
+          collectedGoals[plan.domain] = [];
+        }
+      } else {
+        collectedGoals[plan.domain] = [];
+      }
+    });
+    
+    setGoalsByDomain(collectedGoals);
+  }, [domainPlans]);
+
+  // Fullscreen handling
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isFullscreenActive = document.fullscreenElement !== null ||
+        // @ts-ignore - vendor prefixed properties
+        document.webkitFullscreenElement !== null ||
+        // @ts-ignore - vendor prefixed properties
+        document.mozFullScreenElement !== null ||
+        // @ts-ignore - vendor prefixed properties
+        document.msFullscreenElement !== null;
+      
+      setIsFullscreen(isFullscreenActive);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
+  }, []);
+
+  // Handle ESC key in presentation mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isPresentationMode && !isAddingGoal && !isEditingGoal && !isAddingVision && !isEditingVision) {
+        e.preventDefault();
+        setIsPresentationMode(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isPresentationMode, isAddingGoal, isEditingGoal, isAddingVision, isEditingVision]);
+
+  // Domain plan mutation
+  const updateDomainPlanMutation = useMutation({
+    mutationFn: async ({ 
+      id, 
+      vision = undefined, 
+      goals = undefined 
+    }: { 
+      id: number, 
+      vision?: string, 
+      goals?: GoalType[] 
+    }) => {
+      const updateData: Partial<InsertDomainPlan> = {};
+      if (vision !== undefined) {
+        updateData.vision = vision;
+      }
+      if (goals !== undefined) {
+        updateData.goals = JSON.stringify(goals);
+      }
+      
+      return apiRequest(`/api/domain-plans/${id}`, {
+        method: 'PATCH',
+        body: updateData,
+      });
     },
     onSuccess: () => {
-      toast({
-        title: "Vision Added",
-        description: "The vision statement has been added successfully.",
-      });
-      // Invalidate any queries that fetch domain plans
       queryClient.invalidateQueries({ queryKey: ['/api/plans'] });
-      closeVisionDialog();
     },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to add vision statement. Please try again.",
-        variant: "destructive"
-      });
-    }
   });
-
-  // Update domain plan mutation
-  const updateDomainPlanMutation = useMutation({
-    mutationFn: ({ id, data }: { 
-      id: number, 
-      data: { 
-        vision?: string | null,
-        visionAge?: number,
-        visionMedia?: string,
-        goals?: any  // Added to fix TypeScript error
-      } 
-    }) => {
-      return apiRequest('PATCH', `/api/domain-plans/${id}`, data);
-    },
-    onSuccess: (data, variables) => {
-      // Determine whether this was a vision update or a goal update based on the data
-      const isVisionUpdate = variables.data.vision !== undefined;
-      const isGoalUpdate = variables.data.goals !== undefined;
-      
-      if (isVisionUpdate) {
-        toast({
-          title: "Vision Updated",
-          description: "The vision statement has been updated successfully.",
-        });
-      } else if (isGoalUpdate) {
-        toast({
-          title: "Goal Updated",
-          description: "The goal has been saved successfully.",
-        });
-      } else {
-        toast({
-          title: "Update Successful",
-          description: "The data has been updated successfully.",
-        });
-      }
-      
-      // Update the local domainPlans state to immediately reflect changes in the UI
-      // This ensures the vision is updated in the UI without waiting for a refetch
-      const updatedDomainPlans = domainPlans.map(plan => {
-        if (plan.id === variables.id) {
-          // Create a new plan object with the updated data
-          let updatedPlan = { ...plan };
-          
-          // Handle vision updates
-          if (variables.data.vision !== undefined) {
-            updatedPlan.vision = variables.data.vision;
-          }
-          
-          if (variables.data.visionAge !== undefined) {
-            updatedPlan.visionAge = variables.data.visionAge;
-          }
-          
-          if (variables.data.visionMedia !== undefined) {
-            updatedPlan.visionMedia = variables.data.visionMedia;
-          }
-          
-          // Handle goals updates
-          if (variables.data.goals !== undefined) {
-            updatedPlan.goals = variables.data.goals;
-          }
-          
-          return updatedPlan;
-        }
-        return plan;
-      });
-      
-      // Force a re-render of the component with the updated domain plan
-      // We're doing this by setting state in a setTimeout to ensure it happens after the current render cycle
-      setTimeout(() => {
-        if (updatedDomainPlans.length > 0) {
-          // Create a custom event to update the UI immediately
-          const event = new CustomEvent('domain-plans-updated', { detail: updatedDomainPlans });
-          window.dispatchEvent(event);
-          
-          // If it was a goal update, also update the goals by domain
-          if (isGoalUpdate) {
-            // We need to rebuild the goalsByDomain state based on the updated domain plans
-            const updatedGoalsByDomain: Record<string, GoalType[]> = {};
-            
-            // Initialize empty arrays for each domain
-            DOMAINS.forEach(domain => {
-              updatedGoalsByDomain[domain.id] = [];
-            });
-            
-            // Process goals from updated domain plans
-            updatedDomainPlans.forEach(plan => {
-              if (plan.goals) {
-                let goals: any[] = [];
-                
-                if (Array.isArray(plan.goals)) {
-                  goals = plan.goals;
-                } else if (typeof plan.goals === 'string') {
-                  try {
-                    goals = JSON.parse(plan.goals);
-                    if (!Array.isArray(goals)) goals = [goals];
-                  } catch (e) {
-                    console.error('Error parsing goals string', e);
-                  }
-                } else if (typeof plan.goals === 'object' && plan.goals !== null) {
-                  goals = [plan.goals];
-                }
-                
-                // Map goals and add to the corresponding domain
-                const processedGoals = goals.map((g: any) => ({
-                  ...g,
-                  domainId: plan.domain
-                }));
-                
-                updatedGoalsByDomain[plan.domain] = processedGoals;
-              }
-            });
-            
-            // Update the goalsByDomain state
-            setGoalsByDomain(updatedGoalsByDomain);
-          }
-        }
-      }, 0);
-      
-      // Invalidate any queries that fetch domain plans to ensure data consistency
-      queryClient.invalidateQueries({ queryKey: ['/api/plans'] });
-      
-      // Close dialogs if needed
-      if (isVisionUpdate) {
-        closeVisionDialog();
-        cancelRemoveVision();
-      }
-      
-      if (isGoalUpdate) {
-        closeGoalDialog();
-      }
-    },
-    onError: (error) => {
-      console.error("Error updating domain plan:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update the data. Please try again.",
-        variant: "destructive"
-      });
-    }
-  });
-
-  const handleSaveVision = () => {
-    if (!currentDomain) return;
-    
-    // Format the vision text to ensure it follows the standard format with the customized age
-    let formattedVision = visionText;
-    const agePrefix = `When I am ${visionAge} years old,`;
-    
-    // If it doesn't start with the standard format, add it with the custom age
-    if (!formattedVision.startsWith(agePrefix)) {
-      // Check if it already has a different age in the prefix
-      const agePattern = new RegExp(`When I am (\\d+) years old,`);
-      if (agePattern.test(formattedVision)) {
-        // Replace the existing age with the new age
-        formattedVision = formattedVision.replace(agePattern, agePrefix);
-      } else if (formattedVision.toLowerCase().startsWith("i will")) {
-        formattedVision = `${agePrefix} ${formattedVision}`;
-      } else {
-        formattedVision = `${agePrefix} I will be ${formattedVision}`;
-      }
-    }
-    
-    // Find the domain plan to update
-    const domainPlan = domainPlans.find(plan => plan.domain === currentDomain);
-    
-    if (domainPlan) {
-      // Update existing domain plan with all the new fields
-      updateDomainPlanMutation.mutate({
-        id: domainPlan.id,
-        data: { 
-          vision: formattedVision,
-          visionAge,
-          visionMedia
-        }
-      });
-    } else {
-      // Create a new domain plan with all the new fields
-      const planId = domainPlans[0]?.planId; // Use the planId from any existing domain plan
-      
-      if (planId) {
-        const newDomainPlan: Partial<InsertDomainPlan> = {
-          planId,
-          domain: currentDomain,
-          vision: formattedVision,
-          visionAge,
-          visionMedia,
-          goals: []
-        };
-        
-        createDomainPlanMutation.mutate(newDomainPlan);
-      }
-    }
-  };
-
-  const handleRemoveVision = () => {
-    if (!removingDomain) return;
-    
-    // Find the domain plan to update
-    const domainPlan = domainPlans.find(plan => plan.domain === removingDomain);
-    
-    if (domainPlan) {
-      // Update the vision to null (remove it)
-      updateDomainPlanMutation.mutate({
-        id: domainPlan.id,
-        data: { vision: null }
-      });
-    }
-  };
 
   // Goal dialog handlers
   const openAddGoalDialog = (domainId: string) => {
-    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
+    // Don't allow adding goals when in presentation mode
+    if (isPresentationMode) return;
+    
+    // Don't allow adding a goal if any dialogs are open
+    if (isAddingVision || isEditingVision || isAddingGoal || isEditingGoal) return;
+    
     setCurrentDomain(domainId);
-    setIsAddingGoal(true);
     setCurrentGoal(null);
+    setIsAddingGoal(true);
   };
 
   const openEditGoalDialog = (goal: GoalType) => {
-    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
+    // Don't allow editing goals when in presentation mode
+    if (isPresentationMode) return;
+    
+    // Don't allow editing a goal if any dialogs are open
+    if (isAddingVision || isEditingVision || isAddingGoal || isEditingGoal) return;
+    
     setCurrentDomain(goal.domainId);
     setCurrentGoal(goal);
     setIsEditingGoal(true);
@@ -507,520 +212,431 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     setCurrentDomain(null);
   };
 
-  // Handle save goal (add or update)
-  const handleSaveGoal = (goalData: any) => {
-    // Find the domain plan to update
-    const domainPlan = domainPlans.find(plan => plan.domain === currentDomain);
+  const handleSaveGoal = (goal: GoalType) => {
+    const domainId = goal.domainId;
+    const domainPlan = domainPlans.find(plan => plan.domain === domainId);
     
     if (!domainPlan) {
       toast({
         title: "Error",
-        description: "Could not find domain plan to update",
-        variant: "destructive"
+        description: "Domain plan not found.",
+        variant: "destructive",
       });
       return;
     }
     
-    try {
-      // Create a new copy of the goals by domain
-      const updatedGoalsByDomain = { ...goalsByDomain };
-      
-      if (isEditingGoal && currentGoal) {
-        // Update existing goal
-        const updatedGoals = updatedGoalsByDomain[currentDomain!].map(g => 
-          g.id === currentGoal.id ? { ...g, ...goalData } : g
-        );
-        updatedGoalsByDomain[currentDomain!] = updatedGoals;
-        
-        // Update the domain plan in the database
-        const originalGoals = Array.isArray(domainPlan.goals) ? domainPlan.goals : [];
-        const updatedDomainGoals = originalGoals.map((g: any) => 
-          g.id === currentGoal.id ? { ...g, ...goalData } : g
-        );
-        
-        // We need to handle this differently due to the type safety
-        const updateData: any = {
-          goals: updatedDomainGoals
-        };
-        
-        // Mutate and handle success/error in the mutation itself
-        updateDomainPlanMutation.mutate({
-          id: domainPlan.id,
-          data: updateData
-        });
-        
-        // Update local state immediately for a responsive UI
-        setGoalsByDomain(updatedGoalsByDomain);
-        
-        // Toast feedback to the user
-        toast({
-          title: "Goal Updated",
-          description: "Goal has been successfully updated",
-        });
-      } else {
-        // Add new goal
-        const newGoal = {
-          id: `${domainPlan.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-          description: goalData.description,
-          status: goalData.status || 'not_started',
-          needsReframing: false,
-          domainId: currentDomain!,
-          ...goalData
-        };
-        
-        updatedGoalsByDomain[currentDomain!] = [
-          ...updatedGoalsByDomain[currentDomain!],
-          newGoal
-        ];
-        
-        // Update the domain plan in the database
-        const originalGoals = Array.isArray(domainPlan.goals) ? domainPlan.goals : [];
-        const updatedDomainGoals = [...originalGoals, newGoal];
-        
-        // We need to handle this differently due to the type safety
-        const updateData: any = {
-          goals: updatedDomainGoals
-        };
-        
-        // Mutate and handle success/error in the mutation itself
-        updateDomainPlanMutation.mutate({
-          id: domainPlan.id,
-          data: updateData
-        });
-        
-        // Update local state immediately for a responsive UI
-        setGoalsByDomain(updatedGoalsByDomain);
-        
-        // Toast feedback to the user
-        toast({
-          title: "Goal Added",
-          description: "New goal has been successfully added",
-        });
-      }
-      
-      // Close the dialog regardless of mutation status
-      // If there's an error, it will be shown via the mutation's onError handler
-      closeGoalDialog();
-    } catch (error) {
-      console.error("Error saving goal:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save goal. Please try again.",
-        variant: "destructive"
-      });
+    let updatedGoals = [...(goalsByDomain[domainId] || [])];
+    
+    if (isEditingGoal && currentGoal) {
+      // Update existing goal
+      updatedGoals = updatedGoals.map(g => g.id === goal.id ? goal : g);
+    } else {
+      // Add new goal
+      updatedGoals.push(goal);
     }
+    
+    // Update the goalsByDomain state
+    setGoalsByDomain(prev => ({
+      ...prev,
+      [domainId]: updatedGoals
+    }));
+    
+    // Save to database
+    updateDomainPlanMutation.mutate({
+      id: domainPlan.id,
+      goals: updatedGoals
+    });
+    
+    closeGoalDialog();
+    
+    toast({
+      title: isEditingGoal ? "Goal Updated" : "Goal Added",
+      description: isEditingGoal 
+        ? "The goal has been successfully updated." 
+        : "A new goal has been added to the vision board.",
+    });
   };
 
-  // Update goal domain mutation
-  const updateGoalDomainMutation = useMutation({
-    mutationFn: ({ 
-      sourceId, 
-      destId, 
-      goal 
-    }: { 
-      sourceId: number, 
-      destId: number, 
-      goal: GoalType 
-    }) => {
-      // Find the original domain plan and updated one
-      const sourcePlan = domainPlans.find(plan => plan.domain === goal.domainId);
-      const destPlan = domainPlans.find(plan => plan.domain === goal.domainId);
-      
-      if (!sourcePlan || !destPlan) return Promise.reject("Domain plans not found");
-      
-      // We need to update both domain plans - remove from source and add to destination
-      // In a production app, you might have a dedicated API endpoint for this operation
-      // Here we're just making two separate calls
-      
-      // First, let's create the updated goal for the destination plan
-      const updatedGoal = {
-        ...goal,
-        domainId: destPlan.domain
-      };
-      
-      // In a production application, we would update both domain plans here
-      // For simplicity, we're just returning a success message
-      return Promise.resolve({ message: "Goal moved successfully" });
-    },
-    onSuccess: () => {
-      toast({
-        title: "Goal Moved",
-        description: "The goal has been moved to a new domain.",
-      });
-      // Invalidate queries to refresh the data
-      queryClient.invalidateQueries({ queryKey: ['/api/plans'] });
-    },
-    onError: () => {
+  // Vision dialog handlers
+  const openAddVisionDialog = (domainId: string) => {
+    // Don't allow adding visions when in presentation mode
+    if (isPresentationMode) return;
+    
+    // Don't allow if any dialogs are open
+    if (isAddingVision || isEditingVision || isAddingGoal || isEditingGoal) return;
+    
+    setCurrentDomain(domainId);
+    setVisionText('');
+    setVisionMedia('');
+    setVisionAge(30);
+    setIsAddingVision(true);
+  };
+
+  const openEditVisionDialog = (domainId: string, vision: string, media?: string, age?: number) => {
+    // Don't allow editing visions when in presentation mode
+    if (isPresentationMode) return;
+    
+    // Don't allow if any dialogs are open
+    if (isAddingVision || isEditingVision || isAddingGoal || isEditingGoal) return;
+    
+    setCurrentDomain(domainId);
+    
+    // Parse vision data
+    let visionText = vision;
+    let visionAge = age || 30;
+    let visionMedia = media || '';
+    
+    setVisionText(visionText);
+    setVisionAge(visionAge);
+    setVisionMedia(visionMedia);
+    setIsEditingVision(true);
+  };
+
+  const closeVisionDialog = () => {
+    setIsAddingVision(false);
+    setIsEditingVision(false);
+    setCurrentDomain(null);
+    setVisionText('');
+    setVisionMedia('');
+  };
+
+  const handleSaveVision = () => {
+    if (!currentDomain) return;
+    
+    const domainPlan = domainPlans.find(plan => plan.domain === currentDomain);
+    if (!domainPlan) {
       toast({
         title: "Error",
-        description: "Failed to move goal. Please try again.",
-        variant: "destructive"
+        description: "Domain plan not found",
+        variant: "destructive",
       });
+      return;
     }
-  });
+    
+    // Prepare the vision string with age and media embedded as JSON if needed
+    const visionData = {
+      text: visionText,
+      age: visionAge,
+      media: visionMedia || undefined
+    };
+    
+    // Update the domain plan
+    updateDomainPlanMutation.mutate({
+      id: domainPlan.id,
+      vision: JSON.stringify(visionData)
+    });
+    
+    closeVisionDialog();
+    
+    toast({
+      title: isEditingVision ? "Vision Updated" : "Vision Added",
+      description: isEditingVision
+        ? "The vision statement has been successfully updated."
+        : "A new vision statement has been added to the vision board.",
+    });
+  };
 
+  // Handle removal of vision
+  const confirmRemoveVision = (domainId: string) => {
+    // Don't allow removing visions when in presentation mode
+    if (isPresentationMode) return;
+    
+    setRemovingDomain(domainId);
+  };
+
+  const cancelRemoveVision = () => {
+    setRemovingDomain(null);
+  };
+
+  const handleRemoveVision = () => {
+    if (!removingDomain) return;
+    
+    const domainPlan = domainPlans.find(plan => plan.domain === removingDomain);
+    if (!domainPlan) {
+      toast({
+        title: "Error",
+        description: "Domain plan not found",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Clear the vision
+    updateDomainPlanMutation.mutate({
+      id: domainPlan.id,
+      vision: ''
+    });
+    
+    setRemovingDomain(null);
+    
+    toast({
+      title: "Vision Removed",
+      description: "The vision statement has been removed from the vision board.",
+    });
+  };
+
+  // Handle drag-and-drop reordering
   const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
+    // Skip if we're in presentation mode
+    if (isPresentationMode) return;
     
-    // If dropped outside a droppable area
-    if (!destination) {
+    // Skip if no destination or same position
+    if (!result.destination || result.destination.index === result.source.index) {
       return;
     }
+
+    // Get domain from droppable ID
+    const domainId = result.source.droppableId.replace('goals-', '');
+    const domainPlan = domainPlans.find(plan => plan.domain === domainId);
     
-    // If dropped in the same position
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    ) {
-      return;
-    }
+    if (!domainPlan || !goalsByDomain[domainId]) return;
     
+    // Reorder the goals
+    const goals = [...goalsByDomain[domainId]];
+    const [removed] = goals.splice(result.source.index, 1);
+    goals.splice(result.destination.index, 0, removed);
+    
+    // Update state
+    setGoalsByDomain(prev => ({
+      ...prev,
+      [domainId]: goals
+    }));
+    
+    // Save to database
+    updateDomainPlanMutation.mutate({
+      id: domainPlan.id,
+      goals: goals
+    });
+  };
+
+  // Parse a vision string to extract embedded data
+  const parseVision = (visionStr: string) => {
     try {
-      // Get source and destination domains
-      const sourceDomain = source.droppableId;
-      const destDomain = destination.droppableId;
-      
-      // Create a deep copy of the current state
-      const newGoalsByDomain = JSON.parse(JSON.stringify(goalsByDomain));
-      
-      // Ensure the arrays exist
-      if (!Array.isArray(newGoalsByDomain[sourceDomain])) {
-        newGoalsByDomain[sourceDomain] = [];
-      }
-      
-      if (!Array.isArray(newGoalsByDomain[destDomain])) {
-        newGoalsByDomain[destDomain] = [];
-      }
-      
-      // Check if the index is valid
-      if (source.index >= newGoalsByDomain[sourceDomain].length) {
-        console.error('Source index out of bounds:', source.index, newGoalsByDomain[sourceDomain].length);
-        return;
-      }
-      
-      // Remove from source domain
-      const [movedGoal] = newGoalsByDomain[sourceDomain].splice(source.index, 1);
-      
-      if (!movedGoal) {
-        console.error('No goal found at index:', source.index);
-        return;
-      }
-      
-      // Update the moved goal's domain
-      movedGoal.domainId = destDomain;
-      
-      // Add to destination domain
-      newGoalsByDomain[destDomain].splice(destination.index, 0, movedGoal);
-      
-      // Update state locally first for immediate feedback
-      setGoalsByDomain(newGoalsByDomain);
-      
-      // Find the domain plans
-      const sourcePlan = domainPlans.find(plan => plan.domain === sourceDomain);
-      const destPlan = domainPlans.find(plan => plan.domain === destDomain);
-      
-      // If both plans exist, update the backend
-      if (sourcePlan && destPlan) {
-        updateGoalDomainMutation.mutate({
-          sourceId: sourcePlan.id,
-          destId: destPlan.id,
-          goal: movedGoal
-        });
-      }
-    } catch (error) {
-      console.error('Error in drag end handler:', error);
-      toast({
-        title: "Error",
-        description: "There was an issue moving the goal. Please try again.",
-        variant: "destructive"
-      });
+      // Try to parse as JSON
+      const parsed = JSON.parse(visionStr);
+      return {
+        text: parsed.text || visionStr,
+        age: parsed.age || 30,
+        media: parsed.media || ''
+      };
+    } catch (e) {
+      // If not valid JSON, return as plain text
+      return {
+        text: visionStr,
+        age: 30,
+        media: ''
+      };
     }
   };
 
-  // Presentation mode handlers
+  // Toggle fullscreen mode
+  const toggleFullscreen = () => {
+    // Don't toggle fullscreen if any dialog is open
+    if (isAddingVision || isEditingVision || isAddingGoal || isEditingGoal || isShareDialogOpen) {
+      return;
+    }
+    
+    if (!boardRef.current) return;
+    
+    if (!isFullscreen) {
+      // Enter fullscreen mode
+      if (boardRef.current.requestFullscreen) {
+        boardRef.current.requestFullscreen();
+      // @ts-ignore - vendor prefixed methods
+      } else if (boardRef.current.webkitRequestFullscreen) {
+        // @ts-ignore - vendor prefixed methods
+        boardRef.current.webkitRequestFullscreen();
+      // @ts-ignore - vendor prefixed methods
+      } else if (boardRef.current.mozRequestFullScreen) {
+        // @ts-ignore - vendor prefixed methods
+        boardRef.current.mozRequestFullScreen();
+      // @ts-ignore - vendor prefixed methods
+      } else if (boardRef.current.msRequestFullscreen) {
+        // @ts-ignore - vendor prefixed methods
+        boardRef.current.msRequestFullscreen();
+      }
+    } else {
+      // Exit fullscreen mode
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      // @ts-ignore - vendor prefixed methods
+      } else if (document.webkitExitFullscreen) {
+        // @ts-ignore - vendor prefixed methods
+        document.webkitExitFullscreen();
+      // @ts-ignore - vendor prefixed methods
+      } else if (document.mozCancelFullScreen) {
+        // @ts-ignore - vendor prefixed methods
+        document.mozCancelFullScreen();
+      // @ts-ignore - vendor prefixed methods
+      } else if (document.msExitFullscreen) {
+        // @ts-ignore - vendor prefixed methods
+        document.msExitFullscreen();
+      }
+    }
+  };
+
+  // Toggle presentation mode
   const togglePresentationMode = () => {
     setIsPresentationMode(!isPresentationMode);
   };
-  
-  const toggleFullscreen = () => {
-    // Check if any dialog is open - don't toggle fullscreen if a dialog is open
-    const isAnyDialogOpen = isAddingVision || isEditingVision || isAddingGoal || isEditingGoal || isShareDialogOpen || !!removingDomain;
-    
-    if (isAnyDialogOpen) {
-      // Don't toggle fullscreen when dialogs are open
-      return;
-    }
-    
-    if (!isFullscreen) {
-      if (visionBoardRef.current) {
-        // Cross-browser fullscreen API
-        const element = visionBoardRef.current;
-        const requestFullscreen = element.requestFullscreen || 
-                                // @ts-ignore - for Safari, Firefox, and IE/Edge
-                                element.webkitRequestFullscreen || 
-                                // @ts-ignore
-                                element.mozRequestFullScreen || 
-                                // @ts-ignore
-                                element.msRequestFullscreen;
-                                
-        if (requestFullscreen) {
-          // Call the appropriate method
-          requestFullscreen.call(element).catch(err => {
-            console.error('Error attempting to enable fullscreen:', err);
-          });
-          setIsFullscreen(true);
-        }
-      }
-    } else {
-      // Cross-browser exit fullscreen API
-      const exitFullscreen = document.exitFullscreen || 
-                           // @ts-ignore
-                           document.webkitExitFullscreen || 
-                           // @ts-ignore
-                           document.mozCancelFullScreen || 
-                           // @ts-ignore
-                           document.msExitFullscreen;
-                           
-      if (exitFullscreen) {
-        exitFullscreen.call(document).catch(err => {
-          console.error('Error attempting to exit fullscreen:', err);
-        });
-        setIsFullscreen(false);
-      }
-    }
-  };
-  
-  // Track fullscreen changes from browser
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      // Update our state to match the browser's fullscreen state
-      const isDocFullscreen = (
-        document.fullscreenElement !== null || 
-        // @ts-ignore - for Safari, Firefox, and IE/Edge support
-        document.webkitFullscreenElement !== null ||
-        // @ts-ignore
-        document.mozFullScreenElement !== null ||
-        // @ts-ignore
-        document.msFullscreenElement !== null
-      );
-      
-      if (isFullscreen !== isDocFullscreen) {
-        setIsFullscreen(isDocFullscreen);
-      }
-    };
-    
-    // Add event listener for fullscreen changes with cross-browser support
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange); // Safari
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange); // Firefox
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange); // IE/Edge
-    
-    // Clean up
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
-    };
-  }, [isFullscreen]);
-  
-  // Collaboration and sharing handlers
-  const openShareDialog = () => {
-    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
-    
-    // Generate a shareable link (in real app, this would be a unique URL)
-    const baseUrl = window.location.origin;
-    const shareableLink = `${baseUrl}/vision-board/shared/${student.id}/${Date.now()}`;
-    setSharingLink(shareableLink);
-    setIsShareDialogOpen(true);
-  };
-  
+
+  // Copy link to clipboard
   const copyLinkToClipboard = () => {
     navigator.clipboard.writeText(sharingLink).then(() => {
       toast({
         title: "Link Copied",
-        description: "Shareable link has been copied to clipboard.",
+        description: "The link has been copied to your clipboard.",
       });
     }).catch(() => {
       toast({
-        title: "Error",
-        description: "Failed to copy link. Please try again.",
-        variant: "destructive"
+        title: "Copy Failed",
+        description: "Failed to copy the link to your clipboard.",
+        variant: "destructive",
       });
     });
   };
-  
-  // Dynamic classes based on presentation mode
-  const presentationModeClasses = isPresentationMode 
-    ? "bg-gradient-to-br from-sky-100 to-indigo-100 p-8 rounded-xl shadow-xl" 
-    : "";
-  
+
+  // Dynamic classes for presentation mode
+  const presentationModeClasses = isPresentationMode
+    ? 'fixed inset-0 z-50 bg-background overflow-auto'
+    : '';
+
   return (
-    <div className="space-y-6" ref={visionBoardRef}>
-      <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${isPresentationMode ? 'mb-8' : ''}`}>
-        <h2 className={`text-2xl font-bold ${isPresentationMode ? 'text-3xl text-indigo-800' : ''}`}>
-          Vision Board for {student.name}
-        </h2>
-        
-        {/* Hidden element to capture keyboard events in fullscreen mode */}
-        {isFullscreen && (
-          <div 
-            className="fixed inset-0 pointer-events-none" 
-            aria-hidden="true"
-            tabIndex={-1}
-            onKeyDown={(e) => {
-              // Add escape key handler for fullscreen
-              if (e.key === 'Escape') {
-                // Cross-browser exit fullscreen API
-                const exitFullscreen = document.exitFullscreen || 
-                                    // @ts-ignore
-                                    document.webkitExitFullscreen || 
-                                    // @ts-ignore
-                                    document.mozCancelFullScreen || 
-                                    // @ts-ignore
-                                    document.msExitFullscreen;
-                                    
-                if (exitFullscreen) {
-                  exitFullscreen.call(document).catch(err => {
-                    console.error('Error attempting to exit fullscreen:', err);
-                  });
-                  setIsFullscreen(false);
-                }
-              }
-            }}
-          />
-        )}
-        
-        <div className="flex flex-wrap items-center gap-3">
-          {/* View Mode Controls */}
-          <div className="flex items-center bg-gray-100 p-1 rounded-lg">
-            <Button
-              variant={viewMode === 'grid' ? "default" : "ghost"}
-              size="sm"
-              className="px-3"
-              onClick={() => setViewMode('grid')}
-            >
-              <GridIcon className="h-4 w-4 mr-1" />
-              <span>Grid</span>
-            </Button>
-            <Button
-              variant={viewMode === 'list' ? "default" : "ghost"}
-              size="sm"
-              className="px-3"
-              onClick={() => setViewMode('list')}
-            >
-              <ColumnsIcon className="h-4 w-4 mr-1" />
-              <span>List</span>
-            </Button>
-          </div>
-          
-          {/* Presentation Mode Toggle */}
+    <div 
+      ref={boardRef} 
+      className={`vision-board relative ${presentationModeClasses}`}
+    >
+      {/* Controls toolbar */}
+      <div className={`
+        flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b
+        ${isPresentationMode ? 'px-4 pt-4' : ''}
+      `}>
+        <div className="flex flex-wrap items-center gap-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant={isPresentationMode ? "default" : "outline"}
-                  size="sm"
-                  className="px-3"
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 gap-1"
+                  onClick={() => setViewMode('grid')}
+                  disabled={viewMode === 'grid' || isPresentationMode}
+                >
+                  <GridIcon className="h-4 w-4" />
+                  <span className="hidden sm:inline">Grid</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Grid View</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 gap-1"
+                  onClick={() => setViewMode('list')}
+                  disabled={viewMode === 'list' || isPresentationMode}
+                >
+                  <ColumnsIcon className="h-4 w-4" />
+                  <span className="hidden sm:inline">List</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>List View</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className={`h-8 gap-1 ${isPresentationMode ? 'bg-primary/10' : ''}`}
                   onClick={togglePresentationMode}
                 >
-                  <PresentationIcon className="h-4 w-4 mr-1" />
-                  <span>Present</span>
+                  <PresentationIcon className="h-4 w-4" />
+                  <span className="hidden sm:inline">
+                    {isPresentationMode ? 'Exit Presentation' : 'Present'}
+                  </span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Toggle presentation mode for meetings</p>
+                {isPresentationMode ? 'Exit Presentation Mode' : 'Presentation Mode'}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
           
-          {/* Fullscreen Toggle */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="px-3"
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 gap-1"
                   onClick={toggleFullscreen}
                 >
-                  <Maximize2Icon className="h-4 w-4 mr-1" />
-                  <span>Fullscreen</span>
+                  <Maximize2Icon className="h-4 w-4" />
+                  <span className="hidden sm:inline">
+                    {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+                  </span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>View in fullscreen mode</p>
+                {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Mode'}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
           
-          {/* Share Button */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="px-3"
-                  onClick={openShareDialog}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 gap-1"
+                  onClick={() => setIsShareDialogOpen(true)}
                 >
-                  <Share2Icon className="h-4 w-4 mr-1" />
-                  <span>Share</span>
+                  <Share2Icon className="h-4 w-4" />
+                  <span className="hidden sm:inline">Share</span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>
-                <p>Share vision board with team members</p>
-              </TooltipContent>
+              <TooltipContent>Share Vision Board</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
+        
+        {isPresentationMode && (
+          <div className="flex items-center">
+            <div className="text-sm font-medium mr-2">Presentation Mode</div>
+            <Badge variant="outline">Student: {student.name}</Badge>
+          </div>
+        )}
+        
+        {/* Collaborators (sample) */}
+        {!isPresentationMode && (
+          <div className="flex -space-x-2 overflow-hidden items-center">
+            <Avatar className="h-8 w-8 border-2 border-background">
+              <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
+            </Avatar>
+            <Avatar className="h-8 w-8 border-2 border-background">
+              <AvatarFallback>{getInitials("Sarah Johnson")}</AvatarFallback>
+            </Avatar>
+            <Button variant="ghost" size="sm" className="h-8 px-2 ml-1">
+              <UsersIcon className="h-4 w-4 mr-1" />
+              <span className="text-xs">Collaborators</span>
+            </Button>
+          </div>
+        )}
       </div>
       
-      {/* Collaborators Section (visible only when not in presentation mode) */}
-      {!isPresentationMode && (
-        <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
-          <div className="flex items-center gap-2">
-            <UsersIcon className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium">Collaborators:</span>
-            <div className="flex -space-x-2">
-              {collaborators.map(collaborator => (
-                <TooltipProvider key={collaborator.id}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="relative">
-                        <Avatar className="h-7 w-7 border-2 border-white">
-                          <AvatarFallback className={collaborator.online ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
-                            {collaborator.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        {collaborator.online && (
-                          <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 ring-1 ring-white"></span>
-                        )}
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{collaborator.name} - {collaborator.role} <span className={collaborator.online ? "text-green-500" : "text-gray-500"}>
-                        {collaborator.online ? '● Online' : '○ Offline'}
-                      </span></p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ))}
-            </div>
-          </div>
-          <Button variant="ghost" size="sm" className="text-xs">
-            <UsersIcon className="h-3 w-3 mr-1" />
-            Invite
-          </Button>
-        </div>
-      )}
-      
-      {!isPresentationMode && (
-        <Alert className="bg-blue-50 border-blue-200">
-          <AlertDescription>
-            <p className="text-blue-800">
-              Drag and drop goals between domains to reorganize your student's Good Life plan. This visualization helps you ensure goals are correctly categorized and balanced across domains.
-            </p>
+      {updateDomainPlanMutation.isPending && (
+        <Alert className="mb-4">
+          <AlertDescription className="flex items-center">
+            <div className="animate-spin mr-2">⏳</div>
+            Saving changes...
           </AlertDescription>
         </Alert>
       )}
@@ -1030,8 +646,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
         if (!open) closeVisionDialog();
       }}>
         <DialogContent 
-          className="max-w-md max-h-[90vh] overflow-y-auto z-[9999]" 
-          style={{ position: isFullscreen ? 'fixed' : 'absolute' }}>
+          className="max-w-md max-h-[90vh] overflow-y-auto"
+          fullscreen={isFullscreen}
+        >
           <DialogHeader>
             <DialogTitle>
               {isAddingVision ? 'Add Vision Statement' : 'Edit Vision Statement'}
@@ -1081,118 +698,33 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                 className="w-full"
               />
               
-              {/* Example Media Suggestion Buttons */}
-              {currentDomain && !visionMedia && (
-                <div className="flex flex-wrap gap-2 mt-3">
+              {/* Vision Suggestions Button */}
+              {currentDomain && (
+                <div className="mt-2">
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="flex items-center gap-2"
+                    className="w-full justify-start text-left h-auto py-2 px-3"
                     onClick={() => {
-                      setVisionMedia('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');
+                      const suggestions = {
+                        safe: "When I am 30 years old, I will be living in a safe environment where I feel secure and protected. I will have developed strategies to manage stress and anxiety in new situations.",
+                        healthy: "When I am 30 years old, I will be maintaining good physical and mental health through activities I enjoy. I will have a balanced lifestyle that includes regular exercise, nutritious meals, and time to relax.",
+                        engaged: "When I am 30 years old, I will be actively participating in work and leisure activities that interest me. I will be developing my skills and pursuing my passions.",
+                        connected: "When I am 30 years old, I will be maintaining meaningful relationships with family, friends, and my community. I will have a support network I can rely on.",
+                        independent: "When I am 30 years old, I will be confidently handling transportation, finances, and daily living tasks. I will be advocating for the support I need when necessary.",
+                        included: "When I am 30 years old, I will be valued for my unique contributions to my community. I will be participating in decisions about my life and future goals."
+                      };
+                      if (currentDomain in suggestions) {
+                        setVisionText(suggestions[currentDomain as keyof typeof suggestions]);
+                      }
                     }}
                   >
-                    <img 
-                      src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
-                      alt="Example 1"
-                      className="h-5 w-8 object-cover rounded"
-                    />
-                    <span>Use Example 1</span>
+                    <WandIcon className="h-4 w-4 mr-2" />
+                    Use Domain Suggestion
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="flex items-center gap-2"
-                    onClick={() => {
-                      setVisionMedia('https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');
-                    }}
-                  >
-                    <img 
-                      src="https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
-                      alt="Example 2"
-                      className="h-5 w-8 object-cover rounded"
-                    />
-                    <span>Use Example 2</span>
-                  </Button>
-                </div>
-              )}
-              {visionMedia && (
-                <div className="mt-2 border rounded overflow-hidden">
-                  {visionMedia.includes('youtube.com') || visionMedia.includes('youtu.be') ? (
-                    // Handle YouTube videos
-                    <iframe 
-                      src={visionMedia}
-                      title="Vision video preview"
-                      className="w-full h-[200px]"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  ) : visionMedia.includes('vimeo.com') ? (
-                    // Handle Vimeo videos
-                    <iframe 
-                      src={visionMedia}
-                      title="Vision video preview"
-                      className="w-full h-[200px]"
-                      allow="autoplay; fullscreen; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  ) : visionMedia.includes('pexels.com/video') ? (
-                    // Handle Pexels video links - show a clickable link
-                    <div className="p-4 text-center">
-                      <a 
-                        href={visionMedia} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline flex flex-col items-center"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-2">
-                          <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                        </svg>
-                        Click to view video on Pexels
-                      </a>
-                    </div>
-                  ) : (
-                    // Default to image
-                    <img 
-                      src={visionMedia} 
-                      alt="Vision media preview" 
-                      className="max-h-[160px] object-contain mx-auto p-2"
-                      onError={(e) => {
-                        e.currentTarget.src = "https://placehold.co/400x300/ebf5ff/6b7280/?text=Invalid+Image+URL";
-                      }}
-                    />
-                  )}
                 </div>
               )}
             </div>
-            
-            {/* Vision Suggestions Button */}
-            {currentDomain && (
-              <div className="mt-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="w-full justify-start text-left h-auto py-2 px-3"
-                  onClick={() => {
-                    const suggestions = {
-                      safe: "When I am 30 years old, I will be living in a safe environment where I feel secure and protected. I will have developed strategies to manage stress and anxiety in new situations.",
-                      healthy: "When I am 30 years old, I will be maintaining good physical and mental health through activities I enjoy. I will have a balanced lifestyle that includes regular exercise, nutritious meals, and time to relax.",
-                      engaged: "When I am 30 years old, I will be actively participating in work and leisure activities that interest me. I will be developing my skills and pursuing my passions.",
-                      connected: "When I am 30 years old, I will be maintaining meaningful relationships with family, friends, and my community. I will have a support network I can rely on.",
-                      independent: "When I am 30 years old, I will be confidently handling transportation, finances, and daily living tasks. I will be advocating for the support I need when necessary.",
-                      included: "When I am 30 years old, I will be valued for my unique contributions to my community. I will be participating in decisions about my life and future goals."
-                    };
-                    if (currentDomain in suggestions) {
-                      setVisionText(suggestions[currentDomain as keyof typeof suggestions]);
-                    }
-                  }}
-                >
-                  <WandIcon className="h-4 w-4 mr-2" />
-                  Use Domain Suggestion
-                </Button>
-              </div>
-            )}
           </div>
           
           <DialogFooter>
@@ -1207,8 +739,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
         if (!open) cancelRemoveVision();
       }}>
         <DialogContent 
-          className="max-w-sm z-[9999]"
-          style={{ position: isFullscreen ? 'fixed' : 'absolute' }}>
+          className="max-w-sm"
+          fullscreen={isFullscreen}
+        >
           <DialogHeader>
             <DialogTitle>Remove Vision Statement?</DialogTitle>
             <DialogDescription>
@@ -1226,8 +759,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       {/* Share Dialog */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
         <DialogContent 
-          className="max-w-md max-h-[90vh] overflow-y-auto z-[9999]"
-          style={{ position: isFullscreen ? 'fixed' : 'absolute' }}>
+          className="max-w-md max-h-[90vh] overflow-y-auto"
+          fullscreen={isFullscreen}
+        >
           <DialogHeader>
             <DialogTitle>Share Vision Board</DialogTitle>
             <DialogDescription>
@@ -1261,252 +795,267 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <Switch id="view-only" defaultChecked />
-                    <label htmlFor="view-only" className="text-sm">View-only access</label>
+                    <span>View-only access</span>
                   </div>
-                  <span className="text-xs text-gray-500">Recommended</span>
+                  <Switch id="view-only" defaultChecked />
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span>Allow comments</span>
+                  </div>
                   <Switch id="allow-comments" />
-                  <label htmlFor="allow-comments" className="text-sm">Allow comments</label>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Switch id="allow-editing" />
-                  <label htmlFor="allow-editing" className="text-sm">Allow editing</label>
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-2 mt-4">
-              <label className="text-sm font-medium">Share Directly</label>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                  </svg>
-                  Twitter
-                </Button>
-                <Button variant="outline" size="sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                  </svg>
-                  Facebook
-                </Button>
-                <Button variant="outline" size="sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                    <polyline points="22,6 12,13 2,6"></polyline>
-                  </svg>
-                  Email
-                </Button>
               </div>
             </div>
           </div>
           
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setIsShareDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsShareDialogOpen(false)}>
               Cancel
             </Button>
-            <Button type="button">
-              Done
+            <Button onClick={() => {
+              setIsShareDialogOpen(false);
+              toast({
+                title: "Sharing Settings Saved",
+                description: "Your sharing settings have been updated.",
+              });
+            }}>
+              Save Settings
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       
+      {/* Vision board grid */}
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className={`grid grid-cols-1 ${
-          viewMode === 'grid' 
-            ? 'md:grid-cols-2 lg:grid-cols-3' 
-            : viewMode === 'list' 
-              ? 'md:grid-cols-1 max-w-4xl mx-auto'
-              : 'md:grid-cols-2 lg:grid-cols-3'
-        } gap-4 ${presentationModeClasses}`}>
-          {DOMAINS.map(domain => {
-            const domainPlan = domainPlans.find(plan => plan.domain === domain.id);
-            const domainVision = domainPlan?.vision || '';
-            const domainVisionMedia = domainPlan?.visionMedia || '';
+        <div className={`
+          ${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}
+          ${presentationModeClasses ? 'p-4' : ''}
+        `}>
+          {domainPlans.map((plan) => {
+            const domainInfo = DOMAINS.find(d => d.id === plan.domain);
+            const hasVision = !!plan.vision;
+            const isParsedVision = hasVision && plan.vision.startsWith('{');
+            
+            // Parse vision data if available
+            const visionData = hasVision ? parseVision(plan.vision) : { text: '', age: 30, media: '' };
             
             return (
-              <Droppable droppableId={domain.id} key={domain.id} isDropDisabled={isPresentationMode}>
-                {(provided, snapshot) => (
-                  <Card 
-                    className={`${snapshot.isDraggingOver ? 'bg-gray-50' : ''} h-full ${
-                      viewMode === 'list' ? 'w-full' : ''
-                    } ${isPresentationMode ? 'shadow-lg transform transition-all duration-200 hover:scale-[1.02]' : ''}`}
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    <CardHeader className={`${domain.bgClass} text-white ${viewMode === 'list' ? 'p-4' : ''} ${isPresentationMode ? 'p-6' : ''}`}>
-                      <CardTitle className={`flex justify-between items-center ${viewMode === 'list' ? 'text-lg' : ''} ${isPresentationMode ? 'text-2xl mb-4' : ''}`}>
-                        <span>{domain.name}</span>
-                        <Badge variant="outline" className="bg-white text-gray-800 border-white">
-                          {goalsByDomain[domain.id]?.length || 0} goals
-                        </Badge>
-                      </CardTitle>
-                      <div className="mt-2">
-                        <div className="flex justify-between items-center">
-                          <div className="text-xs uppercase tracking-wide font-semibold text-white/80">Vision Statement</div>
-                          <div className="flex gap-1">
-                            {domainVision ? (
-                              <>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="h-5 w-5 text-white bg-white/10 hover:bg-white/20"
-                                  onClick={() => openEditVisionDialog(domain.id)}
-                                >
-                                  <PencilIcon className="h-3 w-3" />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="h-5 w-5 text-white bg-white/10 hover:bg-white/20"
-                                  onClick={() => confirmRemoveVision(domain.id)}
-                                >
-                                  <XIcon className="h-3 w-3" />
-                                </Button>
-                              </>
-                            ) : (
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                className="h-5 w-5 text-white bg-white/10 hover:bg-white/20"
-                                onClick={() => openAddVisionDialog(domain.id)}
-                              >
-                                <PlusIcon className="h-3 w-3" />
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                        {domainVision ? (
-                          <div className="mt-1 bg-white/20 p-2 rounded shadow-inner border border-white/30">
-                            {domainVisionMedia && isPresentationMode && (
-                              <div className="mb-3 rounded overflow-hidden">
-                                {domainVisionMedia.includes('youtube.com') || domainVisionMedia.includes('youtu.be') ? (
-                                  // Handle YouTube videos
-                                  <iframe 
-                                    src={domainVisionMedia}
-                                    title={`${domain.name} vision video`}
-                                    className="w-full h-36"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                  ></iframe>
-                                ) : domainVisionMedia.includes('vimeo.com') ? (
-                                  // Handle Vimeo videos
-                                  <iframe 
-                                    src={domainVisionMedia}
-                                    title={`${domain.name} vision video`}
-                                    className="w-full h-36"
-                                    allow="autoplay; fullscreen; picture-in-picture"
-                                    allowFullScreen
-                                  ></iframe>
-                                ) : domainVisionMedia.includes('pexels.com/video') ? (
-                                  // Handle Pexels video links - show a clickable link
-                                  <div className="p-2 text-center bg-white/10">
-                                    <a 
-                                      href={domainVisionMedia} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                      className="text-white hover:underline flex flex-col items-center"
-                                    >
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-1">
-                                        <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                                      </svg>
-                                      View Video
-                                    </a>
-                                  </div>
-                                ) : (
-                                  // Default to image
-                                  <img 
-                                    src={domainVisionMedia} 
-                                    alt={`Vision media for ${domain.name}`}
-                                    className="w-full h-36 object-cover"
-                                    onError={(e) => {
-                                      e.currentTarget.style.display = 'none';
-                                    }} 
-                                  />
-                                )}
-                              </div>
-                            )}
-                            <p className={`${isPresentationMode ? 'text-base' : 'text-sm'} font-medium leading-snug ${viewMode === 'list' && !isPresentationMode ? 'line-clamp-3' : ''}`}>
-                              {domainVision.startsWith(`When I am ${domainPlan?.visionAge || 30} years old,`) ? 
-                                domainVision : 
-                                `When I am ${domainPlan?.visionAge || 30} years old, I will be ${domainVision.toLowerCase().startsWith("i will") ? domainVision.substring(7) : domainVision}`
-                              }
-                            </p>
-                            {isPresentationMode && domainVisionMedia && (
-                              <div className="mt-2 text-xs text-right text-white/80 italic">
-                                Age: {domainPlan?.visionAge || 30} years
-                              </div>
-                            )}
-                          </div>
+              <Card key={plan.domain} className={`
+                overflow-hidden 
+                ${viewMode === 'grid' ? 'h-full flex flex-col' : ''}
+                ${isPresentationMode ? 'shadow-lg' : ''}
+              `}>
+                <CardHeader className={`
+                  bg-gray-50 border-b 
+                  ${viewMode === 'grid' ? 'pb-3' : 'pb-3'} 
+                  ${isPresentationMode ? 'bg-gray-50/50' : ''}
+                `}>
+                  <div className="flex justify-between items-start">
+                    <Badge 
+                      variant={viewMode === 'list' && isPresentationMode ? "outline" : "secondary"}
+                      className={`
+                        ${viewMode === 'list' && isPresentationMode ? 'text-xs px-2 py-0 h-5' : ''}
+                      `}
+                    >
+                      {domainInfo?.name || plan.domain}
+                    </Badge>
+                    
+                    {!isPresentationMode && (
+                      <div className="flex space-x-1">
+                        {hasVision ? (
+                          <>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-7 w-7" 
+                              onClick={() => openEditVisionDialog(
+                                plan.domain, 
+                                visionData.text,
+                                visionData.media,
+                                visionData.age
+                              )}
+                            >
+                              <PencilIcon className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-7 w-7" 
+                              onClick={() => confirmRemoveVision(plan.domain)}
+                            >
+                              <XIcon className="h-4 w-4" />
+                            </Button>
+                          </>
                         ) : (
-                          <div className="flex mt-1 gap-2 items-center">
-                            <p className="text-sm text-white/70 italic">No vision statement yet</p>
+                          <Button 
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            onClick={() => openAddVisionDialog(plan.domain)}
+                          >
+                            <PlusIcon className="h-3 w-3 mr-1" />
+                            Add Vision
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {hasVision && (
+                    <div className={`
+                      mt-2 pt-2 ${visionData.media ? 'pb-0' : 'pb-1'}
+                      ${isPresentationMode ? 'bg-white/80 rounded p-3 shadow-sm' : ''}
+                    `}>
+                      <CardTitle className={`
+                        ${viewMode === 'list' ? 'text-base' : 'text-sm'}
+                        ${isPresentationMode ? 'text-lg font-bold mb-2' : ''}
+                      `}>
+                        <span className="text-sm font-normal text-gray-500 block">
+                          {`When I am ${visionData.age} years old, I will be...`}
+                        </span>
+                        <div className="mt-1">
+                          {visionData.text}
+                        </div>
+                      </CardTitle>
+                      
+                      {visionData.media && (
+                        <div className={`
+                          mt-2 overflow-hidden rounded border 
+                          ${viewMode === 'grid' ? 'max-h-[180px]' : 'max-h-[150px]'}
+                          ${isPresentationMode ? 'max-h-[250px] border-0 shadow-sm' : ''}
+                        `}>
+                          {visionData.media.includes('youtube.com') || visionData.media.includes('youtu.be') ? (
+                            <iframe 
+                              src={visionData.media}
+                              title="Vision video"
+                              className="w-full h-full"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            ></iframe>
+                          ) : (
+                            <img 
+                              src={visionData.media} 
+                              alt="Vision illustration" 
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = "https://placehold.co/600x400/ebf5ff/6b7280/?text=Invalid+Image+URL";
+                              }}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardHeader>
+                
+                <CardContent className={`
+                  ${viewMode === 'grid' ? 'flex-1' : ''}
+                  ${viewMode === 'list' ? 'pt-3' : 'pt-3'}
+                  ${isPresentationMode && !hasVision ? 'pt-0' : ''}
+                `}>
+                  {!hasVision && isPresentationMode && (
+                    <div className="flex flex-col items-center justify-center p-6 border border-dashed rounded-lg my-2">
+                      <LightbulbIcon className="h-8 w-8 text-yellow-500 mb-2" />
+                      <p className="text-center text-gray-500">
+                        No vision has been defined for this domain yet.
+                      </p>
+                    </div>
+                  )}
+                  
+                  {!hasVision && !isPresentationMode && (
+                    <div className="flex flex-col items-center justify-center p-6 border border-dashed rounded-lg">
+                      <Button 
+                        variant="outline"
+                        onClick={() => openAddVisionDialog(plan.domain)}
+                        className="mb-2"
+                      >
+                        <PlusIcon className="h-4 w-4 mr-2" />
+                        Add Vision Statement
+                      </Button>
+                      <p className="text-center text-sm text-gray-500">
+                        Define what success looks like for this domain
+                      </p>
+                    </div>
+                  )}
+                  
+                  {(viewMode === 'grid' || isPresentationMode) && (
+                    <h3 className={`
+                      font-semibold 
+                      ${hasVision ? 'mt-2 mb-3' : 'my-3'} 
+                      ${isPresentationMode ? 'text-lg' : 'text-sm'}
+                    `}>
+                      Goals
+                    </h3>
+                  )}
+                  
+                  <Droppable droppableId={`goals-${plan.domain}`}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={`space-y-2 ${goalsByDomain[plan.domain]?.length ? 'pb-1' : ''}`}
+                      >
+                        {goalsByDomain[plan.domain]?.map((goal, index) => (
+                          <Draggable
+                            key={goal.id}
+                            draggableId={goal.id}
+                            index={index}
+                            isDragDisabled={isPresentationMode}
+                          >
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <GoalItem 
+                                  goal={goal} 
+                                  onEdit={() => openEditGoalDialog(goal)}
+                                  isPresentationMode={isPresentationMode}
+                                  allGoals={Object.values(goalsByDomain).flat()}
+                                />
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                        
+                        {!isPresentationMode && (
+                          <Button 
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start mt-1 text-muted-foreground"
+                            onClick={() => openAddGoalDialog(plan.domain)}
+                          >
+                            <PlusIcon className="h-4 w-4 mr-2" />
+                            Add Goal
+                          </Button>
+                        )}
+                        
+                        {(!goalsByDomain[plan.domain]?.length && isPresentationMode) && (
+                          <div className="text-center p-4 text-gray-500 italic text-sm">
+                            No goals have been added to this domain yet.
                           </div>
                         )}
                       </div>
-                    </CardHeader>
-                    <CardContent className={`${viewMode === 'list' ? 'p-4' : 'min-h-[200px]'}`}>
-                      {goalsByDomain[domain.id]?.length > 0 ? (
-                        <div className="space-y-2">
-                          {goalsByDomain[domain.id].map((goal, index) => (
-                            <Draggable key={goal.id} draggableId={goal.id} index={index}>
-                              {(provided, snapshot) => (
-                                <GoalItem 
-                                  goal={goal}
-                                  domainColor={domain.textClass}
-                                  provided={provided}
-                                  snapshot={snapshot}
-                                  onEditGoal={openEditGoalDialog}
-                                  allGoals={Object.values(goalsByDomain).flat()}
-                                />
-                              )}
-                            </Draggable>
-                          ))}
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="w-full mt-2 border-dashed"
-                            onClick={() => openAddGoalDialog(domain.id)}
-                          >
-                            <PlusIcon className="h-4 w-4 mr-1" />
-                            Add Goal
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-gray-400 text-sm gap-3">
-                          <p>No goals yet</p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="border-dashed"
-                            onClick={() => openAddGoalDialog(domain.id)}
-                          >
-                            <PlusIcon className="h-4 w-4 mr-1" />
-                            Add Goal
-                          </Button>
-                        </div>
-                      )}
-                      {provided.placeholder}
-                    </CardContent>
-                  </Card>
-                )}
-              </Droppable>
+                    )}
+                  </Droppable>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
       </DragDropContext>
-
+      
       {/* Dialog for adding/editing goals */}
       <Dialog open={isAddingGoal || isEditingGoal} onOpenChange={(open) => {
         if (!open) closeGoalDialog();
       }}>
         <DialogContent 
-          className="max-w-md max-h-[90vh] overflow-y-auto z-[9999]"
-          style={{ position: isFullscreen ? 'fixed' : 'absolute' }}>
+          className="max-w-md max-h-[90vh] overflow-y-auto"
+          fullscreen={isFullscreen}
+        >
           <DialogHeader>
             <DialogTitle>
               {isAddingGoal ? 'Add New Goal' : 'Edit Goal'}
