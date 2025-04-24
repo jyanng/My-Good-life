@@ -752,15 +752,37 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     }
     
     if (!isFullscreen) {
-      if (visionBoardRef.current && visionBoardRef.current.requestFullscreen) {
-        visionBoardRef.current.requestFullscreen().catch(err => {
-          console.error('Error attempting to enable fullscreen:', err);
-        });
-        setIsFullscreen(true);
+      if (visionBoardRef.current) {
+        // Cross-browser fullscreen API
+        const element = visionBoardRef.current;
+        const requestFullscreen = element.requestFullscreen || 
+                                // @ts-ignore - for Safari, Firefox, and IE/Edge
+                                element.webkitRequestFullscreen || 
+                                // @ts-ignore
+                                element.mozRequestFullScreen || 
+                                // @ts-ignore
+                                element.msRequestFullscreen;
+                                
+        if (requestFullscreen) {
+          // Call the appropriate method
+          requestFullscreen.call(element).catch(err => {
+            console.error('Error attempting to enable fullscreen:', err);
+          });
+          setIsFullscreen(true);
+        }
       }
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch(err => {
+      // Cross-browser exit fullscreen API
+      const exitFullscreen = document.exitFullscreen || 
+                           // @ts-ignore
+                           document.webkitExitFullscreen || 
+                           // @ts-ignore
+                           document.mozCancelFullScreen || 
+                           // @ts-ignore
+                           document.msExitFullscreen;
+                           
+      if (exitFullscreen) {
+        exitFullscreen.call(document).catch(err => {
           console.error('Error attempting to exit fullscreen:', err);
         });
         setIsFullscreen(false);
@@ -772,18 +794,33 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   useEffect(() => {
     const handleFullscreenChange = () => {
       // Update our state to match the browser's fullscreen state
-      const isDocFullscreen = document.fullscreenElement !== null;
+      const isDocFullscreen = (
+        document.fullscreenElement !== null || 
+        // @ts-ignore - for Safari, Firefox, and IE/Edge support
+        document.webkitFullscreenElement !== null ||
+        // @ts-ignore
+        document.mozFullScreenElement !== null ||
+        // @ts-ignore
+        document.msFullscreenElement !== null
+      );
+      
       if (isFullscreen !== isDocFullscreen) {
         setIsFullscreen(isDocFullscreen);
       }
     };
     
-    // Add event listener for fullscreen changes
+    // Add event listener for fullscreen changes with cross-browser support
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange); // Safari
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange); // Firefox
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange); // IE/Edge
     
     // Clean up
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     };
   }, [isFullscreen]);
   
@@ -834,8 +871,17 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
             onKeyDown={(e) => {
               // Add escape key handler for fullscreen
               if (e.key === 'Escape') {
-                if (document.exitFullscreen) {
-                  document.exitFullscreen().catch(err => {
+                // Cross-browser exit fullscreen API
+                const exitFullscreen = document.exitFullscreen || 
+                                    // @ts-ignore
+                                    document.webkitExitFullscreen || 
+                                    // @ts-ignore
+                                    document.mozCancelFullScreen || 
+                                    // @ts-ignore
+                                    document.msExitFullscreen;
+                                    
+                if (exitFullscreen) {
+                  exitFullscreen.call(document).catch(err => {
                     console.error('Error attempting to exit fullscreen:', err);
                   });
                   setIsFullscreen(false);
