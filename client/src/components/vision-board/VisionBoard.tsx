@@ -747,6 +747,16 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
     }
   };
   
+  // Helper to exit fullscreen when opening dialogs
+  const exitFullscreenForDialog = () => {
+    if (isFullscreen && document.exitFullscreen) {
+      document.exitFullscreen().catch(err => {
+        console.error('Error attempting to exit fullscreen for dialog:', err);
+      });
+      setIsFullscreen(false);
+    }
+  };
+  
   // Collaboration and sharing handlers
   const openShareDialog = () => {
     // Generate a shareable link (in real app, this would be a unique URL)
