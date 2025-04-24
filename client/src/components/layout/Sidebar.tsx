@@ -14,6 +14,7 @@ export default function Sidebar({ user, mobileMenuOpen, setMobileMenuOpen }: Sid
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: <DashboardIcon /> },
+    { path: "/myplan", label: "MyGoodLife Plan", icon: <FileDown className="w-5 h-5" /> },
     { path: "/case-studies", label: "Case Studies", icon: <MenuBookIcon /> },
     { path: "/learning-center", label: "Learning Center", icon: <SchoolIcon /> },
     { path: "/plan-templates", label: "Plan Templates", icon: <FileDown className="w-5 h-5" /> }

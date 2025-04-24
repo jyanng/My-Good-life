@@ -15,6 +15,7 @@ import ReviewGoals from "@/pages/review-goals";
 import ProgressVisualization from "@/pages/progress-visualization";
 import VisionBoard from "@/pages/vision-board";
 import PlanTemplates from "@/pages/plan-templates";
+import MyGoodLifePlan from "@/pages/myplan";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { useState, useEffect } from "react";
 import { User } from "@shared/schema";
@@ -88,6 +89,7 @@ function Router() {
         </Route>
         <Route path="/vision-board" component={VisionBoard} />
         <Route path="/plan-templates" component={PlanTemplates} />
+        <Route path="/myplan" component={MyGoodLifePlan} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>
