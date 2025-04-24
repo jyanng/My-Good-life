@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { User, Student } from "@shared/schema";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { PlusIcon, UserIcon, BuildingIcon, Trash2Icon, PencilIcon } from "lucide-react";
-import { motion } from "framer-motion";
+import { PlusIcon, UserIcon, BuildingIcon, Trash2Icon, PencilIcon, MoveIcon, SaveIcon } from "lucide-react";
+import { motion, useDragControls } from "framer-motion";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 type SupportPerson = {
@@ -17,6 +18,7 @@ type SupportPerson = {
   institution?: string;
   relationship: string;
   tier: 1 | 2 | 3; // 1 = home, 2 = immediate neighborhood, 3 = larger community
+  customPosition?: { x: number; y: number }; // For drag-and-drop positioning
 };
 
 export default function CircleOfSupport() {
@@ -56,6 +58,10 @@ export default function CircleOfSupport() {
     tier: 1,
   });
   const [personToEdit, setPersonToEdit] = useState<SupportPerson | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [hasPositionChanges, setHasPositionChanges] = useState(false);
+  const visualizationRef = useRef<HTMLDivElement>(null);
 
   const handleAddPerson = () => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -87,6 +93,42 @@ export default function CircleOfSupport() {
 
   const handleDeletePerson = (id: string) => {
     setSupportPeople(supportPeople.filter((p) => p.id !== id));
+  };
+
+  // Drag handling functions for repositioning people
+  const handleDragStart = (id: string) => {
+    setIsDragging(true);
+    setDragId(id);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    setDragId(null);
+  };
+
+  const handleDrag = (id: string, x: number, y: number) => {
+    if (!visualizationRef.current) return;
+    
+    // Get center coordinates of the visualization
+    const rect = visualizationRef.current.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    // Set the custom position relative to the center
+    setSupportPeople(
+      supportPeople.map((p) =>
+        p.id === id ? { ...p, customPosition: { x: x - centerX, y: y - centerY } } : p
+      )
+    );
+    setHasPositionChanges(true);
+  };
+  
+  // Reset all custom positions
+  const handleResetPositions = () => {
+    setSupportPeople(
+      supportPeople.map((p) => ({ ...p, customPosition: undefined }))
+    );
+    setHasPositionChanges(false);
   };
 
   if (isLoadingStudents) {
@@ -267,9 +309,15 @@ export default function CircleOfSupport() {
             
             {/* Support People */}
             {supportPeople.map((person, index) => {
-              // Calculate position based on tier and index
+              // Get people in the same tier to calculate angle spacing
+              const peopleInSameTier = supportPeople.filter(p => p.tier === person.tier);
+              const indexInTier = peopleInSameTier.findIndex(p => p.id === person.id);
+              
+              // Calculate position based on tier and index within that tier
               const radius = person.tier === 1 ? 100 : person.tier === 2 ? 175 : 250;
-              const angle = (index * (360 / supportPeople.filter(p => p.tier === person.tier).length)) * (Math.PI / 180);
+              const angleStep = 360 / peopleInSameTier.length;
+              const offsetAngle = person.tier === 1 ? 0 : person.tier === 2 ? angleStep/2 : 0; // offset middle tier
+              const angle = ((indexInTier * angleStep) + offsetAngle) * (Math.PI / 180);
               const x = radius * Math.cos(angle);
               const y = radius * Math.sin(angle);
               
