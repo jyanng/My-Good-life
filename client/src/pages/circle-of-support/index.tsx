@@ -33,7 +33,7 @@ export default function CircleOfSupport() {
     name: "Wei Jie Tan",
     email: "weijie.tan@example.com",
     avatarUrl: null,
-    school: "Pathlight School"
+    school: "RC Yishun Park"
   };
 
   const student = fallbackStudent;
@@ -42,7 +42,7 @@ export default function CircleOfSupport() {
   const [supportPeople, setSupportPeople] = useState<SupportPerson[]>([
     { id: "1", name: "Mom", role: "Parent", relationship: "Family", tier: 1 },
     { id: "2", name: "Dad", role: "Parent", relationship: "Family", tier: 1 },
-    { id: "3", name: "Ms. Lee", role: "Teacher", institution: "Pathlight School", relationship: "Professional", tier: 2 },
+    { id: "3", name: "Ms. Lee", role: "Teacher", institution: "RC Yishun Park", relationship: "Professional", tier: 2 },
     { id: "4", name: "Dr. Tan", role: "Counselor", institution: "Mental Health Services", relationship: "Professional", tier: 2 },
     { id: "5", name: "Coach Ahmad", role: "Sports Coach", institution: "Community Center", relationship: "Professional", tier: 3 },
     { id: "6", name: "Aunt Sarah", role: "Extended Family", relationship: "Family", tier: 3 },
