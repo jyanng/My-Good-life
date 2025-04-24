@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
+import { setupAuth, isAuthenticated, isFacilitator } from "./auth";
 import {
   insertUserSchema,
   insertStudentSchema,
@@ -17,6 +18,8 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication
+  setupAuth(app);
   // Users
   app.get("/api/users/:id", async (req, res) => {
     const id = Number(req.params.id);
