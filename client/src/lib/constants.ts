@@ -6,8 +6,10 @@ export const DOMAINS = [
     color: "#EF4444", // red-500
     description: "Feeling secure in environments and relationships",
     bgClass: "bg-red-500",
-    lightBgClass: "bg-red-100",
-    textClass: "text-red-800"
+    lightBgClass: "bg-red-50",
+    textClass: "text-red-800",
+    borderClass: "border-red-200",
+    badgeClass: "bg-red-100 text-red-800 hover:bg-red-200"
   },
   {
     id: "healthy",
@@ -15,8 +17,10 @@ export const DOMAINS = [
     color: "#10B981", // emerald-500
     description: "Maintaining physical and mental wellbeing",
     bgClass: "bg-emerald-500",
-    lightBgClass: "bg-emerald-100",
-    textClass: "text-emerald-800"
+    lightBgClass: "bg-emerald-50",
+    textClass: "text-emerald-800",
+    borderClass: "border-emerald-200",
+    badgeClass: "bg-emerald-100 text-emerald-800 hover:bg-emerald-200"
   },
   {
     id: "engaged",
@@ -24,8 +28,10 @@ export const DOMAINS = [
     color: "#F59E0B", // amber-500
     description: "Participating in meaningful activities",
     bgClass: "bg-amber-500",
-    lightBgClass: "bg-amber-100",
-    textClass: "text-amber-800"
+    lightBgClass: "bg-amber-50",
+    textClass: "text-amber-800",
+    borderClass: "border-amber-200",
+    badgeClass: "bg-amber-100 text-amber-800 hover:bg-amber-200"
   },
   {
     id: "connected",
@@ -33,8 +39,10 @@ export const DOMAINS = [
     color: "#3B82F6", // blue-500
     description: "Building and maintaining relationships",
     bgClass: "bg-blue-500",
-    lightBgClass: "bg-blue-100",
-    textClass: "text-blue-800"
+    lightBgClass: "bg-blue-50",
+    textClass: "text-blue-800",
+    borderClass: "border-blue-200",
+    badgeClass: "bg-blue-100 text-blue-800 hover:bg-blue-200"
   },
   {
     id: "independent",
@@ -42,8 +50,10 @@ export const DOMAINS = [
     color: "#8B5CF6", // purple-500
     description: "Developing skills for autonomy",
     bgClass: "bg-purple-500",
-    lightBgClass: "bg-purple-100",
-    textClass: "text-purple-800"
+    lightBgClass: "bg-purple-50",
+    textClass: "text-purple-800",
+    borderClass: "border-purple-200",
+    badgeClass: "bg-purple-100 text-purple-800 hover:bg-purple-200"
   },
   {
     id: "included",
@@ -51,8 +61,10 @@ export const DOMAINS = [
     color: "#EC4899", // pink-500
     description: "Being valued, respected, and self-advocating",
     bgClass: "bg-pink-500",
-    lightBgClass: "bg-pink-100",
-    textClass: "text-pink-800"
+    lightBgClass: "bg-pink-50",
+    textClass: "text-pink-800",
+    borderClass: "border-pink-200",
+    badgeClass: "bg-pink-100 text-pink-800 hover:bg-pink-200"
   }
 ];
 

@@ -845,17 +845,20 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
                 overflow-hidden 
                 ${viewMode === 'grid' ? 'h-full flex flex-col' : ''}
                 ${isPresentationMode ? 'shadow-lg' : ''}
+                ${domainInfo?.borderClass ? domainInfo.borderClass : ''}
               `}>
                 <CardHeader className={`
-                  bg-gray-50 border-b 
+                  border-b 
                   ${viewMode === 'grid' ? 'pb-3' : 'pb-3'} 
-                  ${isPresentationMode ? 'bg-gray-50/50' : ''}
+                  ${isPresentationMode ? 'bg-opacity-50' : ''}
+                  ${domainInfo?.lightBgClass ? domainInfo.lightBgClass : 'bg-gray-50'}
                 `}>
                   <div className="flex justify-between items-start">
                     <Badge 
                       variant={viewMode === 'list' && isPresentationMode ? "outline" : "secondary"}
                       className={`
                         ${viewMode === 'list' && isPresentationMode ? 'text-xs px-2 py-0 h-5' : ''}
+                        ${domainInfo?.badgeClass || ''}
                       `}
                     >
                       {domainInfo?.name || plan.domain}
