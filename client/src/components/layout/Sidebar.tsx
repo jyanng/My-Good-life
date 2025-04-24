@@ -14,12 +14,15 @@ export default function Sidebar({ user, mobileMenuOpen, setMobileMenuOpen }: Sid
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: <DashboardIcon /> },
-    { path: "/students", label: "Student Profiles", icon: <AccountCircleIcon /> },
     { path: "/case-studies", label: "Case Studies", icon: <MenuBookIcon /> },
     { path: "/learning-center", label: "Learning Center", icon: <SchoolIcon /> },
-    { path: "/progress-visualization", label: "Progress Visualization", icon: <BarChart2 className="w-5 h-5" /> },
-    { path: "/vision-board", label: "Vision Board", icon: <Kanban className="w-5 h-5" /> },
     { path: "/plan-templates", label: "Plan Templates", icon: <FileDown className="w-5 h-5" /> }
+  ];
+
+  const facilitatorItems = [
+    { path: "/students", label: "Student Profiles", icon: <AccountCircleIcon /> },
+    { path: "/vision-board", label: "Vision Board", icon: <Kanban className="w-5 h-5" /> },
+    { path: "/progress-visualization", label: "Progress Visualization", icon: <BarChart2 className="w-5 h-5" /> }
   ];
 
   const toolItems = [
@@ -54,6 +57,24 @@ export default function Sidebar({ user, mobileMenuOpen, setMobileMenuOpen }: Sid
             <div className="mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Main</div>
             
             {navItems.map((item) => (
+              <Link
+                key={item.path}
+                href={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center px-4 py-3 mb-2 rounded-lg ${
+                  location === item.path
+                    ? "text-primary bg-indigo-50"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                <span className="mr-3 text-current">{item.icon}</span>
+                {item.label}
+              </Link>
+            ))}
+            
+            <div className="mt-8 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Facilitator View</div>
+            
+            {facilitatorItems.map((item) => (
               <Link
                 key={item.path}
                 href={item.path}
