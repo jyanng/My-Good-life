@@ -7,24 +7,6 @@ import { Student, GoodLifePlan, DomainPlan, DomainConfidence } from "@shared/sch
 import { DOMAINS } from "@/lib/constants";
 import { StarIcon, BadgeCheckIcon, AwardIcon, TrendingUpIcon, ClockIcon, TargetIcon } from "lucide-react";
 
-const DomainColors: Record<string, { bg: string, text: string, border: string }> = {
-  safe: { bg: "bg-red-100", text: "text-red-800", border: "border-red-300" },
-  healthy: { bg: "bg-green-100", text: "text-green-800", border: "border-green-300" },
-  engaged: { bg: "bg-blue-100", text: "text-blue-800", border: "border-blue-300" },
-  connected: { bg: "bg-purple-100", text: "text-purple-800", border: "border-purple-300" },
-  independent: { bg: "bg-yellow-100", text: "text-yellow-800", border: "border-yellow-300" },
-  included: { bg: "bg-pink-100", text: "text-pink-800", border: "border-pink-300" }
-};
-
-const DomainIcons: Record<string, React.ReactNode> = {
-  safe: <StarIcon className="h-5 w-5 text-red-600" />,
-  healthy: <BadgeCheckIcon className="h-5 w-5 text-green-600" />,
-  engaged: <TargetIcon className="h-5 w-5 text-blue-600" />,
-  connected: <AwardIcon className="h-5 w-5 text-purple-600" />,
-  independent: <TrendingUpIcon className="h-5 w-5 text-yellow-600" />,
-  included: <ClockIcon className="h-5 w-5 text-pink-600" />
-};
-
 export default function PersonalProgress() {
   const [activeTab, setActiveTab] = useState("progress");
   const studentId = 1; // Wei Jie Tan's ID
@@ -81,24 +63,22 @@ export default function PersonalProgress() {
   const calculateOverallProgress = () => {
     if (!domainPlans.length) return 0;
     
-    const totalGoals = domainPlans.reduce((acc, domain) => {
+    let totalGoals = 0;
+    let completedGoals = 0;
+    
+    domainPlans.forEach(domain => {
       const goals = domain.goals ? (Array.isArray(domain.goals) ? domain.goals : []) : [];
-      return acc + goals.length;
-    }, 0);
+      totalGoals += goals.length;
+      completedGoals += goals.filter((goal: any) => goal.completed).length;
+    });
     
     if (totalGoals === 0) return 0;
-    
-    const completedGoals = domainPlans.reduce((acc, domain) => {
-      const goals = domain.goals ? (Array.isArray(domain.goals) ? domain.goals : []) : [];
-      return acc + goals.filter((goal: any) => goal.completed).length;
-    }, 0);
-    
     return Math.round((completedGoals / totalGoals) * 100);
   };
   
   // Calculate domain-specific progress
-  const calculateDomainProgress = (domain: string) => {
-    const domainPlan = domainPlans.find(dp => dp.domain === domain);
+  const calculateDomainProgress = (domainId: string) => {
+    const domainPlan = domainPlans.find(dp => dp.domain === domainId);
     if (!domainPlan || !domainPlan.goals) return 0;
     
     const goals = Array.isArray(domainPlan.goals) ? domainPlan.goals : [];
@@ -109,31 +89,31 @@ export default function PersonalProgress() {
   };
   
   // Get confidence score for a domain
-  const getConfidenceScore = (domain: string): number => {
-    const key = `${domain}Score` as keyof DomainConfidence;
+  const getConfidenceScore = (domainId: string): number => {
+    const key = `${domainId}Score` as keyof DomainConfidence;
     return (domainConfidence[key] as number) || 0;
   };
   
-  // Generate mock historical data for visualization
-  const generateHistoricalData = () => {
-    return DOMAINS.map(domain => {
-      const currentProgress = calculateDomainProgress(domain);
-      // Generate past progress points (slightly lower than current to show improvement)
-      const pastProgress = Math.max(0, currentProgress - Math.floor(Math.random() * 15) - 10);
-      
-      return {
-        domain,
-        data: [
-          { month: "3 Months Ago", progress: pastProgress },
-          { month: "2 Months Ago", progress: Math.floor((pastProgress + currentProgress) / 2) },
-          { month: "1 Month Ago", progress: Math.floor((pastProgress + currentProgress + currentProgress) / 3) },
-          { month: "Current", progress: currentProgress }
-        ]
-      };
-    });
+  // Get domain icon
+  const getDomainIcon = (domainId: string) => {
+    switch (domainId) {
+      case 'safe':
+        return <StarIcon className="h-5 w-5 text-red-600" />;
+      case 'healthy':
+        return <BadgeCheckIcon className="h-5 w-5 text-green-600" />;
+      case 'engaged':
+        return <TargetIcon className="h-5 w-5 text-amber-600" />;
+      case 'connected':
+        return <AwardIcon className="h-5 w-5 text-blue-600" />;
+      case 'independent':
+        return <TrendingUpIcon className="h-5 w-5 text-purple-600" />;
+      case 'included':
+        return <ClockIcon className="h-5 w-5 text-pink-600" />;
+      default:
+        return <StarIcon className="h-5 w-5 text-gray-600" />;
+    }
   };
   
-  const historicalData = generateHistoricalData();
   const overallProgress = calculateOverallProgress();
   
   return (
@@ -181,18 +161,18 @@ export default function PersonalProgress() {
               <CardContent>
                 <div className="space-y-6">
                   {DOMAINS.map(domain => {
-                    const progress = calculateDomainProgress(domain);
-                    const domainPlan = domainPlans.find(dp => dp.domain === domain);
+                    const progress = calculateDomainProgress(domain.id);
+                    const domainPlan = domainPlans.find(dp => dp.domain === domain.id);
                     const goals = domainPlan?.goals ? 
                       (Array.isArray(domainPlan.goals) ? domainPlan.goals : []) : [];
                     const completedGoals = goals.filter((goal: any) => goal.completed).length;
                     
                     return (
-                      <div key={domain} className="space-y-2">
+                      <div key={domain.id} className="space-y-2">
                         <div className="flex justify-between">
                           <div className="flex items-center">
-                            <span className="mr-2">{DomainIcons[domain]}</span>
-                            <span className="capitalize font-medium">{domain}</span>
+                            <span className="mr-2">{getDomainIcon(domain.id)}</span>
+                            <span className="capitalize font-medium">{domain.name}</span>
                           </div>
                           <div className="text-sm text-gray-500">
                             {completedGoals} / {goals.length} goals completed
@@ -213,22 +193,21 @@ export default function PersonalProgress() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {DOMAINS.map(domain => {
-                const domainPlan = domainPlans.find(dp => dp.domain === domain);
+                const domainPlan = domainPlans.find(dp => dp.domain === domain.id);
                 const goals = domainPlan?.goals ? 
                   (Array.isArray(domainPlan.goals) ? domainPlan.goals : []) : [];
-                const colors = DomainColors[domain];
                   
                 return (
-                  <Card key={domain} className={`border ${colors.border}`}>
-                    <CardHeader className={`${colors.bg}`}>
+                  <Card key={domain.id} className={`border ${domain.borderClass}`}>
+                    <CardHeader className={domain.lightBgClass}>
                       <div className="flex items-center justify-between">
-                        <CardTitle className={`capitalize text-lg ${colors.text}`}>
-                          {domain}
+                        <CardTitle className={`capitalize text-lg ${domain.textClass}`}>
+                          {domain.name}
                         </CardTitle>
-                        {DomainIcons[domain]}
+                        {getDomainIcon(domain.id)}
                       </div>
                       <CardDescription>
-                        {domainPlan?.vision || `No vision set for ${domain} domain`}
+                        {domainPlan?.vision || `No vision set for ${domain.name} domain`}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6">
@@ -273,14 +252,14 @@ export default function PersonalProgress() {
               <CardContent>
                 <div className="space-y-6">
                   {DOMAINS.map(domain => {
-                    const confidenceScore = getConfidenceScore(domain);
+                    const confidenceScore = getConfidenceScore(domain.id);
                     
                     return (
-                      <div key={domain} className="space-y-2">
+                      <div key={domain.id} className="space-y-2">
                         <div className="flex justify-between">
                           <div className="flex items-center">
-                            <span className="mr-2">{DomainIcons[domain]}</span>
-                            <span className="capitalize font-medium">{domain}</span>
+                            <span className="mr-2">{getDomainIcon(domain.id)}</span>
+                            <span className="capitalize font-medium">{domain.name}</span>
                           </div>
                           <div className="flex">
                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(star => (
@@ -321,14 +300,14 @@ export default function PersonalProgress() {
                       Areas of Strength
                     </h3>
                     <ul className="space-y-2 text-sm">
-                      {DOMAINS.filter(domain => getConfidenceScore(domain) >= 7).map(domain => (
-                        <li key={domain} className="flex items-center">
+                      {DOMAINS.filter(domain => getConfidenceScore(domain.id) >= 7).map(domain => (
+                        <li key={domain.id} className="flex items-center">
                           <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                          <span className="capitalize">{domain}</span>
-                          <span className="ml-auto font-medium">{getConfidenceScore(domain)}/10</span>
+                          <span className="capitalize">{domain.name}</span>
+                          <span className="ml-auto font-medium">{getConfidenceScore(domain.id)}/10</span>
                         </li>
                       ))}
-                      {DOMAINS.filter(domain => getConfidenceScore(domain) >= 7).length === 0 && (
+                      {DOMAINS.filter(domain => getConfidenceScore(domain.id) >= 7).length === 0 && (
                         <li className="text-gray-500 italic">Keep working on building your confidence!</li>
                       )}
                     </ul>
@@ -340,14 +319,14 @@ export default function PersonalProgress() {
                       Growth Opportunities
                     </h3>
                     <ul className="space-y-2 text-sm">
-                      {DOMAINS.filter(domain => getConfidenceScore(domain) < 7).map(domain => (
-                        <li key={domain} className="flex items-center">
+                      {DOMAINS.filter(domain => getConfidenceScore(domain.id) < 7).map(domain => (
+                        <li key={domain.id} className="flex items-center">
                           <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
-                          <span className="capitalize">{domain}</span>
-                          <span className="ml-auto font-medium">{getConfidenceScore(domain)}/10</span>
+                          <span className="capitalize">{domain.name}</span>
+                          <span className="ml-auto font-medium">{getConfidenceScore(domain.id)}/10</span>
                         </li>
                       ))}
-                      {DOMAINS.filter(domain => getConfidenceScore(domain) < 7).length === 0 && (
+                      {DOMAINS.filter(domain => getConfidenceScore(domain.id) < 7).length === 0 && (
                         <li className="text-gray-500 italic">Amazing! You're confident in all domains!</li>
                       )}
                     </ul>
@@ -358,69 +337,6 @@ export default function PersonalProgress() {
           </TabsContent>
           
           <TabsContent value="trends" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Progress Trends</CardTitle>
-                <CardDescription>
-                  See how your progress has evolved over time
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {historicalData.map(({ domain, data }) => (
-                    <Card key={domain} className="overflow-hidden">
-                      <CardHeader className={`${DomainColors[domain].bg}`}>
-                        <CardTitle className={`capitalize text-lg ${DomainColors[domain].text}`}>
-                          {domain}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="pt-6">
-                        <div className="relative pt-1">
-                          <div className="flex mb-2 items-center justify-between">
-                            <div>
-                              <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-primary bg-primary/10">
-                                Progress
-                              </span>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-xs font-semibold inline-block text-primary">
-                                {data[data.length - 1].progress}%
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex h-4 mb-4 overflow-hidden bg-gray-100 rounded">
-                            {data.map((point, idx) => (
-                              <div 
-                                key={idx}
-                                className={`flex flex-col justify-center text-center text-white whitespace-nowrap bg-primary ${
-                                  idx === 0 ? 'rounded-l-sm' : ''
-                                } ${
-                                  idx === data.length - 1 ? 'rounded-r-sm' : ''
-                                }`}
-                                style={{ 
-                                  width: '25%',
-                                  height: `${point.progress}%`
-                                }}
-                              ></div>
-                            ))}
-                          </div>
-                          <div className="flex justify-between text-xs text-gray-600">
-                            {data.map((point, idx) => (
-                              <div key={idx} className="text-center" style={{ width: '25%' }}>
-                                <div className="bg-primary w-1 h-1 rounded-full mx-auto"></div>
-                                <div>{point.month}</div>
-                                <div className="font-medium">{point.progress}%</div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            
             <Card>
               <CardHeader>
                 <CardTitle>Overall Progress Summary</CardTitle>
@@ -481,8 +397,8 @@ export default function PersonalProgress() {
                     
                     <div className="border rounded-lg p-4 bg-purple-50 text-center">
                       <div className="text-3xl font-bold text-purple-600 mb-1">
-                        {Math.round(Object.values(DOMAINS).reduce((acc, domain) => {
-                          return acc + getConfidenceScore(domain);
+                        {Math.round(DOMAINS.reduce((acc, domain) => {
+                          return acc + getConfidenceScore(domain.id);
                         }, 0) / DOMAINS.length)}
                       </div>
                       <div className="text-sm text-gray-600">Avg. Confidence</div>
@@ -490,7 +406,7 @@ export default function PersonalProgress() {
                     
                     <div className="border rounded-lg p-4 bg-cyan-50 text-center">
                       <div className="text-3xl font-bold text-cyan-600 mb-1">
-                        {Math.max(...Object.values(DOMAINS).map(domain => getConfidenceScore(domain)))}
+                        {Math.max(...DOMAINS.map(domain => getConfidenceScore(domain.id)))}
                       </div>
                       <div className="text-sm text-gray-600">Highest Confidence</div>
                     </div>
@@ -498,7 +414,7 @@ export default function PersonalProgress() {
                     <div className="border rounded-lg p-4 bg-pink-50 text-center">
                       <div className="text-3xl font-bold text-pink-600 mb-1">
                         {DOMAINS.reduce((highest, domain) => {
-                          const progress = calculateDomainProgress(domain);
+                          const progress = calculateDomainProgress(domain.id);
                           return progress > highest ? progress : highest;
                         }, 0)}%
                       </div>
