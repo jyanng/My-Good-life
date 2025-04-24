@@ -52,6 +52,7 @@ export interface IStorage {
   getCaseStudies(): Promise<CaseStudy[]>;
   getCaseStudy(id: number): Promise<CaseStudy | undefined>;
   createCaseStudy(caseStudy: InsertCaseStudy): Promise<CaseStudy>;
+  updateCaseStudy(id: number, caseStudy: Partial<InsertCaseStudy>): Promise<CaseStudy | undefined>;
   
   // Learning Module methods
   getLearningModules(): Promise<LearningModule[]>;
