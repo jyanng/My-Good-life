@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import StatsCard from "@/components/dashboard/StatsCard";
-import StudentTable from "@/components/dashboard/StudentTable";
+import ProfileCard from "@/components/dashboard/ProfileCard";
 import DomainProgress from "@/components/dashboard/DomainProgress";
 import QualityAlerts from "@/components/dashboard/QualityAlerts";
 import QuickAccess from "@/components/dashboard/QuickAccess";
@@ -50,7 +50,7 @@ export default function Dashboard() {
           <Link href="/students/new">
             <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 text-base py-6 px-4 rounded-xl font-medium">
               <PlusIcon className="mr-2 h-5 w-5" />
-              Add Family Member
+              Edit My Profile
             </Button>
           </Link>
         </div>
@@ -77,7 +77,7 @@ export default function Dashboard() {
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Journey at a Glance</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatsCard 
-          title="People in Your Plan"
+          title="Life Areas Covered"
           value={isLoadingStats ? "..." : stats?.activeStudents || 0}
           icon="group"
           change={5}
@@ -108,9 +108,9 @@ export default function Dashboard() {
         <QualityAlerts alerts={alerts as Alert[] || []} isLoading={isLoadingAlerts} />
       </div>
       
-      {/* Student Progress Section */}
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Family Members & Friends</h2>
-      <StudentTable students={students as Student[] || []} isLoading={isLoadingStudents} />
+      {/* Main Profile Section */}
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">My Profile</h2>
+      <ProfileCard student={students && students.length > 0 ? students[0] : undefined} isLoading={isLoadingStudents} />
       
       {/* Quick Access Section - Resources */}
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Helpful Resources</h2>
