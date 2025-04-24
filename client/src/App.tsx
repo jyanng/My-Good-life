@@ -13,6 +13,7 @@ import CaseStudies from "@/pages/case-studies";
 import LearningCenter from "@/pages/learning-center";
 import ReviewGoals from "@/pages/review-goals";
 import ProgressVisualization from "@/pages/progress-visualization";
+import PersonalProgress from "@/pages/personal-progress";
 import VisionBoard from "@/pages/vision-board";
 import PlanTemplates from "@/pages/plan-templates";
 import MyGoodLifePlan from "@/pages/myplan";
@@ -90,6 +91,7 @@ function Router() {
         <Route path="/vision-board" component={VisionBoard} />
         <Route path="/plan-templates" component={PlanTemplates} />
         <Route path="/myplan" component={MyGoodLifePlan} />
+        <Route path="/personal-progress" component={PersonalProgress} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>
