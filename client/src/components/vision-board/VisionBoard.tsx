@@ -170,9 +170,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
 
   // Vision dialog handlers
   const openAddVisionDialog = (domainId: string) => {
-    // Exit fullscreen if active
-    exitFullscreenForDialog();
-    
+    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
     const domainPlan = domainPlans.find(plan => plan.domain === domainId);
     setCurrentDomain(domainId);
     
@@ -195,9 +193,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   };
 
   const openEditVisionDialog = (domainId: string) => {
-    // Exit fullscreen if active
-    exitFullscreenForDialog();
-    
+    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
     const domainPlan = domainPlans.find(plan => plan.domain === domainId);
     setCurrentDomain(domainId);
     
@@ -239,9 +235,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   };
 
   const confirmRemoveVision = (domainId: string) => {
-    // Exit fullscreen if active
-    exitFullscreenForDialog();
-    
+    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
     setRemovingDomain(domainId);
   };
 
@@ -485,18 +479,14 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
 
   // Goal dialog handlers
   const openAddGoalDialog = (domainId: string) => {
-    // Exit fullscreen if active
-    exitFullscreenForDialog();
-    
+    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
     setCurrentDomain(domainId);
     setIsAddingGoal(true);
     setCurrentGoal(null);
   };
 
   const openEditGoalDialog = (goal: GoalType) => {
-    // Exit fullscreen if active
-    exitFullscreenForDialog();
-    
+    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
     setCurrentDomain(goal.domainId);
     setCurrentGoal(goal);
     setIsEditingGoal(true);
@@ -774,8 +764,7 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
   
   // Collaboration and sharing handlers
   const openShareDialog = () => {
-    // Exit fullscreen if active
-    exitFullscreenForDialog();
+    // No longer exiting fullscreen - allow dialog to appear in fullscreen mode
     
     // Generate a shareable link (in real app, this would be a unique URL)
     const baseUrl = window.location.origin;
