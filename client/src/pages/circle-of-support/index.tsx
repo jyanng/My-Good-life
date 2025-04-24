@@ -62,6 +62,7 @@ export default function CircleOfSupport() {
   const [dragId, setDragId] = useState<string | null>(null);
   const [hasPositionChanges, setHasPositionChanges] = useState(false);
   const visualizationRef = useRef<HTMLDivElement>(null);
+  const dragControls = useDragControls();
 
   const handleAddPerson = () => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -289,7 +290,33 @@ export default function CircleOfSupport() {
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="relative h-[600px] bg-gradient-to-r from-indigo-50 to-purple-50 p-6 flex items-center justify-center">
+          <div className="flex justify-end gap-2 p-4 bg-gray-50 border-b">
+            {hasPositionChanges && (
+              <Button variant="outline" onClick={handleResetPositions}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                  <path d="M3 3v5h5"></path>
+                </svg>
+                Reset Positions
+              </Button>
+            )}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-gray-500">
+                    <MoveIcon className="w-4 h-4 mr-2" />
+                    Drag to Reposition
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Click and drag any person to reposition them in your support network</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div 
+            ref={visualizationRef}
+            className="relative h-[600px] bg-gradient-to-r from-indigo-50 to-purple-50 p-6 flex items-center justify-center">
             {/* Larger Community Circle */}
             <div className="absolute rounded-full border-2 border-indigo-100 w-[500px] h-[500px]"></div>
             
@@ -313,13 +340,22 @@ export default function CircleOfSupport() {
               const peopleInSameTier = supportPeople.filter(p => p.tier === person.tier);
               const indexInTier = peopleInSameTier.findIndex(p => p.id === person.id);
               
-              // Calculate position based on tier and index within that tier
-              const radius = person.tier === 1 ? 100 : person.tier === 2 ? 175 : 250;
-              const angleStep = 360 / peopleInSameTier.length;
-              const offsetAngle = person.tier === 1 ? 0 : person.tier === 2 ? angleStep/2 : 0; // offset middle tier
-              const angle = ((indexInTier * angleStep) + offsetAngle) * (Math.PI / 180);
-              const x = radius * Math.cos(angle);
-              const y = radius * Math.sin(angle);
+              // Calculate position based on tier and index within that tier, or use custom position if available
+              let x, y;
+              
+              if (person.customPosition) {
+                // Use custom position if available (from drag-and-drop)
+                x = person.customPosition.x;
+                y = person.customPosition.y;
+              } else {
+                // Calculate position based on tier and index within that tier
+                const radius = person.tier === 1 ? 100 : person.tier === 2 ? 175 : 250;
+                const angleStep = 360 / peopleInSameTier.length;
+                const offsetAngle = person.tier === 1 ? 0 : person.tier === 2 ? angleStep/2 : 0; // offset middle tier
+                const angle = ((indexInTier * angleStep) + offsetAngle) * (Math.PI / 180);
+                x = radius * Math.cos(angle);
+                y = radius * Math.sin(angle);
+              }
               
               const backgroundColor = 
                 person.relationship === "Family" ? "bg-pink-100" :
@@ -351,13 +387,22 @@ export default function CircleOfSupport() {
                     <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
                   </svg>;
 
+              // Handle starting drag from handle icon
+              const onDragHandlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+                e.stopPropagation();
+                dragControls.start(e);
+              };
+              
+              const isBeingDragged = dragId === person.id;
+              
               return (
                 <motion.div
                   key={person.id}
                   className={cn(
-                    "absolute rounded-full p-2 shadow-md cursor-pointer transform transition-all duration-200 border-2",
+                    "absolute rounded-full p-2 shadow-md cursor-pointer transform border-2",
                     backgroundColor,
-                    "hover:scale-110 hover:shadow-lg z-20"
+                    "hover:shadow-lg z-20",
+                    isBeingDragged ? "shadow-lg z-30 ring-2 ring-primary ring-opacity-50" : "hover:scale-110"
                   )}
                   style={{
                     transform: `translate(${x}px, ${y}px)`,
@@ -365,11 +410,43 @@ export default function CircleOfSupport() {
                   }}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                  onClick={() => handleEditPerson(person)}
+                  transition={{ 
+                    delay: index * 0.1,
+                    type: isBeingDragged ? "tween" : "spring",
+                    damping: 20
+                  }}
+                  drag={true}
+                  dragControls={dragControls}
+                  dragConstraints={visualizationRef}
+                  dragElastic={0.1}
+                  dragMomentum={false}
+                  onDragStart={() => handleDragStart(person.id)}
+                  onDragEnd={handleDragEnd}
+                  onDrag={(e, info) => {
+                    if (visualizationRef.current) {
+                      const rect = visualizationRef.current.getBoundingClientRect();
+                      const centerX = rect.width / 2;
+                      const centerY = rect.height / 2;
+                      handleDrag(person.id, info.point.x - rect.left, info.point.y - rect.top);
+                    }
+                  }}
+                  onClick={(e) => {
+                    if (!isDragging) handleEditPerson(person);
+                  }}
                 >
                   {/* Person Icon and Info */}
-                  <div className="flex flex-col items-center justify-center">
+                  <div className="flex flex-col items-center justify-center relative">
+                    {/* Drag handle */}
+                    <div 
+                      className={cn(
+                        "absolute -top-1 -right-1 p-1 rounded-full bg-gray-100 border border-gray-300 cursor-grab shadow-sm opacity-0 transition-opacity", 
+                        isDragging ? "opacity-100" : "group-hover:opacity-100"
+                      )}
+                      onPointerDown={onDragHandlePointerDown}
+                    >
+                      <MoveIcon className="h-3 w-3 text-gray-500" />
+                    </div>
+                    
                     <div className={cn("p-2 rounded-full", textColor)}>
                       <PersonIcon />
                     </div>
