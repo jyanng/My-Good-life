@@ -825,6 +825,26 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
           Vision Board for {student.name}
         </h2>
         
+        {/* Hidden element to capture keyboard events in fullscreen mode */}
+        {isFullscreen && (
+          <div 
+            className="fixed inset-0 pointer-events-none" 
+            aria-hidden="true"
+            tabIndex={-1}
+            onKeyDown={(e) => {
+              // Add escape key handler for fullscreen
+              if (e.key === 'Escape') {
+                if (document.exitFullscreen) {
+                  document.exitFullscreen().catch(err => {
+                    console.error('Error attempting to exit fullscreen:', err);
+                  });
+                  setIsFullscreen(false);
+                }
+              }
+            }}
+          />
+        )}
+        
         <div className="flex flex-wrap items-center gap-3">
           {/* View Mode Controls */}
           <div className="flex items-center bg-gray-100 p-1 rounded-lg">
@@ -963,7 +983,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={isAddingVision || isEditingVision} onOpenChange={(open) => {
         if (!open) closeVisionDialog();
       }}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto z-[9999]">
+        <DialogContent 
+          className="max-w-md max-h-[90vh] overflow-y-auto z-[9999]" 
+          style={{ position: isFullscreen ? 'fixed' : 'absolute' }}>
           <DialogHeader>
             <DialogTitle>
               {isAddingVision ? 'Add Vision Statement' : 'Edit Vision Statement'}
@@ -1138,7 +1160,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={!!removingDomain} onOpenChange={(open) => {
         if (!open) cancelRemoveVision();
       }}>
-        <DialogContent className="max-w-sm z-[9999]">
+        <DialogContent 
+          className="max-w-sm z-[9999]"
+          style={{ position: isFullscreen ? 'fixed' : 'absolute' }}>
           <DialogHeader>
             <DialogTitle>Remove Vision Statement?</DialogTitle>
             <DialogDescription>
@@ -1155,7 +1179,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       
       {/* Share Dialog */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent 
+          className="max-w-md max-h-[90vh] overflow-y-auto z-[9999]"
+          style={{ position: isFullscreen ? 'fixed' : 'absolute' }}>
           <DialogHeader>
             <DialogTitle>Share Vision Board</DialogTitle>
             <DialogDescription>
@@ -1432,7 +1458,9 @@ export default function VisionBoard({ student, domainPlans }: VisionBoardProps) 
       <Dialog open={isAddingGoal || isEditingGoal} onOpenChange={(open) => {
         if (!open) closeGoalDialog();
       }}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent 
+          className="max-w-md max-h-[90vh] overflow-y-auto z-[9999]"
+          style={{ position: isFullscreen ? 'fixed' : 'absolute' }}>
           <DialogHeader>
             <DialogTitle>
               {isAddingGoal ? 'Add New Goal' : 'Edit Goal'}
