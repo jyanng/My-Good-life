@@ -638,12 +638,12 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
     }
     
     // Check if we're at the last step and need to create a plan
-    if (currentStep === 3 && !plan && !newPlanCreated) {
+    if (currentStep === 4 && !plan && !newPlanCreated) {
       handleCreatePlan();
     }
     
     // Move to next step
-    setCurrentStep(prev => Math.min(prev + 1, 3));
+    setCurrentStep(prev => Math.min(prev + 1, 4));
   };
   
   const handlePrevious = () => {
