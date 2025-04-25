@@ -669,6 +669,7 @@ export default function PlanBuilder({ studentId }: PlanBuilderProps) {
   const steps = [
     { title: "Strengths", description: "What I like and dislike, what I can and cannot do, what people like about me" },
     { title: "Identity", description: "What is important to me, how best to support me, what is important to my family" },
+    { title: "Circle of Support", description: "Map out the important people who support you in your journey" },
     { title: "My Life Profile", description: "How do you feel you are doing with respect to each domain of your life right now?" },
     { title: "Domain Visions", description: "Create visions and goals for each life domain" }
   ];
