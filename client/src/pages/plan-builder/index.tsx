@@ -42,6 +42,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DOMAINS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
 import { 
