@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { User } from "@shared/schema";
 import { PsychologyIcon, DashboardIcon, AccountCircleIcon, MenuBookIcon, SchoolIcon, InsightsIcon, SettingsIcon } from "./icons";
-import { BarChart2, Kanban, FileDown, FileText, TrendingUp } from "lucide-react";
+import { BarChart2, Kanban, FileDown, FileText, TrendingUp, Users } from "lucide-react";
 
 interface SidebarProps {
   user: User;
@@ -16,6 +16,7 @@ export default function Sidebar({ user, mobileMenuOpen, setMobileMenuOpen }: Sid
     { path: "/", label: "Dashboard", icon: <DashboardIcon /> },
     { path: "/myplan", label: "MyGoodLife Plan", icon: <FileText className="w-5 h-5" /> },
     { path: "/personal-progress", label: "My Progress", icon: <BarChart2 className="w-5 h-5" /> },
+    { path: "/circle-of-support", label: "Circle of Support", icon: <Users className="w-5 h-5" /> },
     { path: "/case-studies", label: "Case Studies", icon: <MenuBookIcon /> },
     { path: "/learning-center", label: "Learning Center", icon: <SchoolIcon /> },
     { path: "/plan-templates", label: "Plan Templates", icon: <FileDown className="w-5 h-5" /> }
